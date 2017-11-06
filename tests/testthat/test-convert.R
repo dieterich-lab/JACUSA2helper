@@ -3,7 +3,7 @@ context("matrix2str, get_bc, get_bcs")
 # helper functions
 .get_matrix <- function(counts) {
 	m <- matrix(counts, ncol = 4, byrow = TRUE)
-	colnames(m) <- Jacusa2Helper:::.BASES
+	colnames(m) <- JACUSAhelper2:::.BASES
 	m
 }
 

@@ -6,7 +6,7 @@ test_that("get_comp_bc_matrix works as expected", {
 									   0,0,10,5,
 									   5,0,0,10),
                    ncol = 4, byrow = TRUE)
-	colnames(matrix) <- Jacusa2Helper:::.BASES
+	colnames(matrix) <- JACUSAhelper2:::.BASES
 	
 	comp_matrix <- matrix(c(0,0,5,10,
        									  0,5,10,0,
@@ -14,7 +14,7 @@ test_that("get_comp_bc_matrix works as expected", {
           								10,0,0,5),
           							ncol = 4, byrow = TRUE
 	)
-	colnames(comp_matrix) <- Jacusa2Helper:::.BASES
+	colnames(comp_matrix) <- JACUSAhelper2:::.BASES
 
 	expect_equal(comp_matrix, get_comp_bc_matrix(matrix))
 })
