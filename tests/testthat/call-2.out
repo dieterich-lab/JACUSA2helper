@@ -1,0 +1,2 @@
+#contig	start	end	name	stat	strand	bases11	bases12	bases21	bases22	info	filter_info
+1	1	2	variant	0	+	10,1,0,0	10,1,0,0	10,10,0,0	10,10,0,0	*	*

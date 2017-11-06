@@ -1,0 +1,14 @@
+Package: JACUSA2Helper
+Type: Package
+Title: Post-processing JACUSA 1.x 2.x output
+Version: 0.65
+Depends: R (>= 2.10)
+Date: 2017-07-22
+Author: Michael Piechotta
+Maintainer: <michael.piechotta@gmail.com>
+Description: This package enables post-processing of JACUSA 1.x 2.x output: read, filter, process, plot, write.
+License: GNU Affero General Public License, Version 3.0 + file LICENSE
+RoxygenNote: 6.0.1
+LazyData: true
+Suggests: testthat
+Imports: ggplot2, aod

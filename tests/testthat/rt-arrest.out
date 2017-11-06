@@ -1,0 +1,4 @@
+#contig	start	end	name	stat	strand	bases11	reads11	bases12	reads12	bases21	reads21	bases22	reads22	info	filter_info
+1	1	2	variant	0	+	10,0,0,0	5,5	0,10,0,0	5,5	0,0,10,0	10,0	0,0,0,10	10,0	*	*
+1	2	3	variant	0	+	5,0,0,0	0,5	0,5,0,0	0,5	0,0,5,0	5,0	0,0,0,5	5,0	*	*
+1	4	5	variant	0	+	10,0,0,0	5,5	10,0,0,0	5,5	0,10,0,0	4,6	0,10,0,0	4,6	*	*
