@@ -7,7 +7,7 @@
 #'
 #' @export
 read_jacusa <- function(file, ...) {
-	d <- read.table(file, header = TRUE, stringsAsFactors = FALSE, check.names = FALSE, comment.char = "", ...) 
+	d <- utils::read.table(file, header = TRUE, stringsAsFactors = FALSE, check.names = FALSE, comment.char = "", ...) 
 	colnames(d)[1] <- gsub("^#", "", colnames(d)[1])
 	jacusa <- as.list(d)
 	jacusa
@@ -42,5 +42,5 @@ write_jacusa <- function(jacusa, file, extra = NULL) {
   
   d <- as.data.frame(jacusa, stringsAsFactors = FALSE, check.names = FALSE)
   colnames(d)[1] <- paste0("#", colnames(d)[1])
-  write.table(d, file, col.names = TRUE, row.names = FALSE, quote = FALSE, sep = "\t")
+  utils::write.table(d, file, col.names = TRUE, row.names = FALSE, quote = FALSE, sep = "\t")
 }

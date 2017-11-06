@@ -186,5 +186,5 @@ plot_bc_change_table <- function(bc_change_tbl,
 		score <- score_bc_change(bc_change_tbl, bc_change)
 		main <- paste(bc_change, " (", format(score * 100, digits = 4), "%)", sep = "")  
 	}
-	barplot(bc_change_tbl, las = 2, main = main, ylab = "Frequency")
+	graphics::barplot(bc_change_tbl, las = 2, main = main, ylab = "Frequency")
 }
