@@ -34,3 +34,4 @@ vignettes/*.pdf
 
 # own build
 build/*
+.Rproj.user
