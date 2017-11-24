@@ -24,24 +24,46 @@ read_jacusa <- function(file, ...) {
 #'
 #' @export 
 write_jacusa <- function(jacusa, file, extra = NULL) {
-  fields <- c("contig", "start", "end", "name", "stat", "strand", "info", "filter_info", "ref", "pvalue")
-  if (! is.null(extra)) {
-    fields <- c(fields, extra)
-  }
-  fields <- names(jacusa)[names(jacusa) %in% fields]
+  bed6 <- names(jacusa)[names(jacusa) %in% c("contig", "start", "end", "name", "stat", "pvalue", "strand")]
+  
+  data_fields <- c()
+  data_type <- 0
 
   # add bases fields
   i <- grep("^bases", names(jacusa))
-  fields <- c(fields, names(jacusa)[i])
-
-  # add read_t_e fields
+  base_fields <- names(jacusa)[i]
+  if (length(base_fields > 0)) {
+    data_fields <- c(data_fields, base_fields)
+    data_type <- data_type + 1
+  }
+  
+  # add read arrest through fields
   i <- grep("^reads", names(jacusa))
-  fields <- c(fields, names(jacusa)[i])
+  reads_fields <- names(jacusa)[i]
+  if (length(reads_fields > 0)) {
+    data_fields <- c(base_fields, reads_fields)
+    data_type <- data_type + 1
+  }
+
+  # rearrange data fields
+  if (data_type == 2) {
+    tmp <- vector("character", length(data_fields))
+    n <- length(data_fields)
+    h <-  n / 2
+    tmp[seq(1, n, 2)] <- data_fields[1:h]
+    tmp[seq(2, n, 2)] <- data_fields[(h+1):n]
+    data_fields <- tmp
+  }
+  
+  info <- names(jacusa)[names(jacusa) %in% c("info", "filter_info", "ref")]
+  
+  fields <- c(bed6, data_fields, info)
+  if (! is.null(extra)) {
+    fields <- c(fields, extra)
+  }
 
   jacusa <- jacusa[fields]
-  
-  # TODO rearrange default fields and add extra to the end...
-  
+
   d <- as.data.frame(jacusa, stringsAsFactors = FALSE, check.names = FALSE)
   colnames(d)[1] <- paste0("#", colnames(d)[1])
   utils::write.table(d, file, col.names = TRUE, row.names = FALSE, quote = FALSE, sep = "\t")
