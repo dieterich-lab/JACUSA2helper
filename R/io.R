@@ -33,12 +33,14 @@ write_jacusa <- function(jacusa, file, extra = NULL) {
   # add bases fields
   i <- grep("^bases", names(jacusa))
   fields <- c(fields, names(jacusa)[i])
-  jacusa <- jacusa[fields]
 
   # add read_t_e fields
-  i <- grep("^read", names(jacusa))
+  i <- grep("^reads", names(jacusa))
   fields <- c(fields, names(jacusa)[i])
+
   jacusa <- jacusa[fields]
+  
+  # TODO rearrange default fields and add extra to the end...
   
   d <- as.data.frame(jacusa, stringsAsFactors = FALSE, check.names = FALSE)
   colnames(d)[1] <- paste0("#", colnames(d)[1])
