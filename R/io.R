@@ -37,6 +37,14 @@ write_jacusa <- function(jacusa, file, extra = NULL) {
     data_type <- data_type + 1
   }
   
+  # add ref2bc fields
+  i <- grep("^ref2bc", names(jacusa))
+  ref2bc_fields <- names(jacusa)[i]
+  if (length(ref2bc_fields > 0)) {
+    data_fields <- c(data_fields, ref2bc_fields)
+    data_type <- data_type + 1
+  }
+  
   # add read arrest through fields
   i <- grep("^reads", names(jacusa))
   reads_fields <- names(jacusa)[i]
