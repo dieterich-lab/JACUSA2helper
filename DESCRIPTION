@@ -11,4 +11,4 @@ License: GNU Affero General Public License, Version 3.0 + file LICENSE
 RoxygenNote: 6.0.1
 LazyData: true
 Suggests: testthat
-Imports: ggplot2, aod, fread
+Imports: ggplot2, aod, data.table
