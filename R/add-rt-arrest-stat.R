@@ -9,7 +9,7 @@
 #' 
 #' @return Returns a JACUSA list object with the "stat" field set
 #'
-#' @examples#'
+#' @examples
 #' # TODO
 #'
 #' @export 
