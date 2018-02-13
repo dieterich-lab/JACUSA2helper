@@ -22,7 +22,6 @@ read_jacusa <- function(file, ...) {
 #' @export
 read_result <- function(file, showProgress = TRUE) {
   # TODO
-  # determine number of fields for container
   # fallback when conditions cannot be guessed from header
 
   # pre process file
@@ -65,25 +64,52 @@ read_result <- function(file, showProgress = TRUE) {
   # fix header: #contig -> contig
   colnames(dt)[1] <- gsub("^#", "", colnames(dt)[1])
   
-  # create container depending on determined result/method type
-  r <- "TODO"
+  # number of fields for container
+  n <- -1
+  # create container depending on determined result/method type 
+  # and populate field
+  if (type == "call-pileup") {
+    n <- nrow(dt)
+    r <- .create_call_pileup(n)
+  } else if (type == "rt-arrest") {
+    n <- nrow(dt)
+    r <- .create_rt_arrest(n)
+  } else if (type == "lrt-arrest") {
+    # TODO
+    r <- .create_lrt_arrest(n)
+  } else {
+    stop("Unknown type: ", type)
+  }
+  
+  # TODO copy data
   r
 }
 
 # helper functions to create data container to hold data
 .create_call_pileup <- function(n) {
-  data.frame(id = character(n), name = character(n), 
+  data.frame(id = character(n), name = character(n),
+             contig = character(n), position = integer(n), strand = character(n),
              condition = integer(n), replicate = integer(n),
              bc_A = integer(n), bc_C  = integer(n), bc_G = integer(n), bc_T = integer(n),
              stat = numeric(n))
 }
 .create_rt_arrest <- function(n) {
-  
+  data.frame(id = character(n), name = character(n), 
+             contig = character(n), position = integer(n), strand = character(n),
+             condition = integer(n), replicate = integer(n),
+             type = character(n), count = integer(n),
+             bc_A = integer(n), bc_C  = integer(n), bc_G = integer(n), bc_T = integer(n),
+             pvalue = numeric(n))
 }
 .create_lrt_arrest <- function(n) {
-  
+  data.frame(id = character(n), name = character(n), 
+             contig = character(n), position = integer(n), strand = character(n),
+             condition = integer(n), replicate = integer(n),
+             type = character(n), count = integer(n),
+             bc_position = integer(n), bc_strand = character(n),
+             bc_A = integer(n), bc_C  = integer(n), bc_G = integer(n), bc_T = integer(n),
+             pvalue = numeric(n))
 }
-
 
 #' Write a JACUSA list object to a file
 #'
