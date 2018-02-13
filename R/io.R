@@ -110,21 +110,37 @@ read_result <- function(file, showProgress = TRUE) {
 .create_rt_arrest <- function(dt, conditions) {
   r <- .create_call_pileup(dt, conditions)
   # convert wide to long (samples start with "reads(condition)(replicate)")
-  r <- tidyr::gather(dt, sample, reads, dplyr::starts_with("reads"))
-  # not needed replicate and condition already set in .create_call_pileup
-  r$sample <- NULL
+  tmp_r <- tidyr::gather(dt[, grep("^reads", colnames(dt))], sample, reads, dplyr::starts_with("reads"))
+  # not needed; condition and replicate already set
   # extract read arrest and read through columns from "," encoded strings
   # convert string: "0,10" to new columns: read_arrest = 0, read_through = 10
-  r <- tidyr::separate(r, reads, paste0("read_", c("arrest", "through")), 
-                sep = ",", remove = TRUE, convert = TRUE)
+  tmp_r <- tidyr::separate(tmp_r, reads, paste0("read_", c("arrest", "through")), 
+                           sep = ",", remove = TRUE, convert = TRUE)
+  
+  # append tmp_r
+  r$read_arrest <- tmp_r$read_arrest
+  r$read_through <- tmp_r$read_through
 }
 .create_lrt_arrest <- function(dt, conditions) {
+  # convert wide to long (samples start with "reads(condition)(replicate)")
+  tmp_r <- tidyr::gather(dt[, grep("^reads", colnames(dt))], sample, reads, dplyr::starts_with("reads"))
+  # not needed; condition and replicate already set
+  # extract read arrest and read through columns from "," encoded strings
+  # convert string: "0,10" to new columns: read_arrest = 0, read_through = 10
+  tmp_r <- tidyr::separate(tmp_r, reads, paste0("read_", c("arrest", "through")), 
+                       sep = ",", remove = TRUE, convert = TRUE)
+  
   # convert wide to long (samples start with "ref2bc(condition)(replicate)")
   r <- tidyr::gather(dt, sample, ref2bc, dplyr::starts_with("ref2bc"))
   # extract condition and replicate
   r <- tidyr::extract(r, sample, c("condition", "replicate"), 
                regex = paste0("^ref2bc([0-9]{", nchar(conditions), "})([0-9]+)"), 
-               remove = TRUE, convert = TRUE)
+               remove = TRUE, convert = FALSE)
+
+  # append tmp_r
+  r$read_arrest <- tmp_r$read_arrest
+  r$read_through <- tmp_r$read_through
+  
   # base substitutions per read arrest position
   # expected format: 
   # "*" if no base sub.
@@ -140,20 +156,13 @@ read_result <- function(file, showProgress = TRUE) {
   # store base substitutions in container
   r$ref2bc <- base_sub
   # split 100:10,0,0,0 -> bc_position = 100, bc_A = 10, bc_C = 0, bc_G = 0, bc_T = 0
-  r <- tidyr::extract(r, ref2bc, 
+  r <- tidyr::extract(r, ref2bc,
                 into = c("bc_position", paste0("bc_", c("A", "C", "G", "T"))), 
                 regex = paste0("([0-9-]+):([0-9]+),([0-9]+),([0-9]+),([0-9]+)"), 
                 remove = TRUE, convert = TRUE)
   i <- r$bc_position == -1
   r$bc_position[i] <- NA
-  # convert wide to long (samples start with "reads(condition)(replicate)")
-  r <- tidyr::gather(r, sample, reads, dplyr::starts_with("reads"))
-  # not needed; condition and replicate already set
-  r$sample <- NULL
-  # extract read arrest and read through columns from "," encoded strings
-  # convert string: "0,10" to new columns: read_arrest = 0, read_through = 10
-  r <- tidyr::separate(r, reads, paste0("read_", c("arrest", "through")), 
-                sep = ",", remove = TRUE, convert = TRUE)
+
   r
 }
 
