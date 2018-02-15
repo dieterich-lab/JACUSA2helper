@@ -108,7 +108,7 @@ read_result <- function(file, showProgress = TRUE) {
   r
 }
 .create_rt_arrest <- function(dt, conditions) {
-  r <- .create_call_pileup(dt, conditions)
+  r <- .create_call_pileup(dt[, grep("^reads", colnames(dt), invert = TRUE)], conditions)
   # convert wide to long (samples start with "reads(condition)(replicate)")
   tmp_r <- tidyr::gather(dt[, grep("^reads", colnames(dt))], sample, reads, dplyr::starts_with("reads"))
   # not needed; condition and replicate already set
@@ -131,11 +131,11 @@ read_result <- function(file, showProgress = TRUE) {
                        sep = ",", remove = TRUE, convert = TRUE)
   
   # convert wide to long (samples start with "ref2bc(condition)(replicate)")
-  r <- tidyr::gather(dt, sample, ref2bc, dplyr::starts_with("ref2bc"))
+  r <- tidyr::gather(dt[, grep("^reads", colnames(dt), invert = TRUE)], sample, ref2bc, dplyr::starts_with("ref2bc"))
   # extract condition and replicate
   r <- tidyr::extract(r, sample, c("condition", "replicate"), 
                regex = paste0("^ref2bc([0-9]{", nchar(conditions), "})([0-9]+)"), 
-               remove = TRUE, convert = FALSE)
+               remove = TRUE, convert = TRUE)
 
   # append tmp_r
   r$read_arrest <- tmp_r$read_arrest
