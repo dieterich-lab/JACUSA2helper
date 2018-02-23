@@ -83,3 +83,43 @@ plor_bc_sub_distance <- function(r, condition1 = "cond. A", condition2 = "cond. 
     theme(legend.title = element_blank(), legend.position = "bottom")
   p
 }
+
+plot_test <- function(r, contig, position, offset = 100, condition1 = "cond. A", condition2 = "cond. B") {
+  # FIXME
+  .BASES = c("A", "C", "G", "T")
+  
+  # only needed columns
+  d <- r[, c("id", "condition", "replicate", "end", 
+             "bc_position", paste0("bc_", .BASES), 
+             paste0("read_", c("arrest", "through")),
+             "pvalue")]
+  # add read_arrest_rate
+  d <- dplyr::mutate(d, read_arrest_rate = read_arrest / (read_arrest + read_through))
+  # TODO add ref
+
+  d <- filter(d, contig == contig & end == position)
+  d <- tidyr::gather(d, base, base_count, paste0("bc_", .BASES))
+  d$base <- sub("bc_", "", d$base)
+  m <- max(d$base_count)
+  d$read_arrest_rate <- d$read_arrest_rate * m 
+  
+  # nice labels
+  d$condition <- factor(d$condition, levels = c(1, 2), labels = c(condition1, condition2))
+  d$replicate <- paste0("rep. ", d$replicate)
+
+  a <- unique(c(d$end, d$bc_position))
+  b <- seq(0, length(a) - 1)
+  p <- ggplot2::ggplot(d, aes(x = bc_position, y = base_count, color = base)) + 
+    geom_point() + 
+    geom_point(aes(x = end, y = read_arrest_rate), color = "red") +
+    xlab("relative position") + 
+    ylab("") +
+    scale_color_identity(guide = 'legend', labels = c("Read arrest")) + 
+    scale_color_manual(values = c("green", "blue", "orange", "red")) +
+    scale_x_continuous(breaks = a, labels = b) +
+    scale_y_continuous(sec.axis = ~./m) + 
+    facet_grid(condition ~ .) + 
+    theme_minimal() + 
+    theme(legend.title = element_blank(), legend.position = "top")
+  p
+}
