@@ -163,6 +163,25 @@ read_result <- function(file, showProgress = TRUE) {
   i <- r$bc_position == -1
   r$bc_position[i] <- NA
 
+  # parse filtering
+  # separate multiple filters into rows
+  f <- separate_rows(r[, c("bc_position", "filter_info")], filter_info, sep = ";", convert = T)
+  f <- tidyr::extract(f, filter_info,
+                      into = c("filter", "filter_position"), 
+                      regex = paste0("([[:alnum:]]+)=([0-9,]+)"), 
+                      remove = TRUE, convert = TRUE)
+  f <- separate_rows(f, filter_position, sep = ",", convert = T)
+  # set NA to "*"
+  i <- is.na(f$filter)
+  f$filter[i] <- "*"
+  f$filter_position[i] <- "*"
+  i <- is.na(f$filter_position)
+  f$filter_position[i] <- "*"
+  # remove sites where bc_position does not match filter_position
+  i <- f$filter_position == "*" | f$filter_position != "*" & f$bc_position == f$filter_position
+  # TODO merge sites
+  r <- f[i, "filter"]
+  
   r
 }
 
