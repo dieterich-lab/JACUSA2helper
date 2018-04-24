@@ -170,7 +170,7 @@ read_result <- function(file, showProgress = TRUE) {
                       into = c("filter", "filter_position"), 
                       regex = paste0("([[:alnum:]]+)=([0-9,]+)"), 
                       remove = TRUE, convert = TRUE)
-  f <- separate_rows(f, filter_position, sep = ",", convert = T)
+  f <- tidyr::separate_rows(f, filter_position, sep = ",", convert = T)
   # set NA to "*"
   i <- is.na(f$filter)
   f$filter[i] <- "*"
