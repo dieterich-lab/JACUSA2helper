@@ -235,7 +235,7 @@ write_jacusa <- function(jacusa, file, extra = NULL) {
     data_fields <- tmp
   }
   
-  info <- names(jacusa)[names(jacusa) %in% c("info", "filter_info", "ref")]
+  info <- names(jacusa)[names(jacusa) %in% c("info", "filter_info", "refBase")]
   
   fields <- c(bed6, data_fields, info)
   if (! is.null(extra)) {
