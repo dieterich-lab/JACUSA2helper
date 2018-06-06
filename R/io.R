@@ -46,13 +46,14 @@ read_result <- function(file, showProgress = TRUE) {
     if (length(grep("^## condition", line)) > 0) {
       conditions <- conditions + 1
     }
+
     # try to guess result/method by header line
     if (type == "unknown" && length(grep("^#contig", line)) > 0) {
       if (length(grep("ref2bc", line)) > 0) { # lrt-arrest
         type <- "lrt-arrest"
-      } else if(length(grep("reads", line)) > 0) { # rt-arrest
+      } else if(length(grep("\tarrest_bases", line)) > 0) { # rt-arrest
         type <- "rt-arrest"
-      } else if (length(grep("bases", line)) > 0) { # call-pileup
+      } else if (length(grep("\tbases", line)) > 0) { # call-pileup
         type <- "call-pileup"
       } else { # ERROR: type could not be guessed
         stop("Result type cannot be guessed from header:\n", line)
@@ -70,12 +71,14 @@ read_result <- function(file, showProgress = TRUE) {
   # FIXME
   if (conditions == 0) {
     conditions = 2
+    # guess from header
   }
   
   # read data
-  dt <- data.table::fread(file, skip = skip_lines, header = FALSE, showProgress = showProgress)  
+  dt <- data.table::fread(file, skip = skip_lines, sep = "\t", header = FALSE, showProgress = showProgress)  
+  browser()
   colnames(dt) <- header_names
-  
+
   # create container "r" depending on determined result/method type 
   r <- NULL
   if (type == "call-pileup") {
@@ -93,33 +96,48 @@ read_result <- function(file, showProgress = TRUE) {
   r
 }
 
-# helper functions to create data container to hold data
-.create_call_pileup <- function(dt, conditions) {
-  # convert wide to long (samples start with "bases(condition)(replicate)")
-  r <- tidyr::gather(dt, sample, bases, dplyr::starts_with("bases"))
+.create_bases <- function(dt, conditions, default_bases = "all") {
+  # convert wide to long
+  r <- tidyr::gather(dt, sample, bases, dplyr::contains("bases"))
+  i <- startsWith(r$sample, "bases")
+  if (length(i) > 0) {
+    r$sample[i] <- paste0(default_bases, "_", r$sample[i])
+  }
   # extract condition and replicate
-  r <- tidyr::extract(r, sample, c("condition", "replicate"), 
-               regex = paste0("^bases([0-9]{", nchar(conditions), "})([0-9]+)"), 
-               remove = TRUE, convert = TRUE)
+  r <- tidyr::extract(r, sample, c("base_type", "condition", "replicate"), 
+                      regex = paste0("^(.+)_bases([0-9]{", nchar(conditions), "})([0-9]+)"), 
+                      remove = TRUE, convert = TRUE)
   # extract base call columns from "," encoded strings
   # convert string: "0,10,2,0" to new columns: bc_A = 0, bc_C = 10, bc_G = 2, bc_T = 0
   r <- tidyr::separate(r, bases, paste0("bc_", c("A", "C", "G", "T")), 
-                sep = ",", remove = TRUE, convert = TRUE)
+                       sep = ",", remove = TRUE, convert = TRUE)
+
+  if (length(unique(r$base_type)) == 1) {
+    r$base_type <- NULL
+  }
+  
+  r
+}
+
+# helper functions to create data container to hold data
+.create_call_pileup <- function(dt, conditions) {
+  r <- .create_base(dt, conditions)
+  
   r
 }
 .create_rt_arrest <- function(dt, conditions) {
-  r <- .create_call_pileup(dt[, grep("^reads", colnames(dt), invert = TRUE)], conditions)
-  # convert wide to long (samples start with "reads(condition)(replicate)")
+  r <- .create_bases(dt, conditions)
+  r[grep("^reads", colnames(r))] <- NULL
   tmp_r <- tidyr::gather(dt[, grep("^reads", colnames(dt))], sample, reads, dplyr::starts_with("reads"))
-  # not needed; condition and replicate already set
-  # extract read arrest and read through columns from "," encoded strings
-  # convert string: "0,10" to new columns: read_arrest = 0, read_through = 10
   tmp_r <- tidyr::separate(tmp_r, reads, paste0("read_", c("arrest", "through")), 
                            sep = ",", remove = TRUE, convert = TRUE)
-  
-  # append tmp_r
-  r$read_arrest <- tmp_r$read_arrest
-  r$read_through <- tmp_r$read_through
+  tmp_r <- tidyr::gather(tmp_r[, c("read_arrest", "read_through")], read_type, read_count)
+  tmp_r$read_type <- gsub("read_", "", tmp_r$read_type)
+  browser()
+  # add tmp_r
+  r <- cbind(r, tmp_r)
+
+  r
 }
 .create_lrt_arrest <- function(dt, conditions) {
   # convert wide to long (samples start with "reads(condition)(replicate)")
@@ -137,7 +155,7 @@ read_result <- function(file, showProgress = TRUE) {
                regex = paste0("^ref2bc([0-9]{", nchar(conditions), "})([0-9]+)"), 
                remove = TRUE, convert = TRUE)
 
-  # append tmp_r
+  # append tmp_r order of condition and replicates is the same in r and tmp_r
   r$read_arrest <- tmp_r$read_arrest
   r$read_through <- tmp_r$read_through
   
