@@ -127,15 +127,6 @@ read_result <- function(file, showProgress = TRUE) {
 }
 .create_rt_arrest <- function(dt, conditions) {
   r <- .create_bases(dt, conditions)
-  r[grep("^reads", colnames(r))] <- NULL
-  tmp_r <- tidyr::gather(dt[, grep("^reads", colnames(dt))], sample, reads, dplyr::starts_with("reads"))
-  tmp_r <- tidyr::separate(tmp_r, reads, paste0("read_", c("arrest", "through")), 
-                           sep = ",", remove = TRUE, convert = TRUE)
-  tmp_r <- tidyr::gather(tmp_r[, c("read_arrest", "read_through")], read_type, read_count)
-  tmp_r$read_type <- gsub("read_", "", tmp_r$read_type)
-  browser()
-  # add tmp_r
-  r <- cbind(r, tmp_r)
 
   r
 }
@@ -236,7 +227,7 @@ write_jacusa <- function(jacusa, file, extra = NULL) {
   }
   
   # add read arrest through fields
-  i <- grep("^reads", names(jacusa))
+  i <- grep("arrest_bases|through_bases", names(jacusa))
   reads_fields <- names(jacusa)[i]
   if (length(reads_fields > 0)) {
     data_fields <- c(data_fields, reads_fields)
