@@ -1,3 +1,4 @@
+# deprecated
 context("read_str2read_matrix")
 
 test_that("read_str2read_matrix works as expected on no replicates", {
