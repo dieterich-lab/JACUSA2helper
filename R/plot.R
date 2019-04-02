@@ -9,3 +9,117 @@ paper_theme <- function(...) {
                  ...
   )
 }
+
+# TODO 
+# add nice color
+# make nice condition, replicate combination
+plot_bc_sub_ecdf <- function(r, conditions = NULL) {
+  d <- r[, c("id", "condition", "replicate", paste0("bc_", c("A", "C", "G", "T")))]
+  d$bc <- rowSums(d[, paste0("bc_", c("A", "C", "G", "T"))])
+  p <- ggplot(d, aes(x = bc, colour = condition, linetype = replicate)) + 
+    stat_ecdf(geom = "step")
+  p
+}
+
+plot_bc_sub_scatter <- function(r, conditions) {
+  # select condition
+  r <- r[, c("id", "condition", "replicate", paste0("bc_", c("A", "C", "G", "T")))]
+  r$bc <- rowSums(r[, paste0("bc_", c("A", "C", "G", "T"))])
+  r <- r[, c("id", "condition", "replicate", "bc")]
+  r <- reshape2::dcast(r, id ~ replicate, fill = 0, value.var = "bc", fun.aggregate = sum)
+  r
+}
+
+# TODO colors for condition
+plot_bc_sub_fraction <- function(r, condition1 = "cond. A", condition2 = "cond. B") {
+  d <- r[, c("id", "condition", "replicate", "end", "bc_position")]
+  # distance from read arrest position to base sub.
+  # NA if no base sub. exists
+  d$distance <- d$bc_position - d$end
+  # indicates if read arrest position has base sub. at all
+  d$has_base_sub <- ifelse(is.na(d$distance), FALSE, TRUE)
+  # calculate fraction of read arrest position with and without base sub.
+  d <- d %>% group_by(condition, replicate, has_base_sub) %>% 
+    summarise(count = n()) %>% 
+    mutate(fraction = count / sum(count))
+  # nice labels
+  d$condition <- factor(d$condition, levels = c(1, 2), labels = c(condition1, condition2))
+  d$replicate <- as.character(d$replicate)
+  # retain only fraction of read arrest position with base sub.
+  d <- filter(d, has_base_sub == T)
+  
+  # plot
+  p <- ggplot(d, aes(x = replicate, y = fraction, fill = condition, label = scales::percent(fraction))) + 
+    ylab("% of RA pos.\nwith base sub.") + 
+    scale_y_continuous(labels = scales::percent) +
+    geom_bar(stat = "identity") +
+    geom_text(size = 3, position = position_stack(vjust = 1)) +
+    facet_grid(. ~ condition) + 
+    theme(legend.title = element_blank(), legend.position = "bottom")
+  p
+}
+
+# TODO colors for condition
+plor_bc_sub_distance <- function(r, condition1 = "cond. A", condition2 = "cond. B", max_distance = 200) {
+  d <- r[, c("id", "condition", "replicate", "end", "bc_position")]
+  # retain only fraction of read arrest position with base sub.
+  d <- filter(d, ! is.na(bc_position))
+  # distance from read arrest position to base sub.
+  d$distance <- d$bc_position - d$end
+  # filter max_distance
+  d <- filter(d, distance <= max_distance)
+  # bin
+  d <- d %>% group_by(condition, replicate, distance) %>% summarise(count = n())
+  # nice labels
+  d$condition <- factor(d$condition, levels = c(1, 2), labels = c(condition1, condition2))
+  d$replicate <- as.character(d$replicate)
+  # plot
+  d$sample <- interaction(d$condition, d$replicate, sep = " ")
+  p <- ggplot(d, aes(x = distance, y = count, colour = sample, linetype = sample)) + 
+    geom_line() +
+    xlab("position of base sub.\nrelative to read arrest") + 
+    scale_colour_manual("", values = c(1, 2, 1, 2)) + 
+    scale_linetype_manual("", values = c(1, 1, 2, 2)) +
+    theme(legend.title = element_blank(), legend.position = "bottom")
+  p
+}
+
+plot_test <- function(r, contig, position, offset = 100, condition1 = "cond. A", condition2 = "cond. B") {
+  # FIXME
+  .BASES = c("A", "C", "G", "T")
+  
+  # only needed columns
+  d <- r[, c("id", "condition", "replicate", "end", 
+             "bc_position", paste0("bc_", .BASES), 
+             paste0("read_", c("arrest", "through")),
+             "pvalue")]
+  # add read_arrest_rate
+  d <- dplyr::mutate(d, read_arrest_rate = read_arrest / (read_arrest + read_through))
+  # TODO add ref
+
+  d <- filter(d, contig == contig & end == position)
+  d <- tidyr::gather(d, base, base_count, paste0("bc_", .BASES))
+  d$base <- sub("bc_", "", d$base)
+  m <- max(d$base_count)
+  d$read_arrest_rate <- d$read_arrest_rate * m 
+  
+  # nice labels
+  d$condition <- factor(d$condition, levels = c(1, 2), labels = c(condition1, condition2))
+  d$replicate <- paste0("rep. ", d$replicate)
+
+  a <- unique(c(d$end, d$bc_position))
+  b <- seq(0, length(a) - 1)
+  p <- ggplot2::ggplot(d, aes(x = bc_position, y = base_count, color = base)) + 
+    geom_point() + 
+    geom_point(aes(x = end, y = read_arrest_rate), color = "red") +
+    xlab("relative position") + 
+    ylab("") +
+    scale_color_identity(guide = 'legend', labels = c("Read arrest")) + 
+    scale_color_manual(values = c("green", "blue", "orange", "red")) +
+    scale_x_continuous(breaks = a, labels = b) +
+    scale_y_continuous(sec.axis = ~./m) + 
+    facet_grid(condition ~ .) + 
+    theme_minimal() + 
+    theme(legend.title = element_blank(), legend.position = "top")
+  p
+}

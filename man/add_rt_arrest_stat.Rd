@@ -23,7 +23,6 @@ Returns a JACUSA list object with the "stat" field set
 \code{add_rt_arrest_stat}
 }
 \examples{
-#'
 # TODO
 
 }
