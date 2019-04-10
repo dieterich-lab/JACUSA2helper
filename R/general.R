@@ -37,3 +37,12 @@ add_coverage <- function(jacusa) {
 	jacusa[["cov"]] <- jacusa[["cov1"]] + jacusa[["cov2"]]
 	jacusa
 }
+
+# TODO
+.EMPTY <- "*"
+
+# Helpers defining supported types by JACUSA2.x
+.METHOD_TYPE_UNKNOWN <- "unknown"
+.METHOD_TYPE_CALL_PILEUP <- "call-pileup"
+.METHOD_TYPE_RT_ARREST <- "rt-arrest"
+.METHOD_TYPE_LRT_ARREST <- "lrt-arrest"
