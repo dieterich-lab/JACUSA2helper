@@ -1,0 +1,110 @@
+#' Calculates the fraction of editing sites among RDDs in JACUSA result file.
+#'
+#' \code{score_bc_change()} calculates the fraction of editing sites among RDDs in JACUSA result file.
+#' 
+#' @param bc_change_tbl Vector object created by \code{table()}.
+#' @param bc_change String that identifies true editing, e.g.: "A->G". Use: \code{format_bc_change()}
+#' 
+#' @return Returns a numeric value that represent the fraction of editing sites among RDDs.
+#'
+#' @examples
+#' ## add fields automatically
+#' jacusa <- add_bc_change(rdd, aa = TRUE)
+#' bc_change_tbl <- table(jacusa$bc_change)
+#' score_bc_change(bc_change_tbl)
+#' 
+#' @export 
+score_bc_change <- function(bc_change_tbl, bc_change = format_bc_change("A", "G")) {
+	total <- sum(bc_change_tbl)
+	tp <- sum(bc_change_tbl[bc_change])
+	return(tp / total)
+}
+
+#' Get complemenarty base call count matrix.
+#'
+#' Get complemenarty base call count matrix.
+#'
+#' @param bc_matrix Matrix of base call counts.
+#'
+#' @return Returns complementary base call matrix.
+#'
+#' @export
+get_comp_bc_matrix <- function(bc_matrix) {
+	tmp <- bc_matrix 
+	tmp[, "A"] <- bc_matrix[, "T"]
+	tmp[, "C"] <- bc_matrix[, "G"]
+	tmp[, "G"] <- bc_matrix[, "C"]
+	tmp[, "T"] <- bc_matrix[, "A"]
+
+	tmp
+}
+
+#' Invert vector of base calls.
+#'
+#' Inverts vector of base calls.
+#'
+#' @param bcs List of vectors of base calls.
+#'
+#' @return Returns a List of vector of complementary base calls.
+#'
+#' @export
+get_comp_bcs <- function(bcs) {
+  comp_BASES <- rev(.BASES)
+
+  lapply(bcs, function(x) {
+    i <- match(x, .BASES)
+    comp_BASES[i]
+  })
+}
+
+#' Calculate false discovery rate (FDR) based on observed base call changes and 
+#' expected base call changes. 
+#'
+#' Calculate false discovery rate (FDR) based on observed base call changes and 
+#' expected base call changes. 
+#'
+#' @param bc_change_tbl Vector object created by \code{table()}.
+#' @param expected String that represents the expected base call change.
+#'
+#' @return Returns the calculate FDR.
+#'
+#' @export
+get_false_discovery_rate <- function(bc_change_tbl, expected = format_bc_change("A", "G")) {
+	fdr <- 1 - score_bc_change(bc_change_tbl, expected)
+	fdr
+}
+
+#' Format base call change between two conditions.
+#'
+#' Formats base call change (e.g.: RNA editing) for two base call vectors.
+#'
+#' @param bc1 Vector of base calls for condition 1.
+#' @param bc2 Vector of base calls for condition 2.
+#' @param sep String: "bc1"sep"bc2".
+#' 
+#' @return Vector of base call changes between condition 1 and 2.
+#'
+#' @export
+format_bc_change <- function(bc1, bc2, sep = .BC_CHANGE_SEP) {
+	d <- paste(bc1, sep = sep, bc2)
+	d[d == sep] <- .BC_CHANGE_NO_CHANGE
+  d
+}
+
+#' Plot the distribution of base changes.
+#'
+#' Plot the distribution of base changes.
+#'
+#' @param bc_change_tbl Table object created by \code{table()}.
+#' @param bc_change Base call change between condition 1 and 2 to score for.
+#'
+#' @export
+plot_bc_change_table <- function(bc_change_tbl, 
+                                 bc_change = format_bc_change("A", "G")) {
+	main <- ""
+	if (! is.null(bc_change)) {
+		score <- score_bc_change(bc_change_tbl, bc_change)
+		main <- paste(bc_change, " (", format(score * 100, digits = 4), "%)", sep = "")  
+	}
+	graphics::barplot(bc_change_tbl, las = 2, main = main, ylab = "Frequency")
+}

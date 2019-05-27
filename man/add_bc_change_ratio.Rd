@@ -2,12 +2,14 @@
 % Please edit documentation in R/add-bc.R
 \name{add_bc_change_ratio}
 \alias{add_bc_change_ratio}
-\title{Add base call change ratio (e.g.: editing frequency) to a JACUSA object list.}
+\title{Add base call change ratio (e.g.: editing frequency) to a JACUSA2 object list.}
 \usage{
-add_bc_change_ratio(jacusa, bc1 = jacusa$bc1, bc2 = jacusa$bc2,
-  bc_matrix2 = jacusa$bc_matrix2, aa = FALSE)
+add_bc_change_ratio(jacusa2, ref, bc = jacusa2$bc,
+  bc_matrix = jacusa2$bc_matrix, aa = FALSE)
 }
 \arguments{
+\item{aa}{Logical indicates if missing fields should added automatically.}
+
 \item{jacusa}{List object created by \code{read_jacusa()}.}
 
 \item{bc1}{Vector of observed base calls for condition 1.}
@@ -15,8 +17,6 @@ add_bc_change_ratio(jacusa, bc1 = jacusa$bc1, bc2 = jacusa$bc2,
 \item{bc2}{Vector of observed base calls for condition 2.}
 
 \item{bc_matrix2}{Base call matrix of list of base call matrices for condition 2.}
-
-\item{aa}{Logical indicates if missing fields should added automatically.}
 }
 \value{
 Returns a JACUSA list object the additional fields: "bc_change_ratio", 

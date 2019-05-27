@@ -1,4 +1,4 @@
 library(testthat)
-library(JACUSAhelper2)
+library(JACUSA2helper)
 
-test_check("JACUSAhelper2")
+test_check("JACUSA2helper")

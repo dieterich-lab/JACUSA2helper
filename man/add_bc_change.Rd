@@ -2,16 +2,16 @@
 % Please edit documentation in R/add-bc.R
 \name{add_bc_change}
 \alias{add_bc_change}
-\title{Add base call change for RDD comparisons of a JACUSA result file.}
+\title{Add base call change for RDD comparisons of a JACUSA2 result file.}
 \usage{
-add_bc_change(jacusa, bc1 = jacusa$bc1, bc2 = jacusa$bc2, aa = FALSE)
+add_bc_change(jacusa2, ref = 0, bc = jacusa2$bc, aa = FALSE)
 }
 \arguments{
-\item{jacusa}{List object created by \code{read_jacusa()}.}
+\item{jacusa2}{List object created by \code{read_jacusa()}.}
 
-\item{bc1}{Vector of observed base calls for condition 1.}
+\item{ref}{TODO 0 => use ref_base > 0 => condition in bc}
 
-\item{bc2}{Vector of observed base calls for condition 2.}
+\item{bc}{List of Vector of observed base calls.}
 
 \item{aa}{Logical indicates if missing fields should added automatically.}
 }
@@ -27,15 +27,15 @@ overriden existing fields of the JACUSA list object.
 }
 \examples{
 ## populate necessary fields manually
-jacusa <- add_bc_matrix(rdd)
-jacusa <- add_bc(jacusa)
-jacusa <- add_bc_change(jacusa)
+jacusa2 <- add_bc_matrix(rdd)
+jacusa2 <- add_bc(jacusa2)
+jacusa2 <- add_bc_change(jacusa2)
 ## plot distribution of base changes
-barplot(table(jacusa$bc_change))
+barplot(table(jacusa2$bc_change))
 
 ## populate necessary fields automatically
-jacusa <- add_bc_change(jacusa, aa = TRUE)
+jacusa2 <- add_bc_change(jacusa2, ref = 1, aa = TRUE)
 ## plot distribution of base changes
-barplot(table(jacusa$bc_change))
+barplot(table(jacusa2$bc_change))
 
 }

@@ -1,23 +1,22 @@
-
 #' Helper function - create VCF
-#' Convert JACUSA output to VCF format
+#' Convert JACUSA2 output to VCF format
 #'
-#' This converts JACUSA output to VCF file format
+#' This converts JACUSA2 output to VCF file format
 #'
-#' @param jacusa List object created by \code{read_jacusa}.
+#' @param jacusa2 List object created by \code{read_result}.
 #' @param ref Vector of characters.
 #' @param invert Logical indicates if on "-" strand complementary base calls 
 #' should be calculated.
 #'
-#' @return Data frame that represents JACUSA list object in VCF file format.
+#' @return Data frame that represents JACUSA2 list object in VCF file format.
 #'
 #' #@export
-JACUSA2VCF <- function(jacusa, ref, invert = FALSE) {
+JACUSA2VCF <- function(jacusa2, ref, invert = FALSE) {
   if (any(nchar(ref) >= 2)) { stop("Too many (>=2) alleles for reference base") }
   
-  chrom <- jacusa$"contig"
-  pos <- jacusa$"end"
-  strand <- jacusa$"strand"
+  chrom <- jacusa2$"contig"
+  pos <- jacusa2$"end"
+  strand <- jacusa2$"strand"
   
   # when JACUSA.jar is run with stranded library type option "-P FR-FIRSTSTRAND,FR-FIRSTSTRAND"
   # complementary base call will be calculated where necessary

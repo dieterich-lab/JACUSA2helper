@@ -3,12 +3,12 @@
 \name{JACUSA2VCF}
 \alias{JACUSA2VCF}
 \title{Helper function - create VCF
-Convert JACUSA output to VCF format}
+Convert JACUSA2 output to VCF format}
 \usage{
-JACUSA2VCF(jacusa, ref, invert = FALSE)
+JACUSA2VCF(jacusa2, ref, invert = FALSE)
 }
 \arguments{
-\item{jacusa}{List object created by \code{read_jacusa}.}
+\item{jacusa2}{List object created by \code{read_result}.}
 
 \item{ref}{Vector of characters.}
 
@@ -16,10 +16,10 @@ JACUSA2VCF(jacusa, ref, invert = FALSE)
 should be calculated.}
 }
 \value{
-Data frame that represents JACUSA list object in VCF file format.
+Data frame that represents JACUSA2 list object in VCF file format.
 
 #@export
 }
 \description{
-This converts JACUSA output to VCF file format
+This converts JACUSA2 output to VCF file format
 }
