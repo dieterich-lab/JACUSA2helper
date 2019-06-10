@@ -31,79 +31,53 @@ write_bedGraph <- function(file, contig, start, end, value) {
 #'
 #' \code{write_result} Stores a list of sites in a file.
 #' 
-#' @param jacusa List created by \code{read_jacusa()}.
+#' @param jacusa2 List created by \code{read_jacusa()}.
 #' @param file String is the filename to store the list.
 #' @param extra Vector of strings that define additional elements from the list that 
 #'        will be stored in the file. 
 #'
 #' @export 
-write_result <- function(jacusa, file, extra = NULL) {
-  bed6 <- names(jacusa)[names(jacusa) %in% c("contig", "start", "end", "name", "stat", "pvalue", "strand")]
+write_result <- function(jacusa2, file, extra = NULL) {
+  bed6 <- names(jacusa2)[names(jacusa) %in% c(
+    "contig", "start", "end", 
+    "name", 
+    "stat", "pvalue", 
+    "strand")]
   
   data_fields <- c()
-  data_type <- 0
-  
-  # add bases fields
-  i <- grep("^bases", names(jacusa))
-  base_fields <- names(jacusa)[i]
-  if (length(base_fields > 0)) {
-    data_fields <- c(data_fields, base_fields)
-    data_type <- data_type + 1
+  if (jacusa2$type == .CALL_PILEUP_METHOD_TYPE) {
+    data_fields <- .get
+  } else {
+    stop()    
   }
-  
-  # add ref2bc fields
-  i <- grep("^ref2bc", names(jacusa))
-  ref2bc_fields <- names(jacusa)[i]
-  if (length(ref2bc_fields > 0)) {
-    data_fields <- c(data_fields, ref2bc_fields)
-    data_type <- data_type + 1
-  }
-  
-  # add read arrest through fields
-  i <- grep("arrest_bases|through_bases", names(jacusa))
-  reads_fields <- names(jacusa)[i]
-  if (length(reads_fields > 0)) {
-    data_fields <- c(data_fields, reads_fields)
-    data_type <- data_type + 1
-  }
-  
-  # rearrange data fields
-  if (data_type == 2) {
-    tmp <- vector("character", length(data_fields))
-    n <- length(data_fields)
-    h <-  n / 2
-    tmp[seq(1, n, 2)] <- data_fields[1:h]
-    tmp[seq(2, n, 2)] <- data_fields[(h+1):n]
-    data_fields <- tmp
-  }
-  
-  info <- names(jacusa)[names(jacusa) %in% c("info", "filter_info", "refBase")]
+  data_fields <- .get_call_pileup_result(jacusa2)
+  info <- names(jacusa)[names(jacusa) %in% c("info", "filter_info", "ref_Base")]
   
   fields <- c(bed6, data_fields, info)
   if (! is.null(extra)) {
     fields <- c(fields, extra)
   }
   
-  jacusa <- jacusa[fields]
-  
-  d <- as.data.frame(jacusa, stringsAsFactors = FALSE, check.names = FALSE)
-  colnames(d)[1] <- paste0("#", colnames(d)[1])
-  utils::write.table(d, file, col.names = TRUE, row.names = FALSE, quote = FALSE, sep = "\t")
+  jacusa2 <- jacusa2[fields]
+  dt <- as.data.frame(jacusa2, stringsAsFactors = FALSE, check.names = FALSE)
+  colnames(dt)[1] <- paste0("#", colnames(dt)[1])
+  utils::write.table(dt, file, 
+                     col.names = TRUE, row.names = FALSE, 
+                     quote = FALSE, sep = "\t")
 }
 
-# TODO JACUSA2.x specific write methods
-.write_call_result <- function(jacusa, file, extra = NULL) {
+.get_call_result <- function(jacusa2) {
   # TODO
 }
-# FIXME
-.write_pileup_result <- function(jacusa, file, extra = NULL) {
+
+.get_pileup_result <- function(jacusa2) {
   # TODO
 }
-# FIXME
-.write_lrt_arrest_result <- function(jacusa, file, extra = NULL) {
+
+.get_rt_arrest_result <- function(jacusa2) {
   # TODO
 }
-# FIXME
-.write_rt_arrest_result <- function(jacusa, file, extra = NULL) {
+
+.get_lrt_arrest_result <- function(jacusa2) {
   # TODO
 }

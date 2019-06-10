@@ -2,19 +2,19 @@
 % Please edit documentation in R/get-bc.R
 \name{get_bc_change}
 \alias{get_bc_change}
-\title{Calculate base call change for RDD comparisons of JACUSA result file.}
+\title{Calculate base call change for RDD comparisons.}
 \usage{
-get_bc_change(bc1, bc2, sep = .BC_CHANGE_SEP)
+get_bc_change(ref_base, observed_bc, sep = .BC_CHANGE_SEP)
 }
 \arguments{
-\item{bc1}{Vector of base calls for condition 1.}
+\item{ref_base}{Vector of reference bases.}
 
-\item{bc2}{Vector of base calls for condition 2.}
+\item{observed_bc}{Vector of base calls.}
 
-\item{sep}{String: "bc1"sep"bc2".}
+\item{sep}{String: "ref_base"sep"observed_bcs".}
 }
 \value{
-Vector of base call changes for condition 1 and 2.
+Vector of base call changes.
 }
 \description{
 In the context of RDD detection, it is assumed that condition 1 represents the DNA and 

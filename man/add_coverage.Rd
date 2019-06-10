@@ -2,22 +2,16 @@
 % Please edit documentation in R/add-coverage.R
 \name{add_coverage}
 \alias{add_coverage}
-\title{Add coverage fields to JACUSA2 list object.}
+\title{Add coverage field to JACUSA2 data frame.}
 \usage{
 add_coverage(jacusa2)
 }
 \arguments{
-\item{jacusa2}{data frame created by \code{read_jacusa()}.}
+\item{jacusa2}{data frame created by \code{read_result()}.}
 }
 \value{
 Returns the initial data frame with coverage field added.
-
-# TODO @examples
-## add coverage  to data
-#jacusa2 <- add_coverage(rdd)
-## filter/keep sites that have a total coverage of 30
-#jacusa <- filter_coverage(jacusa, "cov", 30)
 }
 \description{
-\code{add_coverage()} calculates and adds read coverage to list of sites.
+\code{add_coverage()} calculates and adds read coverage.
 }

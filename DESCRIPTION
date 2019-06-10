@@ -7,9 +7,9 @@ Date: 2019-05-26
 Author: Michael Piechotta
 Maintainer: <michael.piechotta@gmail.com>
 Description: This package enables post-processing of JACUSA 1.x 2.x output: read, filter, process, plot, write.
-License: GNU Affero General Public License, Version 3.0 + file LICENSE
+License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 6.1.1
 LazyData: true
 Suggests: testthat
-Imports: ggplot2, aod, data.table, tidyr, dplyr
+Imports: aod, data.table, tidyr, dplyr, magrittr

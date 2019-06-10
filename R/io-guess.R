@@ -17,7 +17,8 @@
     cond_rep2 <- .extract_condition_replicate(header_names, prefix2)
     conditions2 <- .find_conditions(cond_rep2)
     if (conditions1 != conditions2) {
-      stop("Error guessing conditions for lrt-arrest: cond1, cond2 = ", conditions1, conditions2)
+      stop("Error guessing conditions for lrt-arrest: cond1, cond2 = ", 
+           conditions1, conditions2)
     }
     conditions <- conditions1
   } else if (type == .RT_ARREST_METHOD_TYPE) {
@@ -28,7 +29,8 @@
     cond_rep2 <- .extract_condition_replicate(header_names, prefix2)
     conditions2 <- .find_conditions(cond_rep2)
     if (conditions1 != conditions2) {
-      stop("Error guessing conditions for lrt-arrest: cond1, cond2 = ", conditions1, conditions2)
+      stop("Error guessing conditions for lrt-arrest: cond1, cond2 = ", 
+           conditions1, conditions2)
     }
     conditions <- conditions1
   } else {
@@ -65,7 +67,6 @@
     guess <- split_cond_rep(conditions)
     
     if (length(guess) == 2) {
-      #return(guess)
       return(conditions)
     }
     conditions <- conditions + 1
@@ -78,6 +79,9 @@
 .extract_condition_replicate <- function(header_names, prefix) {
   prefix <- paste0("^", prefix)
   i <- grep(prefix, header_names)
+  if (length(i) == 0) {
+    stop("Condition replicate part could not be extracted.")
+  }
   cond_rep <- header_names[i]
   cond_rep <- gsub(prefix, "", cond_rep)
   
@@ -92,14 +96,13 @@
   }
   
   type <- .UNKNOWN_METHOD_TYPE
-  if (length(grep("arrest_pos", line)) > 0) { # lrt-arrest
+  if (length(grep(.LRT_ARREST_POS_COLUMN, line)) > 0) { # lrt-arrest
     type <- .LRT_ARREST_METHOD_TYPE
-  } else if(length(grep("\tarrest_bases", line)) > 0) { # rt-arrest
+  } else if(length(grep(paste0("\t", .RT_ARREST_COLUMN), line)) > 0) { # rt-arrest
     type <- .RT_ARREST_METHOD_TYPE
-  } else if (length(grep("\tbases", line)) > 0) { # call-pileup
+  } else if (length(grep(paste0("\t", .CALL_PILEUP_COLUMN), line)) > 0) { # call-pileup
     type <- .CALL_PILEUP_METHOD_TYPE
   } else { 
-    # ERROR: type could not be guessed
     stop("Result type could not be guessed from header: ", line)
   }
   

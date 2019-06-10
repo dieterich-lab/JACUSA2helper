@@ -1,104 +1,59 @@
-# TODO make call-1 possible, how to deal with RRD?
-#' Add base call change for RDD comparisons of a JACUSA2 result file.
-#'
-#' \code{add_bc_change()} adds base call changes for gDNA vs. cDNA comparisons.
-#' Make sure \code{add_bc()} has been called to populate "bc1" and "bc2" fields or 
-#' set option "aa" (i.e. auto_add) to TRUE.
-#' All necessary but missing fields will be added automatically, possibly 
-#' overriden existing fields of the JACUSA list object.
-#'
-#' @param jacusa2 List object created by \code{read_jacusa()}.
-#' @param ref TODO 0 => use ref_base > 0 => condition in bc
-#' @param bc List of Vector of observed base calls.
-#' @param aa Logical indicates if missing fields should added automatically.
-#'
-#' @return Returns a JACUSA object list with the additional "bc_change" field.
-#'
-#' @examples
-#' ## populate necessary fields manually
-#' jacusa2 <- add_bc_matrix(rdd)
-#' jacusa2 <- add_bc(jacusa2)
-#' jacusa2 <- add_bc_change(jacusa2)
-#' ## plot distribution of base changes
-#' barplot(table(jacusa2$bc_change))
-#'
-#' ## populate necessary fields automatically
-#' jacusa2 <- add_bc_change(jacusa2, ref = 1, aa = TRUE)
-#' ## plot distribution of base changes
-#' barplot(table(jacusa2$bc_change))
+#' Add reference base to observed base call field
 #' 
-#' @export 
-add_bc_change <- function(jacusa2, 
-                          ref = 0,
-                          bc = jacusa2$bc,
-                          aa = FALSE) {
-  # auto add missing fields
-  if (aa) {
-    jacusa2 <- add_bc(jacusa2, aa = TRUE)
-    bc = jacusa2$bc
-  }
-  if (ref > 0) {
-    dna <- bc[[ref]]
+#' \code{add_ref_base2bc()} TODO description
+#' 
+#' @param jacusa2 object created by \code{read_result()}
+#' @param ref_field String or integer
+#' @return jacusa2 object enriched by ref. base 2 bc field
+#' 
+#' @export
+add_ref_base2bc <- function(jacusa2, ref_field = "ref_base") {
+  ref_base <- "N"
+  observed_bc <- "N"
+  
+  if (ref_field == "ref_base") { # use reference base "from FASTA reference"
+    ref_base <- jacusa2$ref_base
+    observed_bc <- jacusa2$bc
+    # not all data needed for checking
+    if (! check_max_alleles(jacusa2, max_alleles = 2)) {
+      stop("Sites with alleles > 2 not allowed")
+    }
+  } else if(is.numeric(ref_field) & any(jacusa2$condition %in% ref_field)) { # use specific condition to derive reference base
+    if (! check_max_alleles(jacusa2, max_alleles = 2)) {
+      stop("Sites with alleles > 2 not allowed")
+    }
+    ref_base <- jacusa2 %>% 
+      dplyr::select(id, condition) %>%
+      dplyr::group_by(id) %>%
+      dplyr::filter(condition == ref_field) %>%
+      select(bc)
+    observed_bc <- jacusa2 %>% 
+      dplyr::group_by(id, condition, bc) %>%
+      dplyr::filter(condition != ref_field) %>%
+      dplyr::select(bc)
   } else {
-    dna <- jacusa2$ref_base
+    stop("Unknown ref_field: ", ref_field)
   }
-  jacusa2$bc_change <- get_bc_change(dna, rna)
+  jacusa2$ref_base2bc <- get_bc_change(ref_base, observed_bc)
+
   jacusa2
 }
 
-#' Add base call change ratio (e.g.: editing frequency) to a JACUSA2 object list.
-#'
-#' \code{add_bc_change_ratio()} adds base call change ratio (e.g.: editing frequency) 
-#' for each replicate and an average over all replictes for gDNA vs. cDNA comparisons
-#' to the JACUSA list object. Condition 2 is be cDNA data. 
-#' Depending on the number (=n2) of replicates in condition 2, n2 + 1 fields are added:
-#' \itemize{
-#'  \item bc_change_ratio1 - base call change ratio of condition 1 vs. replicate 1 
-#'  of condition 2
-#'  \item ... - ...
-#'  \item bc_change_ratio{n2} - base call change ratio of condition 1 vs. replicate n2
-#'  of condition 2
-#'  \item bc_change_ratio - average over bc_change_ratio{1, ..., n2}
-#' }
+#' Add reference base to base call change ratio (e.g.: editing frequency) to a JACUSA2 object.
 #' 
-#' @param jacusa List object created by \code{read_jacusa()}.
-#' @param bc1 Vector of observed base calls for condition 1.
-#' @param bc2 Vector of observed base calls for condition 2.
-#' @param bc_matrix2 Base call matrix of list of base call matrices for condition 2.
-#' @param aa Logical indicates if missing fields should added automatically.
+#' \code{add_ref_base2bc_ratio()} adds base call change ratio (e.g.: editing frequency).
 #' 
-#' @return Returns a JACUSA list object the additional fields: "bc_change_ratio", 
-#' "bc_change_ratio1", ... "bc_change_ratio{n2}", where n2 is the number of replicates 
-#' of condition 2.
-#'
-#' @examples
-#' ## add fields manually
-#' jacusa <- add_bc_matrix(rdd)
-#' jacusa <- add_bc(jacusa)
-#' jacusa <- add_bc_change(jacusa)
-#' jacusa <- add_bc_change_ratio(jacusa)
-#' ## plot a boxplot of editing frequencies for each base change
-#' boxplot(tapply(jacusa$bc_change_ratio, jacusa$bc_change, c))
-#' 
-#' #' ## add fields automatically
-#' jacusa <- add_bc_change_ratio(rdd, aa = TRUE)
-#' ## plot a boxplot of editing frequencies for each base change
-#' boxplot(tapply(jacusa$bc_change_ratio, jacusa$bc_change, c))
+#' @param jacusa2 object created by \code{read_result()}.
+#' @param ref_field String or integer
+#' @return Returns a JACUSA2 object
 #' 
 #' @export 
-add_bc_change_ratio <- function(jacusa2, 
-                                ref,
-                                bc = jacusa2$bc, 
-                                bc_matrix = jacusa2$bc_matrix, 
-                                aa = FALSE) {
+add_ref_base2bc_ratio <- function(jacusa2, ref_field = "ref_base") {
   # auto add missing fields
-  # TODO
-  if (aa) {
-    jacusa2 <- add_bc_change(jacusa2, aa = TRUE)
-    bc <- jacusa$bc
-    bc_matrix <- jacusa$bc_matrix
+  if (is.null(jacusa2$ref_base2bc)) {
+    jacusa2 <- add_ref_base2bc(jacusa2, ref_field)
   }
-  # TODO
-  jacusa2 <- c(jacusa2, get_bc_change_ratio(bc, bc_matrix))
+  jacusa2$ref_base2bc_ratio <- get_bc_change_ratio(ref_field, jacusa2[, paste0("bc_", .BASES)])
+  
   jacusa2
 }

@@ -4,19 +4,17 @@
 \alias{get_variant_count}
 \title{Calculates the number of variant reads in JACUSA results files}
 \usage{
-get_variant_count(bc1, bc2, bc_matrix2)
+get_variant_count(dna, bc_matrix)
 }
 \arguments{
-\item{bc1}{Vector of base calls in condition 1.}
+\item{dna}{Vector of base calls in condition 1.}
 
-\item{bc2}{Vector of base calls in condition 2.}
-
-\item{bc_matrix2}{Base call matrix or list of base call matrices.}
+\item{bc_matrix}{Base call matrix or list of base call matrices.}
 }
 \value{
 Returns List of count that represent the number of variant reads in condition 2
 }
 \description{
 Calculates the number of variant reads in JACUSA result files of gDNA vs. cDNA comparisons.
-Per default gDNA is expected to be condition 1 and cDNA to be condition 2!
+TODO not corresponding to DNA
 }

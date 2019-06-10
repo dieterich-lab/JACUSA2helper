@@ -4,18 +4,15 @@
 \alias{get_bc_change_ratio}
 \title{Calculates base call change ratio (e.g.: editing frequency) for RDDs in a JACUSA result file.}
 \usage{
-get_bc_change_ratio(bc1, bc2, bc_matrix2)
+get_bc_change_ratio(ref_base, bc_matrix)
 }
 \arguments{
-\item{bc1}{Vector of base calls for condition 1.}
+\item{ref_base}{Vector of reference bases.}
 
-\item{bc2}{Vector of base calls for condition 2.}
-
-\item{bc_matrix2}{Base call matrix or list of base call matrices.}
+\item{bc_matrix}{Observed base call matrix.}
 }
 \value{
-Returns vector of base call change ratios average and against all 
-replicates of condition 2.
+Returns vector of base call change ratios.
 }
 \description{
 Calculates base call change ratio (e.g.: editing frequency) for RDDs in a JACUSA result file.

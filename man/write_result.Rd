@@ -4,10 +4,10 @@
 \alias{write_result}
 \title{Write a JACUSA list object to a file}
 \usage{
-write_result(jacusa, file, extra = NULL)
+write_result(jacusa2, file, extra = NULL)
 }
 \arguments{
-\item{jacusa}{List created by \code{read_jacusa()}.}
+\item{jacusa2}{List created by \code{read_jacusa()}.}
 
 \item{file}{String is the filename to store the list.}
 

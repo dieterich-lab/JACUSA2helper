@@ -2,21 +2,16 @@
 % Please edit documentation in R/filter.R
 \name{filter_robust_variants}
 \alias{filter_robust_variants}
-\title{Retains sites that contain the variant base in all replicates of at least one sample.}
+\title{Retains sites that contain the variant base in all replicates in at least one condition.}
 \usage{
-filter_robust_variants(jacusa)
+filter_robust_variants(jacusa2)
 }
 \arguments{
-\item{jacusa}{List object created by \code{read_jacusa()}.}
+\item{jacusa2}{object created by \code{read_result()}.}
 }
 \value{
-Returns List with sites where at least one sample contains the variant base in all replicates.
+Returns JACUSA2 object with sites where at least one condition contains the variant base in all replicates.
 }
 \description{
-\code{filter_robust_variants} Enforces that at least one sample contains the variant base in all replicates.
-}
-\examples{
-jacusa <- add_bc_matrix(rdd)
-jacusa <- filter_robust_variants(jacusa)
-
+\code{filter_robust_variants} Enforces that at least one condition contains the variant base in all replicates.
 }
