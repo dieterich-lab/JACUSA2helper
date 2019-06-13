@@ -24,24 +24,28 @@ write_bedGraph <- function(file, contig, start, end, value) {
     start = start, end = end, 
     value = value, 
     stringsAsFactors = FALSE)
-  write.table(d, file, quote = FALSE, sep = "\t", row.names = FALSE, col.names = FALSE)
+  write.table(d, file, 
+              quote = FALSE, 
+              sep = "\t", 
+              row.names = FALSE, col.names = FALSE
+  )
 }
 
-#' Write a JACUSA list object to a file
-#'
-#' \code{write_result} Stores a list of sites in a file.
-#' 
-#' @param jacusa2 List created by \code{read_jacusa()}.
-#' @param file String is the filename to store the list.
-#' @param extra Vector of strings that define additional elements from the list that 
-#'        will be stored in the file. 
-#'
-#' @export 
-write_result <- function(jacusa2, file, extra = NULL) {
+# FIXME
+# Write a JACUSA2 object to a file
+#
+# \code{write_result()} Stores a JACUSA2 object to a file. 
+# TODO what happens to additional data added?
+# 
+# @param jacusa2 object created by \code{read_jacusa()}.
+# @param file String is the filename to store the JACUSA2 object.
+#
+# @export 
+write_result <- function(jacusa2, file) {
   bed6 <- names(jacusa2)[names(jacusa) %in% c(
     "contig", "start", "end", 
     "name", 
-    "stat", "pvalue", 
+    "score", 
     "strand")]
   
   data_fields <- c()
@@ -64,20 +68,4 @@ write_result <- function(jacusa2, file, extra = NULL) {
   utils::write.table(dt, file, 
                      col.names = TRUE, row.names = FALSE, 
                      quote = FALSE, sep = "\t")
-}
-
-.get_call_result <- function(jacusa2) {
-  # TODO
-}
-
-.get_pileup_result <- function(jacusa2) {
-  # TODO
-}
-
-.get_rt_arrest_result <- function(jacusa2) {
-  # TODO
-}
-
-.get_lrt_arrest_result <- function(jacusa2) {
-  # TODO
 }

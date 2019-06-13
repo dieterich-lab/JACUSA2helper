@@ -1,6 +1,7 @@
-#' Check if site has the max number of alleles.
+#' Check if site has the max number of allowed alleles.
 #'
-#' TODO
+#' Return TRUE|FALSE if the JACUSA2 object has the maximum number of allowed 
+#' alleles per site.
 #'
 #' @param jacusa2 object created by \code{read_result()}.
 #' @param max_alleles Integer number of maximal allowed alleles per site.

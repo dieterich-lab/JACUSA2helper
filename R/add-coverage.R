@@ -1,10 +1,10 @@
-#' Add coverage field to JACUSA2 data frame.
+#' Add coverage field to JACUSA2 object.
 #'
 #' \code{add_coverage()} calculates and adds read coverage. 
 #'
-#' @param jacusa2 data frame created by \code{read_result()}.
+#' @param jacusa2 object created by \code{read_result()}.
 #' 
-#' @return Returns the initial data frame with coverage field added.
+#' @return Returns the initial object with coverage key added.
 #' 
 #' @export 
 add_coverage <- function(jacusa2) {

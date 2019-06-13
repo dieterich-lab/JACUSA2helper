@@ -2,7 +2,7 @@
 % Please edit documentation in R/get-bc.R
 \name{get_bc_change_ratio}
 \alias{get_bc_change_ratio}
-\title{Calculates base call change ratio (e.g.: editing frequency) for RDDs in a JACUSA result file.}
+\title{Calculates base call change ratio (e.g.: editing frequency).}
 \usage{
 get_bc_change_ratio(ref_base, bc_matrix)
 }
@@ -15,5 +15,5 @@ get_bc_change_ratio(ref_base, bc_matrix)
 Returns vector of base call change ratios.
 }
 \description{
-Calculates base call change ratio (e.g.: editing frequency) for RDDs in a JACUSA result file.
+Calculates base call change ratio (e.g.: editing frequency).
 }

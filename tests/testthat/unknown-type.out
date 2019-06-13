@@ -1,2 +1,3 @@
-#contig	start	end	name	stat	strand	base11	base12	base21	base22	info	filter_info
-1	1	2	unknown	0	+	10,1,0,0	10,1,0,0	10,10,0,0	10,10,0,0	*	*
+#contig	start	end	name	stat	strand	base11	base12	base21	base22	info	filter_info	ref_base
+1	1	2	unknown	0	+	10,1,0,0	10,1,0,0	10,10,0,0	10,10,0,0	*	*	A
+

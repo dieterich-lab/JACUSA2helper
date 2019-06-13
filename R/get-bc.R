@@ -1,7 +1,6 @@
 #' Calculate base call change for RDD comparisons.
 #' 
-#' In the context of RDD detection, it is assumed that condition 1 represents the DNA and 
-#' condition 2 the RNA.
+#' TODO
 #' 
 #' @param ref_base Vector of reference bases.
 #' @param observed_bc Vector of base calls.
@@ -20,8 +19,8 @@ get_bc_change <- function(ref_base, observed_bc, sep = .BC_CHANGE_SEP) {
 #'
 #' Formats base change (e.g.: RNA editing) for two base vectors.
 #'
-#' @param base1 Vector of bases.
-#' @param base2 Vector of bases.
+#' @param base1 Vector of bases: DNA.
+#' @param base2 Vector of bases: RNA.
 #' @param sep String: "base1"sep"base2".
 #' @param no_change String: how to format no changes.
 #' 
@@ -30,14 +29,14 @@ get_bc_change <- function(ref_base, observed_bc, sep = .BC_CHANGE_SEP) {
 #' @export
 format_bc_change <- function(base1, base2, sep = .BC_CHANGE_SEP, no_change = .BC_CHANGE_NO_CHANGE) {
   bc_change <- paste(base1, sep = sep, base2)
-  bc_change[base1 == base2] <- no_change
+  bc_change[base1 == base2 | base2 == ""] <- no_change
   
   bc_change
 }
 
-#' Calculates base call change ratio (e.g.: editing frequency) for RDDs in a JACUSA result file. 
+#' Calculates base call change ratio (e.g.: editing frequency).
 #' 
-#' Calculates base call change ratio (e.g.: editing frequency) for RDDs in a JACUSA result file. 
+#' Calculates base call change ratio (e.g.: editing frequency).
 #'
 #' @param ref_base Vector of reference bases.
 #' @param bc_matrix Observed base call matrix.
@@ -70,48 +69,14 @@ get_bc_change_ratio <- function(ref_base, bc_matrix) {
   bc_change_ratio
 }
 
-#' Calculates the number of variant reads in JACUSA results files
-#'
-#' Calculates the number of variant reads in JACUSA result files of gDNA vs. cDNA comparisons.
-#' TODO not corresponding to DNA
-#'
-#' @param dna Vector of base calls in condition 1.
-#' @param bc_matrix Base call matrix or list of base call matrices.
-#' 
-#' @return Returns List of count that represent the number of variant reads in condition 2
-#' 
-#' @export 
-get_variant_count <- function(dna, bc_matrix) {
-  if (any(nchar(bc) >= 2)) {
-    stop("Too many (>=2) alleles for condition 1") 
-  }
-
-  # TODO check
-  # not more than 2 alleles
-  
-  # variant base
-  v <- mapply(function(x, y) { gsub(x, "", y) }, bc1, bc2, USE.NAMES = FALSE)
-  i <- match(v, c(.BASES))
-  
-  count <- c()
-  if (is.list(bc_matrix2)) {
-    count <- lapply(bc_matrix2, function(m) {
-      m[cbind(1:nrow(m), i)]
-    })
-  } else {
-    count <- bc_matrix2[cbind(1:nrow(bc_matrix2), i)]
-  }
-  count
-}
-
 # helper function
 get_robust_variants <- function(condition, bc_A, bc_C, bc_G, bc_T) {
   # combind individual base call vectors
   mat <- matrix(c(bc_A, bc_C, bc_G, bc_T), ncol = 4, byrow = FALSE)
 
   mask <- .get_mask(mat, op = "any")
-  mask1 <- .get_mask(mat[condition == 1, ], op = "all")
-  mask2 <- .get_mask(mat[condition != 1, ], op = "all")
+  mask1 <- .get_mask(mat[condition == 1, , drop = FALSE], op = "all")
+  mask2 <- .get_mask(mat[condition != 1, , drop = FALSE], op = "all")
   
   robust <- (mask1 | mask2) == mask
   

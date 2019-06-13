@@ -2,7 +2,7 @@
 % Please edit documentation in R/check.R
 \name{check_max_alleles}
 \alias{check_max_alleles}
-\title{Check if site has the max number of alleles.}
+\title{Check if site has the max number of allowed alleles.}
 \usage{
 check_max_alleles(jacusa2, max_alleles = 2)
 }
@@ -15,5 +15,6 @@ check_max_alleles(jacusa2, max_alleles = 2)
 TRUE|FALSE
 }
 \description{
-TODO
+Return TRUE|FALSE if the JACUSA2 object has the maximum number of allowed 
+alleles per site.
 }

@@ -35,6 +35,7 @@
   base_calls
 }
 
+# apply boolean operator "&","|" on all columns 
 .get_mask <- function(mat, op) {
   mat <- t(apply(mat, 1, function(x) { x > 0 }))
   if (op == "all") {

@@ -8,9 +8,9 @@ format_bc_change(base1, base2, sep = .BC_CHANGE_SEP,
   no_change = .BC_CHANGE_NO_CHANGE)
 }
 \arguments{
-\item{base1}{Vector of bases.}
+\item{base1}{Vector of bases: DNA.}
 
-\item{base2}{Vector of bases.}
+\item{base2}{Vector of bases: RNA.}
 
 \item{sep}{String: "base1"sep"base2".}
 

@@ -49,30 +49,17 @@
   conditions <- 1
   max_conditions <- length(cond_rep)
 
-  split_cond_rep <- function(conditions) {
-    conditions_length <- nchar(conditions)
-    condition <- substring(cond_rep, first = conditions_length, last = conditions_length)
-    replicate <- substring(cond_rep, first = conditions_length + 1)
-    if (nchar(condition) == 0 || nchar(replicate) == 0) {
-      return(NA)
-    }
-    if (length(unique(condition)) != conditions) {
-      return(NA)
-    }
-    
-    list(condition = as.numeric(condition), replicate = as.numeric(replicate))
-  }
-  
   while (conditions <= max_conditions) {
-    guess <- split_cond_rep(conditions)
-    
-    if (length(guess) == 2) {
+    condition_nchar <- nchar(conditions)
+    condition <- substring(cond_rep, first = 1, last = condition_nchar)
+    replicate <- substring(cond_rep, first = condition_nchar + 1)
+    if (all(nchar(condition) > 0 & nchar(replicate) > 0) && 
+        length(unique(condition)) == conditions) {
       return(conditions)
     }
     conditions <- conditions + 1
   }
-
-  conditions
+  stop("Number of conditions could not be guessed")
 }
 
 # Extract condition-replicate part from header names

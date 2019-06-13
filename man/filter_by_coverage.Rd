@@ -9,30 +9,21 @@ filter_by_coverage(jacusa2, min_coverage, type = "replicate")
 \arguments{
 \item{jacusa2}{JACUSA2 object created by \code{read_result()}.}
 
-\item{min_coverage}{Vector or numeric value of the minimal read coverage. Must have}
+\item{min_coverage}{Numeric value of the minimal read coverage.}
 
-\item{type}{Strings determines how and if read depth should be aggregate before filtering. 
-same dimension as fields}
+\item{type}{Strings determines how and if read depth should be aggregate before filtering.}
 }
 \value{
-Returns JACUSA2 object of sites filtered by minimal read coverage
- according to \code{type}.
+Returns JACUSA2 object of sites filtered by minimal read coverage according to \code{type}.
 }
 \description{
-\code{filter_by_coverage()} filters sites by customizable read coverage restrictions. 
-Use \code{add_coverage()} first to add coverage info.
+\code{filter_by_coverage()} filters sites by customizable read coverage restrictions.
 }
 \details{
 Possible value for \code{type}:
 \itemize{
-  \item total -> total read depth at a site
-  \item condition -> per condition (aggregates per condition)
+  \item total -> total read depth at a site,
+  \item condition -> per condition (aggregates per condition), and
   \item replicate -> each replicate (default)
 }
-}
-\examples{
-## Keep sites that have a total read depth of at least 10 reads in 
-## condition 1 and each replicates of condition 2 has a minimal read coverage 
-## of 5 reads. 
-
 }

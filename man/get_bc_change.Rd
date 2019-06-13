@@ -17,6 +17,5 @@ get_bc_change(ref_base, observed_bc, sep = .BC_CHANGE_SEP)
 Vector of base call changes.
 }
 \description{
-In the context of RDD detection, it is assumed that condition 1 represents the DNA and 
-condition 2 the RNA.
+TODO
 }

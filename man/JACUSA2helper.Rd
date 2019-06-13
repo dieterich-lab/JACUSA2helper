@@ -4,14 +4,22 @@
 \name{JACUSA2helper}
 \alias{JACUSA2helper}
 \alias{JACUSA2helper-package}
-\title{JACUSA2helper: A package for post-processing JACUSA (1.x and 2.x) result files.}
+\title{JACUSA2helper: A package for post-processing JACUSA2 result files.}
 \description{
-The JACUSA2helper package provides the following categories of important functions:
-input/output, get, add, and filter to post-process result files of JACUSA (1.x and 2.x).
+The JACUSA2helper package provides the following categories of important functions :
+\itemize{
+ \item[read/write] Read and write JACUSA2.
+ \item[add] This will add some key to an existing JACUSA2 object and return the modified object.
+ \item[check] This will perform some checks on JACUSA2 objects
+ \item[filter] This will remove sites from a JACUSA2 object with some filtering criteria.
+ \item[get] TODO
+}
+to post-process result files of JACUSA2.
 }
 \details{
+The following methods are supported:
 \itemize{
- \item[call{1,2}]calling variants from one condition or condition comparisons.
+ \item[call{1,2}] calling variants from one condition or condition comparisons.
  \item[pileup] SAMtools like pileup
  \item[rt-arrest] identification of RNA modifications by reverse transcription arrest.
  \item[lrt-arrest] combination of varidant discovery and read arrest sites. 
@@ -21,19 +29,18 @@ One major new feature of JACUSA 2.x is the identificaion of RNA modifications by
 transcription arrest.
 tidy data, dplyr
 
-TODO When calling RDDs where the RNA-Seq sample has been generated with stranded sequencing library, 
-base change(s) can be directly inferred and if necessary base calls can be inverted.
+When working with stranded RNA-Seq data, inverting base calls is not necessary because
+JACUSA2 will automatically invert Single End and Paired End depending on the provided 
+library type option "-P" UNSTRANDED|FR_FIRSTSTRAND|RF_SECOND_STRAND".
 
-TODO Warning: Some function do not support replicates or are exclusively applicable on RDD or RRD 
-result files!
-use jacusa2 <- read_result("jacusa2.out") to read JACUSA2 output
-
-The central object in Jacusa2Helper is the JACUSA tidy data that represents
-JACUSA2 result file "jacusa2.out" and can be created via \code{jacusa2 <- read_jacusa("jacusa2.out")}.
+The central data structure in JACUSA2helper is the JACUSA2 object that follows the 
+tidy data approach to feature easy interplay with dplyr and ggplot2.
+An JACUSA2 object can be created via \code{jacusa2 <- read_jacusa("jacusa2.out")} and is 
+currently represented as a data.frame.
 }
-\section{input/output functions}{
+\section{read/write functions}{
 
-The functions read_result, and write_result facilitate input and output operations on JACUSA (1.x and 2.x) 
+The functions read_result, and write_result facilitate input and output operations on JACUSA2 
 output files.
 
 See:
@@ -43,37 +50,50 @@ See:
 }
 }
 
-\section{get functions}{
-
-This functions calculate TODO
-}
-
 \section{add functions}{
 
 TODO
-This functions calculate and add additional such as read depth or base call changes. 
 
 See:
 \itemize{
-  \item add_bc_change
-  \item add_bc_change_ratio
   \item add_coverage
+  \item add_ref_base2bc
+  \item add_ref_base2bc_ratio
+}
+}
+
+\section{check functions}{
+
+TODO
+
+See:
+\itemize{
+  \item chech_max_alleles
 }
 }
 
 \section{filter functions}{
 
-This function set enables processing of JACUSA (1.x and 2.x) output files such as filtering by read coverage 
-or enforcing a minimal number of variant base calls per sample.
+This function set enables filtering by read coverage or 
+enforcing a minimal number of variant base calls per sample.
 
 See:
 \itemize{
- \item filter_allele_count
-  \item filter_call_stat
-  \item filter_coverage
-  \item filter_arrest_stat
+ \item filter_by_allele_count
+  \item filter_by_coverage
   \item filter_robust_variants
-  \item filter_min_variant_count
+  \item filter_by_min_score
+  \item filter_by_max_score
+}
+
+#' @section get functions:
+TODO
+
+See:
+\itemize{
+  \item get_bc_change
+  \item get_bc_change_ratio
+  \item get_variant_count
 }
 }
 

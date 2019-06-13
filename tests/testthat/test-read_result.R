@@ -1,10 +1,7 @@
 context("read_result")
 
-# TODO
-# correct number of conditions -> call-1 call-2
-
 test_that("read_result works on call-1 output", {
-  # TODO
+  j <- read_result("call-1.out")
 })
 
 test_that("read_result works on call-2 output", {
@@ -12,15 +9,15 @@ test_that("read_result works on call-2 output", {
 })
 
 test_that("read_result works on pileup output", {
-  # TODO
+  j <- read_result("pileup.out")
 })
 
 test_that("read_result works on rt-arrest output", {
-  # TODO
+  j <- read_result("rt-arrest.out")
 })
 
 test_that("read_result works on lrt-arrest output", {
-  # TODO
+  j <- read_result("lrt-arrest.out")
 })
 
 test_that("read_result fails on unknown method type", {

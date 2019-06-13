@@ -33,20 +33,19 @@ context("filter_robust_variants")
   ))
 }
 
-test_that("filter_robust_variants fails on > 2 conditions", {
+test_that("filter_robust_variants fails on != 2 conditions", {
   expect_error(
     filter_robust_variants(list(condition = c(1, 2, 3))),
-    "More than 2 conditions are not supported!"
+    "Only 2 conditions are supported!"
+  )
+  expect_error(
+    filter_robust_variants(list(condition = c(1))),
+    "Only 2 conditions are supported!"
   )
 })
 
 test_that("filter_robust_variants on data with > 2 alleles per site", {
   msg <- "Data contains sites with >2 alleles. Please remove those sites."
-  expect_error(
-    filter_robust_variants(
-      .a(.DF, 1, 1, 1, 1, 1, 1, 1)
-    ), msg
-  )
   expect_error(
     filter_robust_variants(
       #    id cond rep
@@ -60,5 +59,21 @@ test_that("filter_robust_variants on data with > 2 alleles per site", {
            0, 0, 1, 0)
     ), msg
   )
+})
+
+test_that("filter_robust_variants works on 2 condition", {
+       #  id cond rep
+       #  A  C  G  T
+  d <- .a(.DF,
+          1, 1, 1, 
+          0, 1, 0, 0) %>%
+       .a(1, 1, 2, 
+          0, 1, 0, 0)  %>%
+       .a(1, 2, 1, 
+          0, 0, 1, 0)
   
+  expect_equal(
+    filter_robust_variants(d),
+    d
+  )
 })

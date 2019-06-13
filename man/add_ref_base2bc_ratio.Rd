@@ -4,16 +4,17 @@
 \alias{add_ref_base2bc_ratio}
 \title{Add reference base to base call change ratio (e.g.: editing frequency) to a JACUSA2 object.}
 \usage{
-add_ref_base2bc_ratio(jacusa2, ref_field = "ref_base")
+add_ref_base2bc_ratio(jacusa2, ref_field)
 }
 \arguments{
 \item{jacusa2}{object created by \code{read_result()}.}
 
-\item{ref_field}{String or integer}
+\item{ref_field}{String ("ref_base" for 1 condition experiment) or integer of DNA condition}
 }
 \value{
-Returns a JACUSA2 object
+Returns a JACUSA2 object with
 }
 \description{
 \code{add_ref_base2bc_ratio()} adds base call change ratio (e.g.: editing frequency).
+Adds key "ref_base2bc" key to JACUSA2 object.
 }

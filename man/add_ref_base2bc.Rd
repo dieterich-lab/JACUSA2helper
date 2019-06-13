@@ -2,18 +2,22 @@
 % Please edit documentation in R/add-bc.R
 \name{add_ref_base2bc}
 \alias{add_ref_base2bc}
-\title{Add reference base to observed base call field}
+\title{Add base change key}
 \usage{
-add_ref_base2bc(jacusa2, ref_field = "ref_base")
+add_ref_base2bc(jacusa2, ref_field)
 }
 \arguments{
 \item{jacusa2}{object created by \code{read_result()}}
 
-\item{ref_field}{String or integer}
+\item{ref_field}{String ("ref_base" for 1 condition experiment) or integer of DNA condition}
 }
 \value{
-jacusa2 object enriched by ref. base 2 bc field
+jacusa2 object extended by base change info contained in "ref_base2bc" key
 }
 \description{
-\code{add_ref_base2bc()} TODO description
+\code{add_ref_base2bc()} adds base change key where the 
+reference base can be either "ref_base" key or a condition 
+to define the reference base. When comparing DNA vs. RNA 
+sequencing samples base calls idenified in DNA might differ from
+reference sequence base provided by "ref_field" key.
 }

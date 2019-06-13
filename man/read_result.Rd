@@ -7,7 +7,7 @@
 read_result(file, showProgress = TRUE)
 }
 \arguments{
-\item{file}{String represents the filename of the JACUSA2 output.}
+\item{file}{String that represents the filename of the JACUSA2 output.}
 
 \item{showProgress}{Boolean indicates if progress should be monitored.}
 }

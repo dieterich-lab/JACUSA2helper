@@ -1,31 +1,27 @@
 #' Filter sites by read coverage (total, per replicates etc.).
 #'
 #' \code{filter_by_coverage()} filters sites by customizable read coverage restrictions. 
-#' Use \code{add_coverage()} first to add coverage info.
 #' 
 #' Possible value for \code{type}:
 #' \itemize{
-#'   \item total -> total read depth at a site
-#'   \item condition -> per condition (aggregates per condition)
+#'   \item total -> total read depth at a site,
+#'   \item condition -> per condition (aggregates per condition), and
 #'   \item replicate -> each replicate (default)
 #' }
 #'
 #' @param jacusa2 JACUSA2 object created by \code{read_result()}.
-#' @param min_coverage Vector or numeric value of the minimal read coverage. Must have 
+#' @param min_coverage Numeric value of the minimal read coverage.
 #' @param type Strings determines how and if read depth should be aggregate before filtering. 
-#' same dimension as fields
 #' 
-#' @return Returns JACUSA2 object of sites filtered by minimal read coverage
-#'  according to \code{type}.
+#' @return Returns JACUSA2 object of sites filtered by minimal read coverage according to \code{type}.
 #'
-#' @examples
-#' ## Keep sites that have a total read depth of at least 10 reads in 
-#' ## condition 1 and each replicates of condition 2 has a minimal read coverage 
-#' ## of 5 reads. 
-#' 
 #' @export 
 #' @importFrom magrittr "%>%"
 filter_by_coverage <- function(jacusa2, min_coverage, type = "replicate") {
+  if (is.null(jacusa2$coverage)) {
+    jacusa2 <- add_coverage(jacusa2)
+  }
+  
   if (! is.numeric(min_coverage) | min_coverage < 0) {
     stop("min_coverage not a number or negative: ", min_coverage)
   }
@@ -53,17 +49,24 @@ filter_by_coverage <- function(jacusa2, min_coverage, type = "replicate") {
 #' Removes sites that have too many alleles.
 #'
 #' @param jacusa2 object created by \code{read_result()}.
-#' @param max_alleles Integer number of maximal allowed alleles per site.
+#' @param max_alleles integer number of maximal allowed alleles per site.
+#' @param ref_base boolean indicating ref_base should used to count alleles per site (Default: TRUE).
 #'
 #' @return Returns JACUSA2 object with sites where max_alleles is obeyed.
 #' 
 #' @export
-filter_by_alleles <- function(jacusa2, max_alleles = 2) {
-  jacusa2 <- jacusa2 %>%
-    dplyr::group_by(id) %>%
-    dplyr::filter(.get_alleles(bc) <= max_alleles)
-  
-  jacusa2
+filter_by_alleles <- function(jacusa2, max_alleles = 2, ref_base = TRUE) {
+  jacusa2 <- jacusa2 %>% dplyr::group_by(id)
+    
+  if (ref_base) {
+    jacusa2 <- jacusa2 %>% 
+      dplyr::filter(.get_alleles(paste0(bc, ref_base)) <= max_alleles)
+  } else {
+    jacusa2 <- jacusa2 %>% 
+      dplyr::filter(.get_alleles(bc) <= max_alleles)
+  }
+
+  as.data.frame(jacusa2)
 }
 
 #' Retains sites that contain the variant base in all replicates in at least one condition.
@@ -78,8 +81,8 @@ filter_by_alleles <- function(jacusa2, max_alleles = 2) {
 filter_robust_variants <- function(jacusa2) {
   conditions <- jacusa2$condition %>% unique() %>% length()
   # check only two conditions
-  if (conditions > 2) {
-    stop("More than 2 conditions are not supported!")
+  if (conditions != 2) {
+    stop("Only 2 conditions are supported!")
   }
   # check only two alleles per site
   if (! check_max_alleles(jacusa2, max_alleles = 2)) {
@@ -87,36 +90,36 @@ filter_robust_variants <- function(jacusa2) {
   }
 
   jacusa2 <- jacusa2 %>% 
-    group_by(id, condition) %>%
-    filter(get_robust_variants(condition, bc_A, bc_C, bc_G, bc_T))
+    dplyr::group_by(id) %>%
+    dplyr::filter(get_robust_variants(condition, bc_A, bc_C, bc_G, bc_T))
 
 	jacusa2
 }
 
-#' Filter JACUSA2 object sites by test-statistic from call method.
+#' Restain sites with minimal score.
 #'
-#' \code{filter_by_call_score()} removes sites that have a test-statistic less than some threshold that has been provided by user.
+#' \code{filter_by_score} removes sites that have score >= min_score.
 #'
-#' @param jacusa2 data frame created by \code{read_result()}.
-#' @param min_score Numeric value that represents the minimal test-statistic.
+#' @param jacusa2 JACUSA2 object created by \code{read_result()}.
+#' @param min_score Numeric value that represents the minimal score.
 #' 
-#' @return Returns data frame with sites with a test-statistic >= min_score.
+#' @return Returns JACUSA2 object with sites with score >= min_score
 #' 
 #' @export 
-filter_by_call_score <- function(jacusa2, min_score) {
-  subset(jacusa2, jacusa2$score >= min_score)
+filter_by_min_score <- function(jacusa2, min_score) {
+	subset(jacusa2, jacusa2$score >= min_score)
 }
 
-#' Filter JACUSA2 object by p-value from rt-arrest method.
+#' Restain sites with maximal score.
 #'
-#' \code{filter_by_arrest_stat} removes sites that have a p-value more than some threshold that has been provided by user.
+#' \code{filter_by_score} removes sites that have score <= min_score.
 #'
-#' @param jacusa2 List object created by \code{read_result()}.
-#' @param max_pvalue Numeric value that represents the maximal p-value.
+#' @param jacusa2 JACUSA2 object created by \code{read_result()}.
+#' @param max_score Numeric value that represents the maximal score.
 #' 
-#' @return Returns data frame with sites with a stat <= max_pvalue.
+#' @return Returns JACUSA2 object with sites with score <= max_score.
 #' 
 #' @export 
-filter_by_arrest_stat <- function(jacusa2, max_pvalue) {
-	subset(jacusa2, jacusa2$pvalue <= max_pvalue)
+filter_by_max_score <- function(jacusa2, max_score) {
+  subset(jacusa2, jacusa2$score <= max_score)
 }
