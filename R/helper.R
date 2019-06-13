@@ -5,6 +5,8 @@
 .BC_CHANGE_SEP <- "->"
 .BC_CHANGE_NO_CHANGE <- "no change"
 
+.DATA_DESC <- "data_desc"
+
 # Helpers defining supported types by JACUSA2.x
 .UNKNOWN_METHOD_TYPE <- "unknown"
 # call and pileup cannot be distiguished by output
@@ -54,4 +56,26 @@
   allele_count <- length(.get_unique_base_calls(bcs))
   
   allele_count
+}
+
+#' Adds data description to JACUSA2 object.
+#' 
+#' This adds more description name to the data, extending condition, replicate information.
+#' 
+#' @param jacusa2 object created by \code{read_result()}.
+#' @param desc Vector mapping condition to description
+#' @return Returns a JACUSA2 object with sample description added
+#' 
+#' @export
+add_data_desc <- function(jacusa2, desc) {
+  conditions <- length(unique(jacusa2$condition))
+  if (length(desc) != conditions) {
+    stop("Description does not match data: ", desc)
+  }
+  
+  jacusa2 <- jacusa2 %>% mutate(!! .DATA_DESC := paste0(desc[condition], " (", replicate, ")")) %>% 
+    as.data.frame()
+  jacusa2[[.DATA_DESC]] <- as.factor(jacusa2[[.DATA_DESC]])
+  
+  jacusa2
 }

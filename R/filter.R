@@ -35,8 +35,8 @@ filter_by_coverage <- function(jacusa2, min_coverage, type = "replicate") {
       dplyr::filter(sum(coverage) >= min_coverage)
   } else if (type == "replicate") {
     jacusa2 <- jacusa2 %>% 
-      dplyr::group_by(id, condition, replicate) %>%
-      dplyr::filter(sum(coverage) >= min_coverage)
+      dplyr::group_by(id) %>%
+      dplyr::filter(all(coverage >= min_coverage))
   } else {
     stop("Unknown parameter type: ", type)
   }

@@ -71,7 +71,7 @@ get_bc_change_ratio <- function(ref_base, bc_matrix) {
 
 # helper function
 get_robust_variants <- function(condition, bc_A, bc_C, bc_G, bc_T) {
-  # combind individual base call vectors
+  # combine individual base call vectors
   mat <- matrix(c(bc_A, bc_C, bc_G, bc_T), ncol = 4, byrow = FALSE)
 
   mask <- .get_mask(mat, op = "any")

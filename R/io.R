@@ -60,11 +60,10 @@ read_result <- function(file, showProgress = TRUE) {
   colnames(data) <- header_names
 
   # create combined position id from genomic coordinates
-  data$id <- paste(data$contig, 
-                   data$start, data$end, 
-                   data$strand, 
-                   sep = ":")
-  
+  data$id <- dplyr::group_indices(
+    data, contig, start, end, strand
+  )
+
   # create container depending on determined result/method type 
   container <- .create_container(type, conditions, data)
   
@@ -105,12 +104,16 @@ read_result <- function(file, showProgress = TRUE) {
     )
   }
 
+  # make factors
+  container$condition <- as.factor(container$condition)
+  container$replicate <- as.factor(container$replicate)
+  
   container
 }
 
 # helper function to extract deletion info(s)
 .process_deletion <- function(conditions, info) {
-  info %>% 
+  df <- info %>% 
     tidyr::separate_rows(info, .INFO_COLUMN, sep = ";") %>% 
     tidyr::separate(
       col = !! .INFO_COLUMN, 
@@ -129,6 +132,11 @@ read_result <- function(file, showProgress = TRUE) {
       remove = TRUE, convert = TRUE) %>%
     tidyr::separate(deletion_counts, paste0("deletion_", c("reads", "coverage")), 
                          sep = ",", remove = TRUE, convert = TRUE)
+
+  df$deletion_pvalue <- as.numeric(df$deletion_pvalue)
+  df$deletion_score <- as.numeric(df$deletion_score)
+
+  df
 }
 
 .create_bases <- function(conditions, dt, default_bases = "all") {
@@ -178,4 +186,35 @@ read_result <- function(file, showProgress = TRUE) {
   # TODO aggregate
   
   r
+}
+
+#' Read multiple related JACUSA2 results
+#' 
+#' TODO
+#'
+#' @param Vector of files
+#' @param Vector of character vectors that correspond to files
+#' @return TODO
+#'
+#' @export
+read_results <- function(files, meta_conditions) {
+  stopifnot(length(files) == length(meta_conditions))
+  
+  # read all files  
+  l <- mapply(function(file, meta_condition) {
+    j2 <- read_result(file)
+    j2$meta_condition <- meta_condition
+    j2$id
+    j2
+  }, files, meta_conditions)
+
+  # combine read files
+  js2 <- dplyr::bind_rows(l)
+  js2$meta_condition <- as.factor(js2$meta_condition)
+  # use meta_condition to re-index
+  js2$id <- dplyr::group_indices(
+    js2, meta_condition, contig, start, end, strand
+  )
+  
+  js2
 }

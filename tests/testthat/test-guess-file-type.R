@@ -1,5 +1,6 @@
 context(".guess_file_type")
 
+
 .TEST_HEADER_COORD <- "#contig\tstart\tend\tname\t*\tstrand"
 .TEST_HEADER_INFO <- paste(.INFO_COLUMN, .FILTER_INFO_COLUMN, sep ="\t")
 

@@ -1,15 +1,15 @@
 Package: JACUSA2helper
 Type: Package
-Title: Post-processing for JACUSA 1.x 2.x output
-Version: 1.95
+Title: Post-processing for JACUSA 2.x output
+Version: 1.99
 Depends: R (>= 2.10)
-Date: 2019-05-26
+Date: 2019-06-21
 Author: Michael Piechotta
 Maintainer: <michael.piechotta@gmail.com>
-Description: This package enables post-processing of JACUSA 1.x 2.x output: read, filter, process, plot, write.
+Description: This package enables post-processing of JACUSA 2.x output: read, filter, process, plot, write.
 License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 6.1.1
 LazyData: true
 Suggests: testthat
-Imports: aod, data.table, tidyr, dplyr, magrittr
+Imports: aod, data.table, tidyr, dplyr, magrittr, ggplot2
