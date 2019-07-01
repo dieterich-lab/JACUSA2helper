@@ -29,7 +29,7 @@
     cond_rep2 <- .extract_condition_replicate(header_names, prefix2)
     conditions2 <- .find_conditions(cond_rep2)
     if (conditions1 != conditions2) {
-      stop("Error guessing conditions for lrt-arrest: cond1, cond2 = ", 
+      stop("Error guessing conditions for rt-arrest: cond1, cond2 = ", 
            conditions1, conditions2)
     }
     conditions <- conditions1

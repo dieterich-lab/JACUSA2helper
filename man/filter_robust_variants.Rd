@@ -4,13 +4,13 @@
 \alias{filter_robust_variants}
 \title{Retains sites that contain the variant base in all replicates in at least one condition.}
 \usage{
-filter_robust_variants(jacusa2)
+filter_robust_variants(result)
 }
 \arguments{
-\item{jacusa2}{object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()}.}
 }
 \value{
-Returns JACUSA2 object with sites where at least one condition contains the variant base in all replicates.
+Returns JACUSA2 result object with sites where at least one condition contains the variant base in all replicates.
 }
 \description{
 \code{filter_robust_variants} Enforces that at least one condition contains the variant base in all replicates.

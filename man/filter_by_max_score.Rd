@@ -4,15 +4,15 @@
 \alias{filter_by_max_score}
 \title{Restain sites with maximal score.}
 \usage{
-filter_by_max_score(jacusa2, max_score)
+filter_by_max_score(result, max_score)
 }
 \arguments{
-\item{jacusa2}{JACUSA2 object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()}.}
 
 \item{max_score}{Numeric value that represents the maximal score.}
 }
 \value{
-Returns JACUSA2 object with sites with score <= max_score.
+JACUSA2 result object with sites with score <= max_score.
 }
 \description{
 \code{filter_by_score} removes sites that have score <= min_score.

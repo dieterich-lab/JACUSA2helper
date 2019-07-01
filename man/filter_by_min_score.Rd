@@ -4,15 +4,15 @@
 \alias{filter_by_min_score}
 \title{Restain sites with minimal score.}
 \usage{
-filter_by_min_score(jacusa2, min_score)
+filter_by_min_score(result, min_score)
 }
 \arguments{
-\item{jacusa2}{JACUSA2 object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()}.}
 
 \item{min_score}{Numeric value that represents the minimal score.}
 }
 \value{
-Returns JACUSA2 object with sites with score >= min_score
+JACUSA2 result object with sites with score >= min_score
 }
 \description{
 \code{filter_by_score} removes sites that have score >= min_score.

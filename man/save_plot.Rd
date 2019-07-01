@@ -10,6 +10,8 @@ save_plot(filename, plot, ...)
 \item{filename}{character vector TODO}
 
 \item{plot}{object to be plotted TODO}
+
+\item{...}{parameters passed to}
 }
 \description{
 TODO

@@ -4,17 +4,19 @@
 \alias{check_max_alleles}
 \title{Check if site has the max number of allowed alleles.}
 \usage{
-check_max_alleles(jacusa2, max_alleles = 2)
+check_max_alleles(result, max_alleles = 2, use_ref_base = TRUE)
 }
 \arguments{
-\item{jacusa2}{object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()}.}
 
 \item{max_alleles}{Integer number of maximal allowed alleles per site.}
+
+\item{ref_base}{boolean indicating ref_base should used to count alleles per site (Default: TRUE).}
 }
 \value{
 TRUE|FALSE
 }
 \description{
-Return TRUE|FALSE if the JACUSA2 object has the maximum number of allowed 
+Return TRUE|FALSE if the JACUSA2 result object has the maximum number of allowed 
 alleles per site.
 }

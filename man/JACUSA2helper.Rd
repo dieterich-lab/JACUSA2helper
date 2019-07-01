@@ -6,42 +6,41 @@
 \alias{JACUSA2helper-package}
 \title{JACUSA2helper: A package for post-processing JACUSA2 result files.}
 \description{
-The JACUSA2helper package provides the following categories of important functions :
+The JACUSA2helper package provides the following categories of functions to 
+post-process result files of JACUSA2:
 \itemize{
- \item[read/write] Read and write JACUSA2.
- \item[add] This will add some key to an existing JACUSA2 object and return the modified object.
- \item[check] This will perform some checks on JACUSA2 objects
- \item[filter] This will remove sites from a JACUSA2 object with some filtering criteria.
+ \item[read/write] Read and write JACUSA2 result files.
+ \item[add] This will add some field to an existing JACUSA2 result object and return the modified object.
+ \item[check] This will perform some checks on result objects
+ \item[filter] This will remove sites from a result object with some filtering criteria.
  \item[get] TODO
 }
-to post-process result files of JACUSA2.
 }
 \details{
 The following methods are supported:
 \itemize{
- \item[call{1,2}] calling variants from one condition or condition comparisons.
+ \item[call{1,2}] calling variants from one condition or a comparison of conditions.
  \item[pileup] SAMtools like pileup
- \item[rt-arrest] identification of RNA modifications by reverse transcription arrest.
- \item[lrt-arrest] combination of varidant discovery and read arrest sites. 
+ \item[rt-arrest] identification transcription arrest events.
+ \item[lrt-arrest] combination of varidant discovery and read arrest events. 
 }
 
-One major new feature of JACUSA 2.x is the identificaion of RNA modifications by reverse
-transcription arrest.
-tidy data, dplyr
+One major new feature of JACUSA 2.x is the identificaion of read arrest events.
+TODO tidy data, dplyr
 
 When working with stranded RNA-Seq data, inverting base calls is not necessary because
 JACUSA2 will automatically invert Single End and Paired End depending on the provided 
 library type option "-P" UNSTRANDED|FR_FIRSTSTRAND|RF_SECOND_STRAND".
 
-The central data structure in JACUSA2helper is the JACUSA2 object that follows the 
+The central data structure in JACUSA2helper is the JACUSA2 result object that follows the 
 tidy data approach to feature easy interplay with dplyr and ggplot2.
-An JACUSA2 object can be created via \code{jacusa2 <- read_jacusa("jacusa2.out")} and is 
+An JACUSA2 result object can be created via \code{result <- read_result("jacusa2.out")} and is 
 currently represented as a data.frame.
 }
 \section{read/write functions}{
 
 The functions read_result, and write_result facilitate input and output operations on JACUSA2 
-output files.
+result files.
 
 See:
 \itemize{
@@ -68,7 +67,7 @@ TODO
 
 See:
 \itemize{
-  \item chech_max_alleles
+  \item check_max_alleles
 }
 }
 

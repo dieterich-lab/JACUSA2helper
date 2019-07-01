@@ -1,14 +1,13 @@
-#' Add coverage field to JACUSA2 object.
+#' Add coverage field to JACUSA2 result object.
 #'
 #' \code{add_coverage()} calculates and adds read coverage. 
 #'
-#' @param jacusa2 object created by \code{read_result()}.
-#' 
-#' @return Returns the initial object with coverage key added.
+#' @param result object created by \code{read_result()}.
+#' @return result object with coverage field added.
 #' 
 #' @export 
-add_coverage <- function(jacusa2) {
-  jacusa2$coverage <- rowSums(jacusa2[, paste0("bc_", .BASES)])
+add_coverage <- function(result) {
+  result$coverage <- rowSums(result[, paste0("bc_", .BASES)])
   
-  jacusa2
+  result
 }

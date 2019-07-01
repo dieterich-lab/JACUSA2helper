@@ -4,17 +4,17 @@
 \alias{filter_by_coverage}
 \title{Filter sites by read coverage (total, per replicates etc.).}
 \usage{
-filter_by_coverage(jacusa2, min_coverage, type = "replicate")
+filter_by_coverage(result, min_coverage, type = "replicate")
 }
 \arguments{
-\item{jacusa2}{JACUSA2 object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()}.}
 
 \item{min_coverage}{Numeric value of the minimal read coverage.}
 
 \item{type}{Strings determines how and if read depth should be aggregate before filtering.}
 }
 \value{
-Returns JACUSA2 object of sites filtered by minimal read coverage according to \code{type}.
+JACUSA2 result object with sites filtered by minimal read coverage according to \code{type}.
 }
 \description{
 \code{filter_by_coverage()} filters sites by customizable read coverage restrictions.

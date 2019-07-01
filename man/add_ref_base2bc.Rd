@@ -4,20 +4,20 @@
 \alias{add_ref_base2bc}
 \title{Add base change key}
 \usage{
-add_ref_base2bc(jacusa2, ref_field)
+add_ref_base2bc(result, ref_field)
 }
 \arguments{
-\item{jacusa2}{object created by \code{read_result()}}
+\item{result}{object created by \code{read_result()}}
 
 \item{ref_field}{String ("ref_base" for 1 condition experiment) or integer of DNA condition}
 }
 \value{
-jacusa2 object extended by base change info contained in "ref_base2bc" key
+result object extended by base change info
 }
 \description{
 \code{add_ref_base2bc()} adds base change key where the 
-reference base can be either "ref_base" key or a condition 
-to define the reference base. When comparing DNA vs. RNA 
-sequencing samples base calls idenified in DNA might differ from
+reference base can be either the character vector "ref_base" key or 
+a condition integer to define the reference base. When comparing DNA vs. RNA 
+sequencing samples, base calls idenified in DNA might differ from
 reference sequence base provided by "ref_field" key.
 }

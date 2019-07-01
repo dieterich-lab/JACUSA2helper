@@ -4,17 +4,17 @@
 \alias{filter_by_alleles}
 \title{Filter sites by the number of alleles per site.}
 \usage{
-filter_by_alleles(jacusa2, max_alleles = 2, ref_base = TRUE)
+filter_by_alleles(result, max_alleles = 2, use_ref_base = TRUE)
 }
 \arguments{
-\item{jacusa2}{object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()}.}
 
 \item{max_alleles}{integer number of maximal allowed alleles per site.}
 
 \item{ref_base}{boolean indicating ref_base should used to count alleles per site (Default: TRUE).}
 }
 \value{
-Returns JACUSA2 object with sites where max_alleles is obeyed.
+Returns JACUSA2 result object with sites where max_alleles is obeyed.
 }
 \description{
 Removes sites that have too many alleles.

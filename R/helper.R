@@ -25,6 +25,7 @@
 # convenience: description info fields
 .INFO_COLUMN <- "info"
 .FILTER_INFO_COLUMN <- "filter_info"
+.REF_BASE_COLUMN <- "ref_base"
 
 # get unique base calls from a vector of base calls
 .get_unique_base_calls <- function(bcs) {
@@ -58,24 +59,25 @@
   allele_count
 }
 
-#' Adds data description to JACUSA2 object.
+#' Adds data description to JACUSA2 result object.
 #' 
 #' This adds more description name to the data, extending condition, replicate information.
 #' 
-#' @param jacusa2 object created by \code{read_result()}.
+#' @param result object created by \code{read_result()}.
 #' @param desc Vector mapping condition to description
-#' @return Returns a JACUSA2 object with sample description added
+#' @return JACUSA2 result object with sample description added
 #' 
 #' @export
-add_data_desc <- function(jacusa2, desc) {
-  conditions <- length(unique(jacusa2$condition))
+add_data_desc <- function(result, desc) {
+  conditions <- length(unique(result$condition))
   if (length(desc) != conditions) {
     stop("Description does not match data: ", desc)
   }
   
-  jacusa2 <- jacusa2 %>% mutate(!! .DATA_DESC := paste0(desc[condition], " (", replicate, ")")) %>% 
+  result <- result %>% 
+    mutate(!! .DATA_DESC := paste0(desc[condition], " (", replicate, ")")) %>% 
     as.data.frame()
-  jacusa2[[.DATA_DESC]] <- as.factor(jacusa2[[.DATA_DESC]])
+  result[[.DATA_DESC]] <- as.factor(result[[.DATA_DESC]])
   
-  jacusa2
+  result
 }

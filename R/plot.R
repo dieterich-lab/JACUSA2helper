@@ -97,6 +97,7 @@ plot_meta_ecdf_column <- function(js2, column) {
 #'
 #' @param filename character vector TODO
 #' @param plot object to be plotted TODO
+#' @param ... parameters passed to 
 #' 
 #' @export
 save_plot <- function(filename, plot, ...) {

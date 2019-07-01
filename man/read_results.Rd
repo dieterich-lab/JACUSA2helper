@@ -7,9 +7,9 @@
 read_results(files, meta_conditions)
 }
 \arguments{
-\item{Vector}{of files}
+\item{files}{Vector of files}
 
-\item{Vector}{of character vectors that correspond to files}
+\item{meta_conditions}{Vector of character vectors that correspond to files}
 }
 \value{
 TODO

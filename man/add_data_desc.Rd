@@ -2,17 +2,17 @@
 % Please edit documentation in R/helper.R
 \name{add_data_desc}
 \alias{add_data_desc}
-\title{Adds data description to JACUSA2 object.}
+\title{Adds data description to JACUSA2 result object.}
 \usage{
-add_data_desc(jacusa2, desc)
+add_data_desc(result, desc)
 }
 \arguments{
-\item{jacusa2}{object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()}.}
 
 \item{desc}{Vector mapping condition to description}
 }
 \value{
-Returns a JACUSA2 object with sample description added
+JACUSA2 result object with sample description added
 }
 \description{
 This adds more description name to the data, extending condition, replicate information.
