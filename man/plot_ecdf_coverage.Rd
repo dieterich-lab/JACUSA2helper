@@ -4,10 +4,10 @@
 \alias{plot_ecdf_coverage}
 \title{Plot cumulative read coverage}
 \usage{
-plot_ecdf_coverage(j2)
+plot_ecdf_coverage(result)
 }
 \arguments{
-\item{j2}{object create by \code{read_result()}}
+\item{result}{object create by \code{read_result()}}
 }
 \value{
 plot object

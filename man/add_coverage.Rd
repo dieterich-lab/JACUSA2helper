@@ -7,11 +7,11 @@
 add_coverage(result)
 }
 \arguments{
-\item{result}{object created by \code{read_result()}.}
+\item{result}{created by \code{read_result*()}}
 }
 \value{
 result object with coverage field added.
 }
 \description{
-\code{add_coverage()} calculates and adds read coverage.
+Calculates and adds read coverage.
 }

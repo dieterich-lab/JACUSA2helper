@@ -11,5 +11,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 6.1.1
 LazyData: true
-Suggests: testthat
-Imports: aod, data.table, tidyr, dplyr, magrittr, ggplot2
+Suggests: 
+    testthat (>= 2.1.0)
+Imports: aod, data.table, tidyr, dplyr, rlang, magrittr, ggplot2, GGally

@@ -2,35 +2,42 @@
 #' 
 #' TODO
 #' 
-#' @param j2 object create by \code{read_result()}
+#' @param result object create by \code{read_result()}
 #' @return plot object
 #'
 #' @export
-plot_ecdf_coverage <- function(j2) {
-  if (is.null(j2$coverage)) {
-    j2 <- add_coverage(j2)
+plot_ecdf_coverage <- function(result) {
+  if (is.null(result[["coverage"]])) {
+    result <- add_coverage(result)
   }
 
-  .plot_ecdf_column(j2, "coverage") +
+  plot_ecdf_column(result, "coverage") +
     ggplot2::xlab("Read coverage")
-  
 }
 
-# helper for plotting arbitrary columns from JACUSA2 object and 
-# stratify by condition and replicate
-.plot_ecdf_column <- function(j2, column) {
-  conditions <- length(unique(j2$condition))
-  replicates <- length(unique(j2$replicate))
+#' Plot TODO
+#' 
+#' TODO
+#' 
+#' @param result object \code{read_results()}
+#' @param column to be used for plotting
+#' @return Plot TODO
+#'
+#' @export
+plot_ecdf_column <- function(result, column) {
+  conditions <- length(unique(result$condition))
+  replicates <- length(unique(result$replicate))
   
-  if (is.null(j2[[.DATA_DESC]])) {
-    j2[[.DATA_DESC]] <- paste0("Cond. ", j2$condition, "  Rep. ", j2$replicate)
+  if (is.null(result[[.DATA_DESC]])) {
+    result <- add_data_desc(paste0("Cond.", 1:conditions))
+    # result[[.DATA_DESC]] <- paste0("Cond. ", result$condition, "  Rep. ", result$replicate)
   }
   
   legend.title <- "Sample"
   # add description
   tmp_df <- data.frame(
-    sample = as.factor(paste0(j2$condition, j2$replicate)), 
-    data_desc = j2$data_desc,
+    sample = as.factor(paste0(result$condition, result$replicate)), 
+    data_desc = result$data_desc,
     stringsAsFactors = FALSE
   )
   
@@ -38,7 +45,7 @@ plot_ecdf_coverage <- function(j2) {
   labels <- dplyr::distinct(tmp_df, sample, data_desc)$data_desc
   
   p <- ggplot2::ggplot(
-    j2, 
+    result, 
     ggplot2::aes_(
       x = as.name(column), 
       colour = tmp_df$sample, 
@@ -65,41 +72,78 @@ plot_ecdf_coverage <- function(j2) {
 #' 
 #' TODO
 #' 
-#' @param js2 object \code{read_results()}
-#' @param column to be used for plotting
+#' @param result object \code{read_results()}
+#' @param ref_field TODO
+#' @param ref_base2bc TODO
 #' @return Plot TODO
 #'
 #' @export
-plot_meta_ecdf_column <- function(js2, column) {
-  legend.title <- "Condition"
+plot_base_ref2bc_ratio_matrix <- function(result, ref_field, ref_base2bc = c()) {
+  if (is.null(result[["ref_base2bc_ratio"]])) {
+    result <- add_ref_base2bc_ratio(result, ref_field)
+  }
+  # add default data description
+  if (is.null(result[[.DATA_DESC]])) {
+    result <- add_data_desc(result)
+  }
+  data_desc <- unique(result$data_desc)
+  
+  result <- dplyr::select(
+    result, 
+    contig, start, end, strand, 
+    !!.DATA_DESC, 
+    ref_base2bc, ref_base2bc_ratio
+  )
 
-  p <- ggplot2::ggplot(
-    js2, 
-    aes_(
-      x = as.name(column), 
-      colour = quote(meta_condition), 
-      linetype = quote(meta_condition)
-    )) +
-    ggplot2::xlab(column) +
-    ggplot2::ylab("Density") +
-    ggplot2::stat_ecdf(geom = "step") + 
-    ggplot2::guides(
-      colour = ggplot2::guide_legend(legend.title), 
-      linetype = ggplot2::guide_legend(legend.title)
-    )
+  result <- result %>% group_by_site() %>% 
+    dplyr::mutate(ref_base2bc = .merge_ref_base2bc(ref_base2bc)) %>%
+    dplyr::ungroup()
+  df <- tidyr::spread(result, !!.DATA_DESC, ref_base2bc_ratio)
+  
+  if (length(ref_base2bc) > 0) {
+    df$ref_base2bc[! df$ref_base2bc %in% ref_base2bc] <- "other"
+  }
+  
+  i <- which(colnames(df) %in% data_desc)
+  #df[, i] <- log10(df[, i] + 0.01)
+  p <- GGally::ggpairs(df, columns = i, mapping = ggplot2::aes(colour = ref_base2bc, alpha = 1/10)) +
+    ggplot2::xlab("base change ratio") + ggplot2::ylab("base change ratio")
   
   p
 }
 
-#' Save plot to disc
-#'
-#' TODO
-#'
-#' @param filename character vector TODO
-#' @param plot object to be plotted TODO
-#' @param ... parameters passed to 
+#' Plot TODO
 #' 
+#' TODO
+#' 
+#' @param result object \code{read_results()}
+#' @param ref_field TODO
+#' @param ref_base2bc TODO
+#' @return Plot TODO
+#'
 #' @export
-save_plot <- function(filename, plot, ...) {
-  ggplot2::ggsave(filename, plot, ...)
+plot_ref_base2bc <- function(result, ref_field, ref_base2bc = c()) {
+  if (is.null(result[["ref_base2bc"]])) {
+    result <- add_ref_base2bc(result, ref_field)
+  }
+
+  result <- dplyr::select(
+    result, 
+    contig, start, end, strand, 
+    ref_base2bc
+  )
+  
+  result <- result %>% group_by_site() %>% 
+    dplyr::mutate(ref_base2bc = .merge_ref_base2bc(ref_base2bc)) %>%
+    dplyr::ungroup()
+
+  if (length(ref_base2bc) > 0) {
+    result$ref_base2bc[! result$ref_base2bc %in% ref_base2bc] <- "other"
+  }
+  result <- result %>% dplyr::distinct(contig, start, end, strand, ref_base2bc)
+  p <- ggplot2::ggplot(result, ggplot2::aes(x = ref_base2bc, fill = ref_base2bc)) + ggplot2::geom_bar() +
+    ggplot2::xlab("Base change") + 
+    ggplot2::scale_fill_discrete(name = "Base change")
+  
+  p
 }

@@ -4,7 +4,7 @@ test_that("add_ref_base2bc fails on unknown ref_field", {
   expect_error(
     add_ref_base2bc(
       data.frame(
-        id = c(1, 1),
+        contig = c(1, 1), start = c(1, 1), end = c(2, 2), strand = c("+", "+"),
         bc = c("G", "G"),
         condition = c(1, 1), 
         ref_base = c("A", "A"),
@@ -20,7 +20,7 @@ test_that("add_ref_base2bc fails on unknown condition", {
   expect_error(
     add_ref_base2bc(
       data.frame(
-        id = c(1, 1),
+        contig = c(1, 1), start = c(1, 1), end = c(2, 2), strand = c("+", "+"),
         bc = c("G", "G"),
         condition = c(1, 1), 
         ref_base = c("A", "A"),
@@ -35,9 +35,9 @@ test_that("add_ref_base2bc fails on > 2 alleles", {
   expect_error(
     add_ref_base2bc(
       data.frame(
-        condition = c(1, 1), 
-        id = c(1, 1), 
+        contig = c(1, 1), start = c(1, 1), end = c(2, 2), strand = c("+", "+"),
         bc = c("AC", "G"),
+        condition = c(1, 1), 
         ref_base = c("A", "A"),
         stringsAsFactors = FALSE
       ), 1
@@ -49,7 +49,7 @@ test_that("add_ref_base2bc fails on > 2 alleles", {
 test_that("add_ref_base2bc fails on 2 conditions when using ref_base", {
   result <- data.frame(
     condition = c(1, 1, 2, 2), 
-    id = c(1, 1, 1, 1), 
+    contig = c(1, 1, 1, 1), start = c(1, 1, 1, 1), end = c(2, 2, 2, 2), strand = c("+", "+", "+", "+"),
     bc = c("A", "G", "T", "T"),
     ref_base = c("A", "A", "C", "C"),
     stringsAsFactors = FALSE
@@ -65,9 +65,9 @@ test_that("add_ref_base2bc fails on 2 conditions when using ref_base", {
 
 test_that("add_ref_base2bc works as expected on ref_base", {
   result <- data.frame(
-    condition = c(1, 1), 
-    id = c(1, 1), 
+    contig = c(1, 1), start = c(1, 1), end = c(2, 2), strand = c("+", "+"),
     bc = c("A", "G"),
+    condition = c(1, 1), 
     ref_base = c("A", "A"),
     stringsAsFactors = FALSE
   )
@@ -82,18 +82,18 @@ test_that("add_ref_base2bc works as expected on ref_base", {
 
 test_that("add_ref_base2bc works as expected of condition", {
   result <- data.frame(
+    contig = c(1, 1), start = c(1, 1), end = c(2, 2), strand = c("+", "+"),
     condition = c(1, 1, 2, 2), 
-    id = c(1, 1, 1, 1), 
     bc = c("A", "G", "A", "A"),
     ref_base = c("A", "A", "A", "A"),
     stringsAsFactors = FALSE
   )
   expected <- result
   expected$ref_base2bc <- c(
-    .BC_CHANGE_NO_CHANGE, 
+    BC_CHANGE_NO_CHANGE, 
     "A->G", 
-    .BC_CHANGE_NO_CHANGE, 
-    .BC_CHANGE_NO_CHANGE
+    BC_CHANGE_NO_CHANGE, 
+    BC_CHANGE_NO_CHANGE
   ) 
 
   expect_equal(

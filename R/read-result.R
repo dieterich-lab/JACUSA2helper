@@ -23,19 +23,19 @@ read_result <- function(file, showProgress = TRUE) {
     }
     # count header lines to ignore
     skip_lines <- skip_lines + 1
-
+    
     if (length(grep("^#contig", line)) > 0) {
       # try to guess result/method by header line
-      type <- .guess_file_type(line)
+      type <- guess_file_type(line)
       # type will be vali or .guess_file_type throw error
-
+      
       # parse and store header
       # fix header: #contig -> contig
       header_names <- sub("^#", "", line);
       header_names <- unlist(strsplit(header_names, "\t"))
       
       # guess number of conditions  
-      conditions <- .guess_conditions(type, header_names)
+      conditions <- guess_conditions(type, header_names)
     }
   }
   # finished pre-processing
@@ -45,7 +45,7 @@ read_result <- function(file, showProgress = TRUE) {
   if (is.null(header_names)) {
     stop("No header line for file: ", file)
   }
-
+  
   # check that conditions could be guessed
   if (conditions < 1) {
     stop("Conditions could not be guessed for file: ", file)
@@ -58,42 +58,39 @@ read_result <- function(file, showProgress = TRUE) {
                             header = FALSE, 
                             showProgress = showProgress)  
   colnames(data) <- header_names
-
-  # create combined position id from genomic coordinates
-  data$id <- dplyr::group_indices(
-    data, contig, start, end, strand
-  )
-
+  
   # create result depending on determined method type 
-  result <- .create_result(type, conditions, data)
+  result <- create_result(type, conditions, data)
   
   result
 }
 
 # Create result for type and conditions from data 
-.create_result <- function(type, conditions, data) {
-  info <- data %>% dplyr::select(id, info)
+create_result <- function(type, conditions, data) {
+  info <- data %>% dplyr::select(contig, start, end, strand, info)
   data$info <- NULL
   result <- NULL
-  if(type == .CALL_PILEUP_METHOD_TYPE) {
-    result <- .create_bases(data, conditions, .CALL_PILEUP_COLUMN)
-  } else if (type == .RT_ARREST_METHOD_TYPE) {
-    result <- .create_bases(data, conditions, c(.RT_ARREST_COLUMN, .RT_THROUGH_COLUMN))
-  } else if (type == .LRT_ARREST_METHOD_TYPE) {
-    result <- .create_bases(data, conditions, c(.LRT_ARREST_COLUMN, .LRT_THROUGH_COLUMN))
+  if(type == CALL_PILEUP_METHOD_TYPE) {
+    result <- create_bases(data, conditions, CALL_PILEUP_COLUMN)
+  } else if (type == RT_ARREST_METHOD_TYPE) {
+    result <- create_bases(data, conditions, c(RT_ARREST_COLUMN, RT_THROUGH_COLUMN))
+    result[["primary"]] <- TRUE
+  } else if (type == LRT_ARREST_METHOD_TYPE) {
+    result <- create_bases(data, conditions, c(LRT_ARREST_COLUMN, LRT_THROUGH_COLUMN))
+    result[["primary"]] <- TRUE
   } else {
     stop("Unknown type: ", type)
   }
-  result$type <- type
+  attributes(result) <- c(attributes(result), jacusa_type = type)
 
   # add base call
-  bc <- apply(result[, paste0("bc_", .BASES)], 1, function(x) { 
-    paste0(.BASES[x > 0], collapse = "")
+  bc <- apply(result[, paste0("bc_", BASES)], 1, function(x) { 
+    paste0(BASES[x > 0], collapse = "")
   })
   # add allele count
   result$allele_count <- nchar(bc)
   result$bc <- bc
-
+  
   # only parse deletions, if there are any
   # FIXME id different
   #if (any(grep("^deletion", info$info))) {
@@ -104,23 +101,23 @@ read_result <- function(file, showProgress = TRUE) {
   #    all.x = TRUE
   #  )
   #}
-
+  
   # make factors
   result$condition <- as.factor(result$condition)
   result$replicate <- as.factor(result$replicate)
   
-  result
+  dplyr::as_tibble(result)
 }
 
 # helper function to extract deletion info(s)
-.process_deletion <- function(conditions, info) {
+process_deletion <- function(conditions, info) {
   df <- info %>% 
-    tidyr::separate_rows(info, .INFO_COLUMN, sep = ";") %>% 
+    tidyr::separate_rows(info, INFO_COLUMN, sep = ";") %>% 
     tidyr::separate(
-      col = !! .INFO_COLUMN, 
+      col = !! INFO_COLUMN, 
       into = c("key", "value"), 
       sep = "=", fill = "right") %>% 
-    dplyr::filter(key != .EMPTY) %>%
+    dplyr::filter(key != EMPTY) %>%
     tidyr::spread(key, value) %>% 
     tidyr::gather(
       key = "deletion_sample", 
@@ -132,23 +129,23 @@ read_result <- function(file, showProgress = TRUE) {
       regex = paste0("^deletions([0-9]{", nchar(conditions), "})([0-9]+)"), 
       remove = TRUE, convert = TRUE) %>%
     tidyr::separate(deletion_counts, paste0("deletion_", c("reads", "coverage")), 
-                         sep = ",", remove = TRUE, convert = TRUE)
-
+                    sep = ",", remove = TRUE, convert = TRUE)
+  
   df$deletion_pvalue <- as.numeric(df$deletion_pvalue)
   df$deletion_score <- as.numeric(df$deletion_score)
-
+  
   df
 }
 
 # helper functions to create data container to hold data
-.create_bases <- function(df, conditions, column) {
+create_bases <- function(df, conditions, column) {
   # convert wide to long
   r <- tidyr::gather(
     df, 
     sample, bases, 
     lapply(column, dplyr::starts_with) %>% unlist()
   )
-
+  
   # extract condition and replicate
   r <- tidyr::extract(r, sample, c("base_type", "condition", "replicate"), 
                       regex = paste0("^(", 
@@ -157,22 +154,24 @@ read_result <- function(file, showProgress = TRUE) {
                                      nchar(conditions), 
                                      "})([0-9]+)"), 
                       remove = TRUE, convert = TRUE)
-  i <- r$bases == .EMPTY
-  r$bases[i] <- paste0(rep(0, length(JACUSA2helper:::.BASES)), collapse = ",")
+  i <- r$bases == EMPTY
+  r$bases[i] <- paste0(rep(0, length(BASES)), collapse = ",")
   # extract base call columns from "," encoded strings
   # convert string: "0,10,2,0" to new columns: bc_A = 0, bc_C = 10, bc_G = 2, bc_T = 0
-  r <- tidyr::separate(r, bases, paste0("bc_", .BASES), 
+  r <- tidyr::separate(r, bases, paste0("bc_", BASES), 
                        sep = ",", remove = TRUE, convert = TRUE)
-
+  
   if (length(unique(r$base_type)) == 1) {
-    r$base_type <- NULL
+    r$base_type <- "total"
   } else {
-    r <- r %>% dplyr::group_by(id, condition, replicate) %>%
+    r <- r %>% 
+      group_by_site("arrest_pos", condition, replicate) %>%
       dplyr::mutate(base_type = "total", bc_A = sum(bc_A), bc_C = sum(bc_C), bc_G = sum(bc_G), bc_T = sum(bc_T)) %>%
+      dplyr::distinct() %>%
       dplyr::ungroup() %>%
       rbind(r)
   }
-
+  
   r
 }
 
@@ -192,17 +191,13 @@ read_results <- function(files, meta_conditions) {
   l <- mapply(function(file, meta_condition) {
     result <- read_result(file)
     result$meta_condition <- meta_condition
-    result$id
+    
     result
   }, files, meta_conditions)
-
+  
   # combine read files
   results <- dplyr::bind_rows(l)
   results$meta_condition <- as.factor(results$meta_condition)
-  # use meta_condition to re-index
-  results$id <- dplyr::group_indices(
-    results, meta_condition, contig, start, end, strand
-  )
   
   results
 }
