@@ -18,9 +18,9 @@ write_bedGraph(file, contig, start, end, value)
 \item{value}{Vector of characters or numericals the reference value(s)}
 }
 \description{
-\code{write_bedGraph()} Writes a bedGraph conform file with coordinates
+Writes a bedGraph conform file with coordinates
 defined by vectors: "contig", "start", and "end". According to:
 https://genome.ucsc.edu/goldenPath/help/bedgraph.html
-"start" and "end" are zero index and half opened. The caller needs to make sure 
+"start" and "end" are zero indexed and half opened. The caller needs to make sure 
 that this is fullfilled.
 }

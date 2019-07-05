@@ -1,15 +1,15 @@
 context("filter_robust_variants")
 
-test_that("filter_robust_variants fails on != 2 conditions", {
-  expect_error(
-    filter_by_robust_variants(list(condition = c(1, 2, 3))),
-    "Only 2 conditions are supported!"
-  )
-  expect_error(
-    filter_by_robust_variants(list(condition = c(1))),
-    "Only 2 conditions are supported!"
-  )
-})
+#test_that("filter_robust_variants fails on != 2 conditions", {
+#  expect_error(
+#    filter_by_robust_variants(list(condition = c(1, 2, 3))),
+#    "Only 2 conditions are supported!"
+#  )
+#  expect_error(
+#    filter_by_robust_variants(list(condition = c(1))),
+#    "Only 2 conditions are supported!"
+#  )
+#})
 
 test_that("filter_robust_variants on data with > 2 alleles per site", {
   msg <- "Data contains sites with >2 alleles. Please remove those sites."

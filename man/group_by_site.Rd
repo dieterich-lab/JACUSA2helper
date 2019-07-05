@@ -2,19 +2,19 @@
 % Please edit documentation in R/group-by-site.R
 \name{group_by_site}
 \alias{group_by_site}
-\title{TODO}
+\title{Group JACUSA2 result object by coordinates}
 \usage{
 group_by_site(result, opt_vars = c(), ...)
 }
 \arguments{
 \item{result}{object created by \code{read_result(s)()}.}
 
-\item{opt_vars}{TODO}
+\item{opt_vars}{optional variables to group by (need to be present)}
 
-\item{...}{TODO}
+\item{...}{forward options to dplyr::group_by}
 }
 \value{
-TODO
+grouped JACUSA2 result object
 }
 \description{
 TODO

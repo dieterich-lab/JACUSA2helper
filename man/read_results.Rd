@@ -7,12 +7,12 @@
 read_results(files, meta_conditions)
 }
 \arguments{
-\item{files}{Vector of files}
+\item{files}{vector of files}
 
-\item{meta_conditions}{Vector of character vectors that correspond to files}
+\item{meta_conditions}{vector of string describing each}
 }
 \value{
-TODO
+combined JACUSA2 result object
 }
 \description{
 TODO

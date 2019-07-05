@@ -1,14 +1,14 @@
-#' Add base change key
+#' Add base change field to JACUSA2 result object
 #' 
-#' Adds base change key where the reference base can be either 
-#' the character vector "ref_base" key or a condition integer to define the reference base. 
+#' Adds base change field. The reference base can be defined either by
+#' the character vector field "ref_base" or a condition integer. 
 #' When comparing DNA vs. RNA sequencing samples, base calls idenified in DNA might differ from
-#' reference sequence base provided by "ref_field" key.
+#' reference sequence base provided by "ref_base" key.
 #' 
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()}
-#' @param ref_field String ("ref_base" for 1 condition experiment) or integer of DNA condition 
-#' @return result object extended by base change info
+#' @param ref_field String ("ref_base" for 1 condition experiment) or integer of condition to define reference base
+#' @return result object extended by base change
 #' 
 #' @export
 add_ref_base2bc <- function(result, ref_field) {
@@ -19,7 +19,7 @@ add_ref_base2bc <- function(result, ref_field) {
   if (ref_field == "ref_base") {
     # use reference base "from FASTA reference"
     result <- result %>%
-      group_by_site() %>%
+      group_by_site("meta_condition") %>%
       dplyr::mutate(ref_base2bc = get_bc_change(ref_base, bc))
   } else if (is.numeric(ref_field) & ref_field %in% result$condition) {
     # use specific condition to derive reference base

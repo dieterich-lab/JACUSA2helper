@@ -28,9 +28,9 @@ plot_ecdf_column <- function(result, column) {
   conditions <- length(unique(result$condition))
   replicates <- length(unique(result$replicate))
   
-  if (is.null(result[[.DATA_DESC]])) {
+  if (is.null(result[[DATA_DESC]])) {
     result <- add_data_desc(paste0("Cond.", 1:conditions))
-    # result[[.DATA_DESC]] <- paste0("Cond. ", result$condition, "  Rep. ", result$replicate)
+    # result[[DATA_DESC]] <- paste0("Cond. ", result$condition, "  Rep. ", result$replicate)
   }
   
   legend.title <- "Sample"
@@ -83,7 +83,7 @@ plot_base_ref2bc_ratio_matrix <- function(result, ref_field, ref_base2bc = c()) 
     result <- add_ref_base2bc_ratio(result, ref_field)
   }
   # add default data description
-  if (is.null(result[[.DATA_DESC]])) {
+  if (is.null(result[[DATA_DESC]])) {
     result <- add_data_desc(result)
   }
   data_desc <- unique(result$data_desc)
@@ -91,14 +91,14 @@ plot_base_ref2bc_ratio_matrix <- function(result, ref_field, ref_base2bc = c()) 
   result <- dplyr::select(
     result, 
     contig, start, end, strand, 
-    !!.DATA_DESC, 
+    !!DATA_DESC, 
     ref_base2bc, ref_base2bc_ratio
   )
 
   result <- result %>% group_by_site() %>% 
-    dplyr::mutate(ref_base2bc = .merge_ref_base2bc(ref_base2bc)) %>%
+    dplyr::mutate(ref_base2bc = merge_ref_base2bc(ref_base2bc)) %>%
     dplyr::ungroup()
-  df <- tidyr::spread(result, !!.DATA_DESC, ref_base2bc_ratio)
+  df <- tidyr::spread(result, !!DATA_DESC, ref_base2bc_ratio)
   
   if (length(ref_base2bc) > 0) {
     df$ref_base2bc[! df$ref_base2bc %in% ref_base2bc] <- "other"
@@ -134,7 +134,7 @@ plot_ref_base2bc <- function(result, ref_field, ref_base2bc = c()) {
   )
   
   result <- result %>% group_by_site() %>% 
-    dplyr::mutate(ref_base2bc = .merge_ref_base2bc(ref_base2bc)) %>%
+    dplyr::mutate(ref_base2bc = merge_ref_base2bc(ref_base2bc)) %>%
     dplyr::ungroup()
 
   if (length(ref_base2bc) > 0) {

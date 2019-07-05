@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter-by-alleles.R
 \name{filter_by_alleles}
 \alias{filter_by_alleles}
-\title{Filter sites by the number of alleles per site.}
+\title{Filter sites by the number of alleles per site}
 \usage{
 filter_by_alleles(result, max_alleles = 2, use_ref_base = TRUE)
 }
@@ -14,8 +14,8 @@ filter_by_alleles(result, max_alleles = 2, use_ref_base = TRUE)
 \item{use_ref_base}{boolean indicating ref_base should used to count alleles per site (Default: TRUE).}
 }
 \value{
-Returns JACUSA2 result object with sites where max_alleles is obeyed.
+JACUSA2 result object with sites where max_alleles is obeyed.
 }
 \description{
-Removes sites that have too many alleles.
+Removes sites that have too many alleles
 }

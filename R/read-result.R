@@ -81,8 +81,8 @@ create_result <- function(type, conditions, data) {
   } else {
     stop("Unknown type: ", type)
   }
-  attributes(result) <- c(attributes(result), jacusa_type = type)
-
+  attributes(result)[[ATTRIBUTE_TYPE]] <- type
+  
   # add base call
   bc <- apply(result[, paste0("bc_", BASES)], 1, function(x) { 
     paste0(BASES[x > 0], collapse = "")
@@ -92,15 +92,14 @@ create_result <- function(type, conditions, data) {
   result$bc <- bc
   
   # only parse deletions, if there are any
-  # FIXME id different
-  #if (any(grep("^deletion", info$info))) {
-  #    result <- merge(
-  #    result, 
-  #    .process_deletion(conditions, info), 
-  #    by = c("id", "condition", "replicate"),
-  #    all.x = TRUE
-  #  )
-  #}
+  if (any(grep("^deletion", info$info))) {
+      result <- merge(
+      result, 
+      process_deletion(conditions, info), 
+      by = c("contig", "start", "end", "strand", "condition", "replicate"),
+      all.x = TRUE
+    )
+  }
   
   # make factors
   result$condition <- as.factor(result$condition)
@@ -179,19 +178,28 @@ create_bases <- function(df, conditions, column) {
 #' 
 #' TODO
 #' 
-#' @param files Vector of files
-#' @param meta_conditions Vector of character vectors that correspond to files
-#' @return TODO
+#' @param files vector of files
+#' @param meta_conditions vector of string describing each
+#' @return combined JACUSA2 result object
 #'
 #' @export
 read_results <- function(files, meta_conditions) {
   stopifnot(length(files) == length(meta_conditions))
-  
+
+  types <- SUPPORTED_METHOD_TYPES
   # read all files  
   l <- mapply(function(file, meta_condition) {
     result <- read_result(file)
-    result$meta_condition <- meta_condition
-    
+    result$meta_condition <- as.factor(meta_condition)
+
+    # this makes sure that all files have the same JACUSA2 type
+    attr <- attributes(result)
+    type <- attr[[ATTRIBUTE_TYPE]]
+    if (! type %in% types) {
+      stop("All files must have the same type. File: ", file, " has type: ", type)
+    }
+    types <- type
+
     result
   }, files, meta_conditions)
   
@@ -200,4 +208,23 @@ read_results <- function(files, meta_conditions) {
   results$meta_condition <- as.factor(results$meta_condition)
   
   results
+}
+
+#' @noRd
+check_jacusa_method <- function(result, types = SUPPORTED_METHOD_TYPES) {
+  if (is.null(attributes(result))) {
+    stop("result does not have any attributes")
+  }
+  
+  attr <- attributes(result)
+  if (! ATTRIBUTE_TYPE %in% names(attr)) {
+    stop("result has not been created by read_result or is of unknown type")
+  }
+  
+  type <- attr[[ATTRIBUTE_TYPE]]
+  if (! type %in% types) {
+    stop("result has an unsupported type: ", type)
+  }
+  
+  TRUE
 }

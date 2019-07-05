@@ -7,9 +7,9 @@
 get_bc_change_ratio(ref_base, bc_matrix)
 }
 \arguments{
-\item{ref_base}{Vector of reference bases.}
+\item{ref_base}{vector of reference bases.}
 
-\item{bc_matrix}{Observed base call matrix.}
+\item{bc_matrix}{matrix of observed base calls.}
 }
 \value{
 Returns vector of base call change ratios.

@@ -2,15 +2,15 @@
 % Please edit documentation in R/add-coverage.R
 \name{add_coverage}
 \alias{add_coverage}
-\title{Add coverage field to JACUSA2 result object.}
+\title{Add coverage to JACUSA2 result object}
 \usage{
 add_coverage(result)
 }
 \arguments{
-\item{result}{created by \code{read_result*()}}
+\item{result}{created by \code{read_result()}}
 }
 \value{
-result object with coverage field added.
+result object with coverage added
 }
 \description{
 Calculates and adds read coverage.

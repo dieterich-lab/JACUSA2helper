@@ -46,6 +46,7 @@
 #' See:
 #' \itemize{
 #'   \item add_coverage
+#'   \item add_arrest_ratio
 #'   \item add_ref_base2bc
 #'   \item add_ref_base2bc_ratio
 #' }
@@ -66,8 +67,8 @@
 #' \itemize{
 #'	 \item filter_by_allele_count
 #'   \item filter_by_coverage
-#'   \item filter_robust_variants
 #'   \item filter_by_min_score
+#'   \item filter_robust_variants
 #'   \item filter_by_max_score
 #' }
 #'

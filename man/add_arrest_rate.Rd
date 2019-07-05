@@ -2,12 +2,12 @@
 % Please edit documentation in R/add-arrest-rate.R
 \name{add_arrest_rate}
 \alias{add_arrest_rate}
-\title{Add arrest rate field to JACUSA2 result object}
+\title{Add arrest rate to JACUSA2 result object}
 \usage{
 add_arrest_rate(result, pseudo_count = 0)
 }
 \arguments{
-\item{result}{created by \code{read_result*()}}
+\item{result}{created by \code{read_result())}}
 
 \item{pseudo_count}{numeric to be added to arrest and read through counts}
 }
@@ -15,5 +15,6 @@ add_arrest_rate(result, pseudo_count = 0)
 result object with arrest rate added
 }
 \description{
-This calculates the arrest rate for a JACUSA2 result object and a
+This calculates and adds the arrest rate for a JACUSA2 result object.
+Make sure the result object is
 }

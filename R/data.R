@@ -1,9 +1,9 @@
-#' Subset of RDDs detected by JACUSA (1.x and 2.x) in HEK-293 untreated cells
+#' Subset of RDDs detected by JACUSA2 in HEK-293 untreated cells
 #'
-#' A dataset containing a subset of RNA DNA differences (RDDs) identified by JACUSA (1.x and 2.x) in untreated HEK-293 cells. 
+#' A dataset containing a subset of RNA DNA differences (RDDs) identified by JACUSA2 in untreated HEK-293 cells. 
 #' The fields are as follows:
 #'
-#' @format a list with 11 elements where each has 10,000 elements on its on.
+#' @format a tibble with 12 elements where each has 10,000 elements on its on.
 #' \itemize{
 #'		\item contig: contig
 #'		\item start: position of variant (>=0)
@@ -20,12 +20,12 @@
 #' }
 "rdd"
 
-#' Subset of RRDs detected by JACUSA (1.x and 2.x) in HEK-293 ADAR KD and untreated cells
+#' Subset of RRDs detected by JACUSA2 in HEK-293 ADAR KD and untreated cells
 #'
-#' A dataset containing a subset of RNA RNA differences (RRDs) identified by JACUSA (1.x and 2.x) in ADAR KD and untreated HEK-293 cells. 
+#' A dataset containing a subset of RNA RNA differences (RRDs) identified by JACUSA2 in ADAR KD and untreated HEK-293 cells. 
 #' The fields are as follows:
 #'
-#' @format a list with 11 elements where each has 10,000 elements on its on.
+#' @format a tibble with 13 elements where each has 10,000 elements on its on.
 #' \itemize{
 #'		\item contig: contig
 #'		\item start: position of variant (>=0)
@@ -48,13 +48,13 @@
 ##' TODO
 ##' The fields are as follows:
 ##'
-##' @format a list with 11 elements where each has 10,000 elements on its on.
+##' @format a tibble with 13 elements where each has 10,000 elements on its on.
 ##' \itemize{
 ##'  	\item contig: contig
 ##'		\item start: position of variant (>=0)
 ##'		\item end: start + 1 (conform to BED file format)
 ##'		\item name: arbitrary (conform to BED file format)
-##'		\item score: pvalue TODO
+##'		\item score: pvalue can be found in the info field:TODO
 ##'		\item strand: "+", "-", "." (no strand available)
 ##'		\item bases11: Base count (A, C, G, T) for condition 1 and replicate 1 
 ##'  	\item reads11: Read info count (read start, through, end) for condition 1 and replicate 1

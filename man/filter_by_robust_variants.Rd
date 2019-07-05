@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter-robust-varianst.R
 \name{filter_by_robust_variants}
 \alias{filter_by_robust_variants}
-\title{Retains sites that contain the variant base in all replicates in at least one condition.}
+\title{Retains sites that contain a variant base in all replicates in at least one condition}
 \usage{
 filter_by_robust_variants(result)
 }

@@ -17,5 +17,5 @@ filter_by_max_score(result, max_score, field = "score")
 JACUSA2 result object with sites with score <= max_score.
 }
 \description{
-\code{filter_by_score} removes sites that have score <= min_score.
+Retains sites that have score <= max_score.
 }

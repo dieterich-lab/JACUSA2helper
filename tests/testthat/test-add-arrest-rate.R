@@ -14,6 +14,7 @@ test_that("add_arrest_rate computes correct arrest rate", {
     coverage = c(1, 9, 10, 5, 5, 10),
     stringsAsFactors = FALSE
   )
+  attributes(result)[[ATTRIBUTE_TYPE]] <- RT_ARREST_METHOD_TYPE
   
   expected <- result
   expected[["arrest_rate"]] <- rep(c(1 / 10, 5 / 10), each = 3)

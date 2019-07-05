@@ -8,14 +8,14 @@ merge_ref_base2bc(ref_base2bc, sep = BC_CHANGE_SEP,
   no_change = BC_CHANGE_NO_CHANGE)
 }
 \arguments{
-\item{ref_base2bc}{TODO}
+\item{ref_base2bc}{vector of base changes}
 
-\item{sep}{character vector TODO}
+\item{sep}{character vector that separates base changes}
 
-\item{no_change}{character vector TODO}
+\item{no_change}{character vector when there is no base change}
 }
 \value{
-vector TODO
+character vector of merged base changes
 }
 \description{
 TODO

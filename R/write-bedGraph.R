@@ -1,9 +1,9 @@
 #' Write vector of values as bedGraph file
 #'
-#' \code{write_bedGraph()} Writes a bedGraph conform file with coordinates
+#' Writes a bedGraph conform file with coordinates
 #' defined by vectors: "contig", "start", and "end". According to:
 #' https://genome.ucsc.edu/goldenPath/help/bedgraph.html
-#' "start" and "end" are zero index and half opened. The caller needs to make sure 
+#' "start" and "end" are zero indexed and half opened. The caller needs to make sure 
 #' that this is fullfilled.
 #'
 #' @param file String represents the filename of the BED graph file.
@@ -25,7 +25,7 @@ write_bedGraph <- function(file, contig, start, end, value) {
     value = value, 
     stringsAsFactors = FALSE
   )
-  write.table(d, file, 
+  utils::write.table(d, file, 
               quote = FALSE, 
               sep = "\t", 
               row.names = FALSE, col.names = FALSE

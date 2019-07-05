@@ -7,11 +7,11 @@
 get_primary_sites(result)
 }
 \arguments{
-\item{result}{object create by \code{read_result()}}
+\item{result}{object created by \code{read_result()}}
 }
 \value{
-TODO
+intger the numner of primary sites
 }
 \description{
-TODO
+Retrieves the number of primary sites - unsplit and unique coordinates (TODO).
 }

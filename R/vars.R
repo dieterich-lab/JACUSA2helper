@@ -1,3 +1,5 @@
+ATTRIBUTE_TYPE <- "jacusa_method_type"
+
 # convenience: All possible bases
 BASES <- c("A", "C", "G", "T")
 EMPTY <- "*"
@@ -13,6 +15,12 @@ UNKNOWN_METHOD_TYPE <- "unknown"
 CALL_PILEUP_METHOD_TYPE <- "call-pileup"
 RT_ARREST_METHOD_TYPE <- "rt-arrest"
 LRT_ARREST_METHOD_TYPE <- "lrt-arrest"
+#
+SUPPORTED_METHOD_TYPES <- c(
+  CALL_PILEUP_METHOD_TYPE, 
+  RT_ARREST_METHOD_TYPE, 
+  LRT_ARREST_METHOD_TYPE
+)
 
 # convenience: description data fields
 CALL_PILEUP_COLUMN <- "bases"

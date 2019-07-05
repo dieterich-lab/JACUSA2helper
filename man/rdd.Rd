@@ -3,8 +3,8 @@
 \docType{data}
 \name{rdd}
 \alias{rdd}
-\title{Subset of RDDs detected by JACUSA (1.x and 2.x) in HEK-293 untreated cells}
-\format{a list with 11 elements where each has 10,000 elements on its on.
+\title{Subset of RDDs detected by JACUSA2 in HEK-293 untreated cells}
+\format{a tibble with 12 elements where each has 10,000 elements on its on.
 \itemize{
 	\item contig: contig
 	\item start: position of variant (>=0)
@@ -23,7 +23,7 @@
 rdd
 }
 \description{
-A dataset containing a subset of RNA DNA differences (RDDs) identified by JACUSA (1.x and 2.x) in untreated HEK-293 cells. 
+A dataset containing a subset of RNA DNA differences (RDDs) identified by JACUSA2 in untreated HEK-293 cells. 
 The fields are as follows:
 }
 \keyword{datasets}

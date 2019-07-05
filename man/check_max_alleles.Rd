@@ -2,7 +2,7 @@
 % Please edit documentation in R/check-max-alleles.R
 \name{check_max_alleles}
 \alias{check_max_alleles}
-\title{Check if site has the max number of allowed alleles.}
+\title{Check if site contains the max number of allowed alleles}
 \usage{
 check_max_alleles(result, max_alleles = 2, use_ref_base = TRUE)
 }
@@ -11,10 +11,10 @@ check_max_alleles(result, max_alleles = 2, use_ref_base = TRUE)
 
 \item{max_alleles}{Integer number of maximal allowed alleles per site.}
 
-\item{use_ref_base}{boolean indicating ref_base should used to count alleles per site (Default: TRUE).}
+\item{use_ref_base}{boolean indicating if ref_base should used to count alleles per site (Default: TRUE).}
 }
 \value{
-TRUE|FALSE
+boolean
 }
 \description{
 Return TRUE|FALSE if the JACUSA2 result object has the maximum number of allowed 

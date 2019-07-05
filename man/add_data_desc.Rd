@@ -2,21 +2,21 @@
 % Please edit documentation in R/add-data-desc.R
 \name{add_data_desc}
 \alias{add_data_desc}
-\title{Adds data description to JACUSA2 result object.}
+\title{Adds data description to JACUSA2 result object}
 \usage{
 add_data_desc(result, condition_desc = c(),
   format = "\%CONDITION\%_\%REPLICATE\%")
 }
 \arguments{
-\item{result}{object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()}}
 
-\item{condition_desc}{Vector mapping condition to more verbose description}
+\item{condition_desc}{TODO list of vector mapping condition to more verbose description}
 
-\item{format}{character vector must contain:}
+\item{format}{character vector must contain place holder: \%CONDITION\% and \%REPLICATE\%}
 }
 \value{
-JACUSA2 result object with data description added
+result object with data description added
 }
 \description{
-This adds a more descriptive name to the data, extending condition, replicate information.
+Adds a more descriptive name to the resut object, beautifying condition and replicate information.
 }

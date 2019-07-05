@@ -2,7 +2,7 @@
 % Please edit documentation in R/get-ref_base2bc_tbl.R
 \name{get_ref_base2bc_tbl}
 \alias{get_ref_base2bc_tbl}
-\title{This is a TODO}
+\title{Get distirbution This is a TODO}
 \usage{
 get_ref_base2bc_tbl(result, ref_field)
 }

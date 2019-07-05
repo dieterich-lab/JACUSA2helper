@@ -3,9 +3,9 @@ get_score <- function(primary, base_type, score) {
   score[primary & base_type == "total"]
 }
 
-#' Restain sites with minimal score.
+#' Restain sites by minimal score
 #'
-#' \code{filter_by_score} removes sites that have score >= min_score.
+#' Retains sites that have score >= min_score.
 #' 
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()}.
@@ -24,7 +24,7 @@ filter_by_min_score <- function(result, min_score, field = "score") {
 
 #' Restain sites with maximal score.
 #'
-#' \code{filter_by_score} removes sites that have score <= min_score.
+#' Retains sites that have score <= max_score.
 #'
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()}.

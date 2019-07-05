@@ -2,21 +2,21 @@
 % Please edit documentation in R/add-ref-base2bc.R
 \name{add_ref_base2bc}
 \alias{add_ref_base2bc}
-\title{Add base change key}
+\title{Add base change field to JACUSA2 result object}
 \usage{
 add_ref_base2bc(result, ref_field)
 }
 \arguments{
 \item{result}{object created by \code{read_result()}}
 
-\item{ref_field}{String ("ref_base" for 1 condition experiment) or integer of DNA condition}
+\item{ref_field}{String ("ref_base" for 1 condition experiment) or integer of condition to define reference base}
 }
 \value{
-result object extended by base change info
+result object extended by base change
 }
 \description{
-Adds base change key where the reference base can be either 
-the character vector "ref_base" key or a condition integer to define the reference base. 
+Adds base change field. The reference base can be defined either by
+the character vector field "ref_base" or a condition integer. 
 When comparing DNA vs. RNA sequencing samples, base calls idenified in DNA might differ from
-reference sequence base provided by "ref_field" key.
+reference sequence base provided by "ref_base" key.
 }

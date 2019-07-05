@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter-by-score.R
 \name{filter_by_min_score}
 \alias{filter_by_min_score}
-\title{Restain sites with minimal score.}
+\title{Restain sites by minimal score}
 \usage{
 filter_by_min_score(result, min_score, field = "score")
 }
@@ -17,5 +17,5 @@ filter_by_min_score(result, min_score, field = "score")
 JACUSA2 result object with sites with score >= min_score
 }
 \description{
-\code{filter_by_score} removes sites that have score >= min_score.
+Retains sites that have score >= min_score.
 }

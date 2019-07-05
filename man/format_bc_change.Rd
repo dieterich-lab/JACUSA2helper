@@ -14,7 +14,7 @@ format_bc_change(base1, base2, sep = BC_CHANGE_SEP,
 
 \item{sep}{string: "base1"sep"base2".}
 
-\item{no_change}{character vector: how to format no changes.}
+\item{no_change}{character vector: how to format no change.}
 }
 \value{
 Vector of base changes.

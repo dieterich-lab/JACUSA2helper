@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper-ref-base2bc.R
 \name{get_bc_change}
 \alias{get_bc_change}
-\title{Calculate base call change for RDD comparisons.}
+\title{Calculate base changes}
 \usage{
 get_bc_change(ref_base, observed_bc, sep = BC_CHANGE_SEP,
   no_change = BC_CHANGE_NO_CHANGE)
@@ -20,5 +20,5 @@ get_bc_change(ref_base, observed_bc, sep = BC_CHANGE_SEP,
 Vector of base call changes.
 }
 \description{
-TODO
+Calculates and formats base changes for provided reference bases and observed base calls.
 }

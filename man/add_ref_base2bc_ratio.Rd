@@ -2,12 +2,12 @@
 % Please edit documentation in R/add-ref-base2bc-ratio.R
 \name{add_ref_base2bc_ratio}
 \alias{add_ref_base2bc_ratio}
-\title{Add reference base to base call change ratio (e.g.: editing frequency) to a JACUSA2 object.}
+\title{Add reference base to base call change ratio to a JACUSA2 object}
 \usage{
 add_ref_base2bc_ratio(result, ref_field)
 }
 \arguments{
-\item{result}{object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()}}
 
 \item{ref_field}{String ("ref_base" for 1 condition experiment) or integer of DNA condition}
 }
@@ -15,6 +15,5 @@ add_ref_base2bc_ratio(result, ref_field)
 result object with base change and base change ratio added
 }
 \description{
-Adds base call change ratio (e.g.: editing frequency).
-Adds key "ref_base2bc" key to JACUSA2 object.
+Adds base call change ratio (e.g.: editing frequency) to a JACUSA2 result object.
 }

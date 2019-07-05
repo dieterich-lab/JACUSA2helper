@@ -1,6 +1,6 @@
-#' Filter sites by read coverage (total, per replicates etc.).
+#' Filter sites by read coverage (total, per replicates etc.)
 #'
-#' \code{filter_by_coverage()} filters sites by customizable read coverage restrictions. 
+#' Filters sites by customizable read coverage restrictions. 
 #' 
 #' Possible value for \code{type}:
 #' \itemize{
@@ -11,8 +11,8 @@
 #'
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()}.
-#' @param min_coverage Numeric value of the minimal read coverage.
-#' @param type Strings determines how and if read depth should be aggregated before filtering.
+#' @param min_coverage numeric value of the minimal read coverage.
+#' @param type character vector determines how and if read depth should be aggregated before filtering.
 #' @return JACUSA2 result object with sites filtered by minimal read coverage according to \code{type}.
 #'
 #' @export 
@@ -20,16 +20,16 @@ filter_by_coverage <- function(result, min_coverage, type = "replicate") {
   if (! is.numeric(min_coverage) | min_coverage < 0) {
     stop("min_coverage not a number or negative: ", min_coverage)
   }
-  
+
   # add coverage on demand
   if (is.null(result[["coverage"]])) {
     result <- add_coverage(result)
   }
-  
+
   get_coverage <- function(primary, base_type, coverage) {
     coverage[primary & base_type == "total"]
   }
-  
+
   if (type == "total") {
     result <- result %>% 
       group_by_site("meta_condition") %>% 

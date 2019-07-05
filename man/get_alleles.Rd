@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper-ref-base2bc.R
 \name{get_alleles}
 \alias{get_alleles}
-\title{Get number of alles within a vector of bases}
+\title{Get number of alleles within a vector of bases}
 \usage{
 get_alleles(bc)
 }
@@ -10,8 +10,9 @@ get_alleles(bc)
 \item{bc}{vector of bases}
 }
 \value{
-TODO
+thu unique numner of observed alleles
 }
 \description{
-TODO
+Gives the number of alleles within a vectors of bases.
+For a vector such as c("AG", "A") it returns 2.
 }

@@ -2,17 +2,17 @@
 % Please edit documentation in R/save-plot.R
 \name{save_plot}
 \alias{save_plot}
-\title{Save plot to disc}
+\title{Save plot}
 \usage{
 save_plot(filename, plot, ...)
 }
 \arguments{
-\item{filename}{character vector TODO}
+\item{filename}{character vector}
 
-\item{plot}{object to be plotted TODO}
+\item{plot}{object to be saved}
 
-\item{...}{parameters passed to}
+\item{...}{parameters passed to ggplot2::ggsave}
 }
 \description{
-TODO
+Saves plot using ggplot2::ggsave.
 }

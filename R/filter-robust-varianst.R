@@ -1,21 +1,14 @@
-#' Retains sites that contain the variant base in all replicates in at least one condition.
+#' Retains sites that contain a variant base in all replicates in at least one condition
 #'
 #' Enforces that at least one condition contains the variant base in all replicates. 
 #'
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()}.
-#' @return Returns JACUSA2 result object with sites where at least one condition contains the variant base in all replicates.  
+#' @return Returns JACUSA2 result object with sites where at least one condition contains the variant base in all replicates.
 #' 
 #' @export 
 filter_by_robust_variants <- function(result) {
-  # TODO get conditions
-  conditions <- result$condition %>% unique() %>% length()
-  # check only two conditions
-  if (conditions != 2) {
-    stop("Only 2 conditions are supported!")
-  }
-
-    # check only two alleles per site
+  # check only two alleles per site
   if (! check_max_alleles(result, max_alleles = 2)) {
     stop("Data contains sites with >2 alleles. Please remove those sites.")
   }
@@ -34,19 +27,20 @@ filter_by_robust_variants <- function(result) {
   dplyr::ungroup(result)
 }
 
-# helper function
 #' @noRd
 get_robust_variants <- function(condition, bc_A, bc_C, bc_G, bc_T) {
   # combine individual base call vectors
   mat <- matrix(c(bc_A, bc_C, bc_G, bc_T), ncol = 4, byrow = FALSE)
-  
+
   mask <- get_mask(mat, op = "any")
-  mask1 <- get_mask(mat[condition == 1, , drop = FALSE], op = "all")
-  mask2 <- get_mask(mat[condition != 1, , drop = FALSE], op = "all")
-  
-  robust <- (mask1 | mask2) == mask
-  
-  all(robust)
+
+  conditions <- length(unique(condition))
+  robust <- get_mask(mat[condition == 1, , drop = FALSE], op = "all")
+  if (conditions > 1) {
+    robust <- robust | get_mask(mat[condition != 1, , drop = FALSE], op = "all")
+  }
+
+  all(robust == mask)
 }
 
 # apply boolean operator "&","|" on all columns 

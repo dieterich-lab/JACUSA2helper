@@ -1,14 +1,17 @@
-#' Add arrest rate field to JACUSA2 result object
+#' Add arrest rate to JACUSA2 result object
 #' 
-#' This calculates the arrest rate for a JACUSA2 result object and a
+#' This calculates and adds the arrest rate for a JACUSA2 result object.
+#' Make sure the result object is 
 #' 
 #' @importFrom magrittr %>%
-#' @param result created by \code{read_result*()}
+#' @param result created by \code{read_result())}
 #' @param pseudo_count numeric to be added to arrest and read through counts
 #' @return result object with arrest rate added
 #' 
 #' @export
 add_arrest_rate <- function(result, pseudo_count = 0) {
+  check_jacusa_method(result, c(RT_ARREST_METHOD_TYPE, LRT_ARREST_METHOD_TYPE))
+
   if (is.null(result[["coverage"]])) {
     result <- add_coverage(result)
   }
@@ -17,6 +20,7 @@ add_arrest_rate <- function(result, pseudo_count = 0) {
     arrest <- coverage[base_type == "arrest_bases"] + pseudo_count
     through <- coverage[base_type == "through_bases"] + pseudo_count
     arrest_rate <- arrest / (arrest + through)
+    stopifnot(length(arrest_rate) == 1)
     return(arrest_rate)
   }
 
