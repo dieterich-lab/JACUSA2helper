@@ -2,19 +2,19 @@
 % Please edit documentation in R/filter-by-score.R
 \name{filter_by_max_score}
 \alias{filter_by_max_score}
-\title{Restain sites with maximal score.}
+\title{Restains sites with maximal score.}
 \usage{
-filter_by_max_score(result, max_score, field = "score")
+filter_by_max_score(result, max_score, column = "score")
 }
 \arguments{
-\item{result}{object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{max_score}{Numeric value that represents the maximal score.}
+\item{max_score}{numeric value that specifies the maximal score.}
 
-\item{field}{character vector that identifies the column}
+\item{column}{character string that specifies the column of the score.}
 }
 \value{
-JACUSA2 result object with sites with score <= max_score.
+result object with sites where score <= max_score.
 }
 \description{
 Retains sites that have score <= max_score.

@@ -1,4 +1,4 @@
-context("get_allele_count filter_allele_count")
+context("filter_by_allele_count")
 
 get_data <- function() {
   data.frame(
@@ -15,16 +15,16 @@ get_data <- function() {
   )
 }
 
-test_that("get_allele_count works as expected on <= 2", {
+test_that("filter_by_allele_count works as expected on <= 2", {
   expect_equal(
-    filter_by_alleles(get_data(), 2),
+    filter_by_allele_count(get_data(), 2),
     get_data()[1:4, ]
   )
 })
 
-test_that("filter_allele_count works as expected <= 3", {
+test_that("filter_by_allele_count works as expected <= 3", {
   expect_equal(
-    filter_by_alleles(get_data(), 3),
+    filter_by_allele_count(get_data(), 3),
     get_data()
   )
 })

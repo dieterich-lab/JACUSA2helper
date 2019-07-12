@@ -2,28 +2,28 @@
 % Please edit documentation in R/filter-by-coverage.R
 \name{filter_by_coverage}
 \alias{filter_by_coverage}
-\title{Filter sites by read coverage (total, per replicates etc.)}
+\title{Filters sites by read coverage (total, per replicates, etc.)}
 \usage{
 filter_by_coverage(result, min_coverage, type = "replicate")
 }
 \arguments{
-\item{result}{object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{min_coverage}{numeric value of the minimal read coverage.}
+\item{min_coverage}{numeric value for the minimal read coverage.}
 
-\item{type}{character vector determines how and if read depth should be aggregated before filtering.}
+\item{type}{character string determines how read depth should be aggregated before filtering.}
 }
 \value{
-JACUSA2 result object with sites filtered by minimal read coverage according to \code{type}.
+result object with sites filtered by minimal read coverage.
 }
 \description{
 Filters sites by customizable read coverage restrictions.
 }
 \details{
-Possible value for \code{type}:
-\itemize{
-  \item total -> total read depth at a site,
-  \item condition -> per condition (aggregates per condition), and
-  \item replicate -> each replicate (default)
+Possible value for "code":
+\describe{
+  \item{total}{total read depth at a site,}
+  \item{condition}{per condition (aggregates per condition), and}
+  \item{replicate}{each replicate (default).}
 }
 }

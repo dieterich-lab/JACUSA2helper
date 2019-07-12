@@ -1,5 +1,5 @@
-#contig	start	end	name	stat	strand	arrest_pos	arrest_bases11	through_bases11	arrest_bases12	through_bases12	arrest_bases21	through_bases21	arrest_bases22	through_bases22	info	filter_info	ref_base
-1	1	2	variant	0	+	*	5,0,0,0	5,0,0,0	0,5,0,0	0,5,0,0	0,0,10,0	0,0,0,0	0,0,0,10	0,0,0,0	*	*	A
-1	2	3	variant	0	+	*	0,0,0,0	5,0,0,0	0,0,0,0	0,5,0,0	0,0,5,0	0,0,0,0	0,0,0,5	0,0,0,0	*	*	A
-1	4	5	variant	0	+	*	5,0,0,0	5,0,0,0	5,0,0,0	5,0,0,0	0,4,0,0	0,6,0,0	0,4,0,0	0,6,0,0	*	*	A
+#contig	start	end	name	score	strand	arrest_pos	arrest_bases11	through_bases11	arrest_bases12	through_bases12	arrest_bases21	through_bases21	arrest_bases22	through_bases22	info	filter_info	ref_base
+1	1	2	variant	0	+	2	5,0,0,0	5,0,0,0	0,5,0,0	0,5,0,0	0,0,10,0	0,0,0,0	0,0,0,10	0,0,0,0	*	*	A
+1	2	3	variant	0	+	3	0,0,0,0	5,0,0,0	0,0,0,0	0,5,0,0	0,0,5,0	0,0,0,0	0,0,0,5	0,0,0,0	*	*	A
+1	4	5	variant	0	+	5	5,0,0,0	5,0,0,0	5,0,0,0	5,0,0,0	0,4,0,0	0,6,0,0	0,4,0,0	0,6,0,0	*	*	A
 

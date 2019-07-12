@@ -20,7 +20,7 @@ test_that("get_mask works as expected on all", {
     c(FALSE, FALSE, FALSE, FALSE),
     ncol = 4, byrow = TRUE
   )
-  expect_equal(get_mask(input, op = "all"), expected)
+  expect_equal(get_mask(input, op = all), expected)
 })
 
 test_that("get_mask works as expected on any", {
@@ -36,5 +36,5 @@ test_that("get_mask works as expected on any", {
     c(TRUE, TRUE, TRUE, TRUE),
     ncol = 4, byrow = TRUE
   )
-  expect_equal(get_mask(input, op = "any"), expected)
+  expect_equal(get_mask(input, op = any), expected)
 })

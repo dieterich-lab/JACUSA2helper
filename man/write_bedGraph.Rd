@@ -2,20 +2,20 @@
 % Please edit documentation in R/write-bedGraph.R
 \name{write_bedGraph}
 \alias{write_bedGraph}
-\title{Write vector of values as bedGraph file}
+\title{Writes vector of values as bedGraph file.}
 \usage{
 write_bedGraph(file, contig, start, end, value)
 }
 \arguments{
 \item{file}{String represents the filename of the BED graph file.}
 
-\item{contig}{Vector of character vectors}
+\item{contig}{vector of character string represting the contig(s)}
 
-\item{start}{Vector of numericals zero indexed (>= 0)}
+\item{start}{vector of numericals zero indexed (>= 0)}
 
-\item{end}{Vector of numericals half opened: [start, end)}
+\item{end}{vector of numericals half opened: [start, end)}
 
-\item{value}{Vector of characters or numericals the reference value(s)}
+\item{value}{vector of character strings or numericals representing value(s)}
 }
 \description{
 Writes a bedGraph conform file with coordinates

@@ -2,18 +2,26 @@
 % Please edit documentation in R/add-ref-base2bc-ratio.R
 \name{add_ref_base2bc_ratio}
 \alias{add_ref_base2bc_ratio}
-\title{Add reference base to base call change ratio to a JACUSA2 object}
+\title{Adds base call change ratio to a JACUSA2 result object.}
 \usage{
-add_ref_base2bc_ratio(result, ref_field)
+add_ref_base2bc_ratio(result)
 }
 \arguments{
-\item{result}{object created by \code{read_result()}}
-
-\item{ref_field}{String ("ref_base" for 1 condition experiment) or integer of DNA condition}
+\item{result}{created by \code{read_result()} or \code{read_results()}.}
 }
 \value{
-result object with base change and base change ratio added
+result object with base change ratio added.
 }
 \description{
-Adds base call change ratio (e.g.: editing frequency) to a JACUSA2 result object.
+Calculates and adds base call change ratio (e.g.: editing frequency) 
+to a JACUSA2 result object. The "ref_base2bc" column needs to be populated by 
+calling \code{add_ref_base2bc()}.
+}
+\details{
+The following restrictions apply to column "ref_base2bc":
+\itemize{
+  \item There must be only one reference base. A->G is okay, but AG->G is NOT allowed!
+  \item There must be only one non-reference base. A->G is okay, but A->CG is NOT allowed!
+}
+Make sure to filter \code{result} with \code{filter_by_alleles()} to comply with this restrictions.
 }

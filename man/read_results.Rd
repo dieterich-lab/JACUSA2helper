@@ -2,18 +2,20 @@
 % Please edit documentation in R/read-result.R
 \name{read_results}
 \alias{read_results}
-\title{Read multiple related JACUSA2 results}
+\title{Reads multiple related JACUSA2 results.}
 \usage{
 read_results(files, meta_conditions)
 }
 \arguments{
-\item{files}{vector of files}
+\item{files}{vector of JACUSA2 result files.}
 
-\item{meta_conditions}{vector of string describing each}
+\item{meta_conditions}{vector of strings providing details about each file.}
 }
 \value{
-combined JACUSA2 result object
+combined JACUSA2 result object.
 }
 \description{
-TODO
+Read multiple related - same JACUSA2 method type - files and combines them
+in one result object. This allows to combine multiple related JACUSA2 results
+that differ in some meta condition.
 }

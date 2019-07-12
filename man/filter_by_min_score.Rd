@@ -2,19 +2,19 @@
 % Please edit documentation in R/filter-by-score.R
 \name{filter_by_min_score}
 \alias{filter_by_min_score}
-\title{Restain sites by minimal score}
+\title{Retains sites by minimal score.}
 \usage{
-filter_by_min_score(result, min_score, field = "score")
+filter_by_min_score(result, min_score, column = "score")
 }
 \arguments{
-\item{result}{object created by \code{read_result()}.}
+\item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{min_score}{Numeric value that represents the minimal score.}
+\item{min_score}{numeric value that specifies the minimal score.}
 
-\item{field}{character vector that identifies the column}
+\item{column}{character string that specifies the column of the score.}
 }
 \value{
-JACUSA2 result object with sites with score >= min_score
+result object with sites where score >= min_score.
 }
 \description{
 Retains sites that have score >= min_score.

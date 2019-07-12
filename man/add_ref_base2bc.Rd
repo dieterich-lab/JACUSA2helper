@@ -2,21 +2,23 @@
 % Please edit documentation in R/add-ref-base2bc.R
 \name{add_ref_base2bc}
 \alias{add_ref_base2bc}
-\title{Add base change field to JACUSA2 result object}
+\title{Adds base change column to JACUSA2 result object.}
 \usage{
 add_ref_base2bc(result, ref_field)
 }
 \arguments{
-\item{result}{object created by \code{read_result()}}
+\item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{ref_field}{String ("ref_base" for 1 condition experiment) or integer of condition to define reference base}
+\item{ref_field}{character string "ref_base" or a condition number (1 or 2) to define reference base.}
 }
 \value{
-result object extended by base change
+result object with base changes added.
 }
 \description{
-Adds base change field. The reference base can be defined either by
-the character vector field "ref_base" or a condition integer. 
-When comparing DNA vs. RNA sequencing samples, base calls idenified in DNA might differ from
-reference sequence base provided by "ref_base" key.
+The reference base can be defined either by providing the column name "ref_base" 
+or an integer that specifies the condition. 
+When comparing DNA vs. RNA  sequencing samples, base calls identified in DNA might differ from
+the reference base provided by "ref_base" column. 
+There must be only one reference base. A->G is okay, but AG->G is NOT allowed! 
+Make sure to filter \code{result} with \code{filter_by_alleles()} to comply with this restriction.
 }

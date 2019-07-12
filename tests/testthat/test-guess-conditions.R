@@ -13,7 +13,7 @@ test_that("guess_conditions works as expected on call-1", {
   expect_equal(
     guess_conditions(
       CALL_PILEUP_METHOD_TYPE, 
-      c(create_header_names(CALL_PILEUP_COLUMN, 1, 3))
+      c(create_header_names(BASES_COLUMN, 1, 3))
     ),
     1
   )
@@ -24,8 +24,8 @@ test_that("guess_conditions works as expected on call-2, pileup", {
     guess_conditions(
       CALL_PILEUP_METHOD_TYPE, 
       c(
-        create_header_names(CALL_PILEUP_COLUMN, 1, 3),
-        create_header_names(CALL_PILEUP_COLUMN, 2, 3)
+        create_header_names(BASES_COLUMN, 1, 3),
+        create_header_names(BASES_COLUMN, 2, 3)
       )
     ),
     2
@@ -37,10 +37,10 @@ test_that("guess_conditions works as expected on rt-arrest", {
     guess_conditions(
       RT_ARREST_METHOD_TYPE, 
       c(
-        create_header_names(RT_ARREST_COLUMN, 1, 3),
-        create_header_names(RT_THROUGH_COLUMN, 1, 3),
-        create_header_names(RT_ARREST_COLUMN, 2, 3),
-        create_header_names(RT_THROUGH_COLUMN, 2, 3)
+        create_header_names(ARREST_COLUMN, 1, 3),
+        create_header_names(THROUGH_COLUMN, 1, 3),
+        create_header_names(ARREST_COLUMN, 2, 3),
+        create_header_names(THROUGH_COLUMN, 2, 3)
       )
     ),
     2
@@ -52,10 +52,10 @@ test_that("guess_conditions works as expected on lrt-arrest", {
     guess_conditions(
       LRT_ARREST_METHOD_TYPE, 
       c(
-        create_header_names(LRT_ARREST_COLUMN, 1, 3),
-        create_header_names(LRT_THROUGH_COLUMN, 1, 3),
-        create_header_names(LRT_ARREST_COLUMN, 2, 3),
-        create_header_names(LRT_THROUGH_COLUMN, 2, 3)
+        create_header_names(ARREST_COLUMN, 1, 3),
+        create_header_names(THROUGH_COLUMN, 1, 3),
+        create_header_names(ARREST_COLUMN, 2, 3),
+        create_header_names(THROUGH_COLUMN, 2, 3)
       )
     ),
     2

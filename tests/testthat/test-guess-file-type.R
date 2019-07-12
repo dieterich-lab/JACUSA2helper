@@ -20,7 +20,7 @@ test_that("guess_file_type fails on wrong header line", {
 test_that("guess_file_type recognizes call-1", {
   line <- paste(
     TEST_HEADER_COORD,
-    paste0(CALL_PILEUP_COLUMN, "1", 1:3, collapse = "\t"),
+    paste0(BASES_COLUMN, "1", 1:3, collapse = "\t"),
     TEST_HEADER_INFO,
     sep = "\t"
   )
@@ -31,8 +31,8 @@ test_that("guess_file_type recognizes call-1", {
 test_that("guess_file_type recognizes call-2 and pileup", {
   line <- paste0(
     TEST_HEADER_COORD,
-    paste0(CALL_PILEUP_COLUMN, "1", 1:3, collapse = "\t"),
-    paste0(CALL_PILEUP_COLUMN, "2", 1:3, collapse = "\t"),
+    paste0(BASES_COLUMN, "1", 1:3, collapse = "\t"),
+    paste0(BASES_COLUMN, "2", 1:3, collapse = "\t"),
     TEST_HEADER_INFO,
     sep = "\t"
   )
@@ -51,8 +51,8 @@ create_condition <-function(condition, replicates, arrest, through) {
 test_that("guess_file_type recognizes rt-arrest", {
   line <- paste(
     TEST_HEADER_COORD,
-    create_condition(1, 3, RT_ARREST_COLUMN, RT_THROUGH_COLUMN),
-    create_condition(2, 3, RT_ARREST_COLUMN, RT_THROUGH_COLUMN),
+    create_condition(1, 3, ARREST_COLUMN, THROUGH_COLUMN),
+    create_condition(2, 3, ARREST_COLUMN, THROUGH_COLUMN),
     TEST_HEADER_INFO,
     sep = "\t", collapse = ""
   )
@@ -62,9 +62,9 @@ test_that("guess_file_type recognizes rt-arrest", {
 test_that("guess_file_type recognizes lrt-arrest", {
   line <- paste(
     TEST_HEADER_COORD,
-    LRT_ARREST_POS_COLUMN,
-    create_condition(1, 3, LRT_ARREST_COLUMN, LRT_THROUGH_COLUMN),
-    create_condition(2, 3, LRT_ARREST_COLUMN, LRT_THROUGH_COLUMN),
+    ARREST_POS_COLUMN,
+    create_condition(1, 3, ARREST_COLUMN, THROUGH_COLUMN),
+    create_condition(2, 3, ARREST_COLUMN, THROUGH_COLUMN),
     TEST_HEADER_INFO,
     sep = "\t", collapse = ""
   )

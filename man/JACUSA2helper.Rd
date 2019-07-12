@@ -6,46 +6,60 @@
 \alias{JACUSA2helper-package}
 \title{JACUSA2helper: A package for post-processing JACUSA2 result files.}
 \description{
-The JACUSA2helper package provides the following categories of functions to 
-post-process result files of JACUSA2:
-\itemize{
- \item[read/write] Read and write JACUSA2 result files.
- \item[add] This will add some field to an existing JACUSA2 result object and return the modified object.
- \item[check] This will perform some checks on result objects
- \item[filter] This will remove sites from a result object with some filtering criteria.
- \item[get] TODO
+JACUSA2helper: A package for post-processing JACUSA2 result files.
 }
-}
-\details{
-The following methods are supported:
-\itemize{
- \item[call{1,2}] calling variants from one condition or a comparison of conditions.
- \item[pileup] SAMtools like pileup
- \item[rt-arrest] identification transcription arrest events.
- \item[lrt-arrest] combination of varidant discovery and read arrest events. 
+\section{Description}{
+
+A package that provides the following categories of functions to post-process result files of JACUSA2:
+\describe{
+ \item{read/write}{Read and write JACUSA2 result files, e.g.: \code{read_result()}.}
+ \item{add}{Adds some field to an existing JACUSA2 result object and return the modified object, e.g.: \code{add_ref_base2bc()}.}
+ \item{check}{Performs some checks on a result object, e.g.: \code{check_max_alleles()}.}
+ \item{filter}{Will remove sites from a result object with some filtering criteria, e.g.: \code{filter_by_coverage()}}
+ \item{"other"}{TODO}
 }
 
-One major new feature of JACUSA 2.x is the identificaion of read arrest events.
-TODO tidy data, dplyr
+The following methods from JACUSA2 are supported:
+\describe{
+ \item{call{1,2}}{calling variants from one condition or a comparison of conditions.}
+ \item{pileup}{SAMtools like pileup.}
+ \item{rt-arrest}{identification of transcription arrest events.}
+ \item{lrt-arrest}{combination of variant discovery and read arrest events.}
+}
+
+One major new feature of JACUSA2 is the identification of read arrest events. 
+In this method the vector of base call is partitioned into read arrest and read through bases.
 
 When working with stranded RNA-Seq data, inverting base calls is not necessary because
-JACUSA2 will automatically invert Single End and Paired End depending on the provided 
-library type option "-P" UNSTRANDED|FR_FIRSTSTRAND|RF_SECOND_STRAND".
+JACUSA2 will automatically invert Single End (SE) and Paired End (PE) depending on the
+provided library type option "-P" UNSTRANDED|FR_FIRSTSTRAND|RF_SECOND_STRAND".
 
 The central data structure in JACUSA2helper is the JACUSA2 result object that follows the 
-tidy data approach to feature easy interplay with dplyr and ggplot2.
-An JACUSA2 result object can be created via \code{result <- read_result("jacusa2.out")} and is 
-currently represented as a data.frame.
+tidy data approach to feature easy interaction with dplyr and ggplot2.
+A JACUSA2 result object can be created via \code{result <- read_result("jacusa2.out")} and is 
+currently represented as a tibble. Furthermore, JACUSA2helper supports the analysis of several related
+JACUSA2 result files via \code{results <- read_results(files, meta_conditions)} where \code{meta_conditions} is a 
+vector of character strings that provides a descriptive name for each file in \code{files}.
 }
+
+\section{sites}{
+
+site, which is a defined as a location in genome using: contig, start, end, and strand information.
+TODO sites 
+primary, base_type
+}
+
 \section{read/write functions}{
 
 The functions read_result, and write_result facilitate input and output operations on JACUSA2 
 result files.
 
 See:
-\itemize{
-  \item read_result
-  \item write_result
+\describe{
+  \item{read_result}{Reads and unpacks a JACUSA2 result file and creates a result object.}
+  \item{read_results}{Allows to combine multiple result files and distinguish them with meta conditions.}
+  \item{write_result}{This will pack result object and write its contents back to a file.}
+  \item{write_bedGraph}{Writes a vector of values as bedGraph file.}
 }
 }
 
@@ -54,21 +68,21 @@ See:
 TODO
 
 See:
-\itemize{
-  \item add_coverage
-  \item add_arrest_ratio
-  \item add_ref_base2bc
-  \item add_ref_base2bc_ratio
+\describe{
+  \item{add_arrest_rate}{}
+  \item{add_ref_base2bc}{}
+  \item{add_ref_base2bc_ratio}{}
+  \item{add_summary}{}
 }
 }
 
-\section{check functions}{
+\section{check function}{
 
 TODO
 
 See:
-\itemize{
-  \item check_max_alleles
+\describe{
+  \item{check_max_alleles}{}
 }
 }
 
@@ -78,22 +92,23 @@ This function set enables filtering by read coverage or
 enforcing a minimal number of variant base calls per sample.
 
 See:
-\itemize{
- \item filter_by_allele_count
-  \item filter_by_coverage
-  \item filter_by_min_score
-  \item filter_robust_variants
-  \item filter_by_max_score
+\describe{
+ \item{filter_by_allele_count}{}
+  \item{filter_by_coverage}{}
+  \item{filter_by_max_score}{}
+  \item{filter_by_min_score}{}
+  \item{filter_by_robust_arrest_events}{}
+  \item{filter_by_robust_variants}{}
+}
 }
 
-#' @section get functions:
+\section{"other" functions}{
+
 TODO
 
 See:
 \itemize{
-  \item get_bc_change
-  \item get_bc_change_ratio
-  \item get_variant_count
+  \item{}{}
 }
 }
 

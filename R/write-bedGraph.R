@@ -1,4 +1,4 @@
-#' Write vector of values as bedGraph file
+#' Writes vector of values as bedGraph file.
 #'
 #' Writes a bedGraph conform file with coordinates
 #' defined by vectors: "contig", "start", and "end". According to:
@@ -7,10 +7,10 @@
 #' that this is fullfilled.
 #'
 #' @param file String represents the filename of the BED graph file.
-#' @param contig Vector of character vectors
-#' @param start Vector of numericals zero indexed (>= 0)
-#' @param end Vector of numericals half opened: [start, end)
-#' @param value Vector of characters or numericals the reference value(s)
+#' @param contig vector of character string represting the contig(s)
+#' @param start vector of numericals zero indexed (>= 0)
+#' @param end vector of numericals half opened: [start, end)
+#' @param value vector of character strings or numericals representing value(s)
 #'
 #' @export
 write_bedGraph <- function(file, contig, start, end, value) {

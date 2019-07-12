@@ -2,17 +2,17 @@
 % Please edit documentation in R/save-plot.R
 \name{save_plot}
 \alias{save_plot}
-\title{Save plot}
+\title{Saves plot.}
 \usage{
 save_plot(filename, plot, ...)
 }
 \arguments{
-\item{filename}{character vector}
+\item{filename}{character string naming a file for writing.}
 
-\item{plot}{object to be saved}
+\item{plot}{the ggplot2 plot object to be written.}
 
 \item{...}{parameters passed to ggplot2::ggsave}
 }
 \description{
-Saves plot using ggplot2::ggsave.
+Wrapper to save plot using ggplot2::ggsave.
 }

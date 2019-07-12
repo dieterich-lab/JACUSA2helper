@@ -4,17 +4,17 @@ guess_conditions <- function(type, header_names) {
   if (type == UNKNOWN_METHOD_TYPE) {
     stop("Unknown type: ", type)
   }
-  
+
   conditions <- 0
   if (type == CALL_PILEUP_METHOD_TYPE) {
-    prefix <- CALL_PILEUP_COLUMN
+    prefix <- BASES_COLUMN
     cond_rep <- extract_condition_replicate(header_names, prefix)
     conditions <- find_conditions(cond_rep)
   } else if (type == LRT_ARREST_METHOD_TYPE) {
-    prefix1 <- LRT_ARREST_COLUMN
+    prefix1 <- ARREST_COLUMN
     cond_rep1 <- extract_condition_replicate(header_names, prefix1)
     conditions1 <- find_conditions(cond_rep1)
-    prefix2 <- LRT_THROUGH_COLUMN
+    prefix2 <- THROUGH_COLUMN
     cond_rep2 <- extract_condition_replicate(header_names, prefix2)
     conditions2 <- find_conditions(cond_rep2)
     if (conditions1 != conditions2) {
@@ -23,10 +23,10 @@ guess_conditions <- function(type, header_names) {
     }
     conditions <- conditions1
   } else if (type == RT_ARREST_METHOD_TYPE) {
-    prefix1 <- RT_ARREST_COLUMN
+    prefix1 <- ARREST_COLUMN
     cond_rep1 <- extract_condition_replicate(header_names, prefix1)
     conditions1 <- find_conditions(cond_rep1)
-    prefix2 <- RT_THROUGH_COLUMN
+    prefix2 <- THROUGH_COLUMN
     cond_rep2 <- extract_condition_replicate(header_names, prefix2)
     conditions2 <- find_conditions(cond_rep2)
     if (conditions1 != conditions2) {
@@ -80,22 +80,22 @@ extract_condition_replicate <- function(header_names, prefix) {
 
 # Determine file type base on header line
 #' @noRd
-guess_file_type <- function(line) {
+guess_file_type <- function(header_line) {
   # header line: "#contig\t[...]" is required
-  if (length(grep("^#contig", line)) == 0) {
-    stop("Invalid header line: ", line)
+  if (length(grep("^#contig", header_line)) == 0) {
+    stop("Invalid header line: ", header_line)
   }
-  
+
   type <- UNKNOWN_METHOD_TYPE
-  if (length(grep(LRT_ARREST_POS_COLUMN, line)) > 0) { # lrt-arrest
+  if (length(grep(ARREST_POS_COLUMN, header_line)) > 0) { # lrt-arrest
     type <- LRT_ARREST_METHOD_TYPE
-  } else if(length(grep(paste0("\t", RT_ARREST_COLUMN), line)) > 0) { # rt-arrest
+  } else if(length(grep(paste0("\t", ARREST_COLUMN), header_line)) > 0) { # rt-arrest
     type <- RT_ARREST_METHOD_TYPE
-  } else if (length(grep(paste0("\t", CALL_PILEUP_COLUMN), line)) > 0) { # call-pileup
+  } else if (length(grep(paste0("\t", BASES_COLUMN), header_line)) > 0) { # call-pileup
     type <- CALL_PILEUP_METHOD_TYPE
   } else { 
-    stop("Result type could not be guessed from header: ", line)
+    stop("Result type could not be guessed from header: ", header_line)
   }
-  
+
   type
 }

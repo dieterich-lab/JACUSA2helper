@@ -2,20 +2,24 @@
 % Please edit documentation in R/group-by-site.R
 \name{group_by_site}
 \alias{group_by_site}
-\title{Group JACUSA2 result object by coordinates}
+\title{Groups JACUSA2 result object by coordinates and optional columns.}
 \usage{
 group_by_site(result, opt_vars = c(), ...)
 }
 \arguments{
-\item{result}{object created by \code{read_result(s)()}.}
+\item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{opt_vars}{optional variables to group by (need to be present)}
+\item{opt_vars}{optional variables to group by (need NOT to be present).}
 
-\item{...}{forward options to dplyr::group_by}
+\item{...}{forward options to dplyr::group_by.}
 }
 \value{
-grouped JACUSA2 result object
+grouped result object.
 }
 \description{
-TODO
+This is supposed to be used within a dplyr pipeline to
+group JACUSA2 result object by coordinates: contig, start, end, strand -> a site. 
+Possible values for opt_vars are:
+"meta_condition", "arrest_pos", etc. This allows to correctly group in case of 
+structured data that was generated with JACUSA2: rt-arrest, lrt-arrest and base stratification.
 }

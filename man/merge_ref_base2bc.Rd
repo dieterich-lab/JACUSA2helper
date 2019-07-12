@@ -2,20 +2,15 @@
 % Please edit documentation in R/helper-ref-base2bc.R
 \name{merge_ref_base2bc}
 \alias{merge_ref_base2bc}
-\title{Merge base change entries}
+\title{Merges base change entries.}
 \usage{
-merge_ref_base2bc(ref_base2bc, sep = BC_CHANGE_SEP,
-  no_change = BC_CHANGE_NO_CHANGE)
+merge_ref_base2bc(ref_base2bc)
 }
 \arguments{
-\item{ref_base2bc}{vector of base changes}
-
-\item{sep}{character vector that separates base changes}
-
-\item{no_change}{character vector when there is no base change}
+\item{ref_base2bc}{vector of base changes.}
 }
 \value{
-character vector of merged base changes
+vector of merged base changes.
 }
 \description{
 TODO

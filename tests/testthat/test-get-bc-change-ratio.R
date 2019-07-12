@@ -1,8 +1,8 @@
-context("get_bc_change_ratio")
+context("get_ref_base2bc_ratio")
 
-test_that("get_bc_change_ratio fails on > 2 alleles", {
+test_that("get_ref_base2bc fails on > 2 alleles", {
   expect_error(
-    get_bc_change_ratio(
+    get_ref_base2bc_ratio(
       c("A"), 
       matrix(c(
         c(0, 10, 10, 0)
@@ -12,7 +12,7 @@ test_that("get_bc_change_ratio fails on > 2 alleles", {
     "More than 2 alleles not supported! ref: *"
   )
   expect_error(
-    get_bc_change_ratio(
+    get_ref_base2bc_ratio(
       c("A"), 
       matrix(c(
         c(10, 10, 10, 0)
@@ -23,9 +23,9 @@ test_that("get_bc_change_ratio fails on > 2 alleles", {
   )
 })
 
-test_that("get_bc_change_ratio works as expected", {
+test_that("get_ref_base2bc works as expected", {
   expect_equal(
-    get_bc_change_ratio(
+    get_ref_base2bc_ratio(
       c("A"), 
       matrix(c(
         c(10, 0, 10, 0)
@@ -35,7 +35,7 @@ test_that("get_bc_change_ratio works as expected", {
     c(0.5)
   )
   expect_equal(
-    get_bc_change_ratio(
+    get_ref_base2bc_ratio(
       c("A", "A"), 
       matrix(c(
         c(10, 0, 10, 0),
@@ -46,7 +46,7 @@ test_that("get_bc_change_ratio works as expected", {
     c(0.5, 1.0)
   )
   expect_equal(
-    get_bc_change_ratio(
+    get_ref_base2bc_ratio(
       c("A", "A"), 
       matrix(c(
         c(10, 0, 10, 0),
