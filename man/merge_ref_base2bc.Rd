@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper-ref-base2bc.R
 \name{merge_ref_base2bc}
 \alias{merge_ref_base2bc}
-\title{Merges base change entries.}
+\title{Merges base changes.}
 \usage{
 merge_ref_base2bc(ref_base2bc)
 }
@@ -10,8 +10,11 @@ merge_ref_base2bc(ref_base2bc)
 \item{ref_base2bc}{vector of base changes.}
 }
 \value{
-vector of merged base changes.
+merged base changes.
 }
 \description{
-TODO
+Merges basechanges. Usefull, when creating summaries for base changes with \code{add_summary()}.
+Merging base changes with different reference bases is not allowed.
+However, base changes with different non-reference bases can be merged, e.g.: c("A->G", "A->C")
+will be merged to "A->CG"
 }

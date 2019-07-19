@@ -41,7 +41,7 @@
 ##'		\item filter_info: comma-separated list of feature filters Empty field is equal equal "*"
 ##'		\item ref_base: Reference base from reference sequence
 ##' }
-#"rrd"
+##"rrd"
 
 ##' TODO
 ##'
@@ -72,4 +72,4 @@
 ##'		\item filter_info: comma-separated list of feature filters Empty field is equal equal "*"
 ##'		\item ref_base: Reference base from reference sequence
 ##' }
-#"tao"
+##"tao"

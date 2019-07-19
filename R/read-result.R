@@ -70,8 +70,10 @@ read_result <- function(file) {
 }
 
 # Create result for type and conditions from data 
+#' @importFrom stringr str_c
+#' @noRd
 create_result <- function(type, conditions, data) {
-  info <- dplyr::select(data, contig, start, end, strand, info)
+  #info <- dplyr::select(data, contig, start, end, strand, info)
   result <- NULL
   if(type == CALL_PILEUP_METHOD_TYPE) {
     result <- create_bases(data, conditions, BASES_COLUMN)
@@ -90,10 +92,20 @@ create_result <- function(type, conditions, data) {
   }
   result <- set_jacusa_method(result, type)
 
-  # add base call
-  result$bc <- apply(result[, paste0("bc_", BASES)], 1, function(x) { 
-    paste0(BASES[x > 0], collapse = "")
-  })
+  tmp_bc <- matrix(
+    rep(BASES, nrow(result)),
+    ncol = 4,
+    byrow = TRUE
+  )
+  i <- result[, paste0("bc_", BASES)] > 0
+  tmp_bc[! i] <- ""
+  result$bc <- stringr::str_c( 
+    tmp_bc[, 1], 
+    tmp_bc[, 2], 
+    tmp_bc[, 3], 
+    tmp_bc[, 4],
+    sep = ""
+  )
 
   # only parse deletions, if there are any
   # TODO parse info field
@@ -111,17 +123,8 @@ create_result <- function(type, conditions, data) {
   result$replicate <- as.factor(result$replicate)
   # 
   result <- add_coverage(result)
-  # TODO do user like this?
-  # result_names <- names(result)
-  # i <- c(
-  #   "contig", "end", "strand", 
-  #   "primary", "base_type", 
-  #   "bc", paste0("bc_", BASES), 
-  #   "score"
-  # ) %in% result_names
-  # result <- dplyr::select(!!!rlang::syms(c(names[i], names[! i])))
 
-  dplyr::as_tibble(result)
+  result
 }
 
 # helper function to extract deletion info(s)
@@ -146,7 +149,7 @@ process_deletion <- function(conditions, info) {
       remove = TRUE, convert = TRUE) %>%
     tidyr::separate(deletion_counts, paste0("deletion_", c("reads", "coverage")), 
                     sep = ",", remove = TRUE, convert = TRUE)
-  
+
   df$deletion_pvalue <- as.numeric(df$deletion_pvalue)
   df$deletion_score <- as.numeric(df$deletion_score)
   
@@ -191,21 +194,17 @@ create_bases <- function(df, conditions, column) {
   )
 
   # TODO base stratification vs. rt-arrest, lrt-arrest
-  # add helper specific column
-  # aggregate arrest and through reads
   if (length(unique(r$base_type)) == 1) {
     r$base_type <- "total"
   } else {
-    # FIXME
     r <- group_by_site(r, ARREST_POS_COLUMN, condition, replicate) %>%
       dplyr::mutate(
         base_type = "total", 
         bc_A = sum(bc_A), 
-        bc_C = sum(bc_C), 
-        bc_G = sum(bc_G), 
+        bc_C = sum(bc_C),
+        bc_G = sum(bc_G),
         bc_T = sum(bc_T)
       ) %>%
-      # TODO test if this is needed dplyr::distinct() %>% 
       dplyr::ungroup() %>%
       rbind(r)
   }

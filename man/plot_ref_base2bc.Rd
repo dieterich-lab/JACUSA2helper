@@ -4,7 +4,7 @@
 \alias{plot_ref_base2bc}
 \title{Plot distribution of base changes.}
 \usage{
-plot_ref_base2bc(result, column = "ref_base2bc_column")
+plot_ref_base2bc(result, column = "ref_base2bc")
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
@@ -15,12 +15,7 @@ plot_ref_base2bc(result, column = "ref_base2bc_column")
 ggplot2 plot object.
 }
 \description{
-TODO
-}
-\details{
+Plots the distribution of base changes.
 The user is responsible for correct filtering and grouping of the 
 \code{result} object.
-\code{data_desc} is used to provide a descriptive name for each observation.
-
-TODO make column replicate optional
 }

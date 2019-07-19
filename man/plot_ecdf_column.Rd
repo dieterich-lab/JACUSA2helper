@@ -28,6 +28,4 @@ The user must make sure that dimensions (rows and length) of:
 in \code{result}. Furthermore, the user is responsible for correct filtering and grouping of the 
 \code{result} object.
 \code{data_desc} is used to provide a descriptive name for each observation.
-
-TODO make column replicate optional
 }

@@ -120,13 +120,16 @@ get_ref_base2bc_ratio <- function(ref_base, bc_matrix) {
   ref_base2bc_ratio
 }
 
-#' Merges base change entries.
+#' Merges base changes.
 #' 
-#' TODO
+#' Merges basechanges. Usefull, when creating summaries for base changes with \code{add_summary()}.
+#' Merging base changes with different reference bases is not allowed.
+#' However, base changes with different non-reference bases can be merged, e.g.: c("A->G", "A->C")
+#' will be merged to "A->CG"
 #' 
 #' @importFrom magrittr %>%
 #' @param ref_base2bc vector of base changes.
-#' @return vector of merged base changes.
+#' @return merged base changes.
 #' 
 #' @export
 merge_ref_base2bc <- function(ref_base2bc) {

@@ -1,12 +1,8 @@
 #' Plot distribution of base changes.
 #' 
-#' TODO
-#' 
+#' Plots the distribution of base changes.
 #' The user is responsible for correct filtering and grouping of the 
 #' \code{result} object.
-#' \code{data_desc} is used to provide a descriptive name for each observation.
-#' 
-#' TODO make column replicate optional
 #' 
 #' @importFrom tibble add_column
 #' @importFrom magrittr %>%

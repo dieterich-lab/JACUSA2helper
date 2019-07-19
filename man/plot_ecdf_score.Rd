@@ -11,11 +11,13 @@ plot_ecdf_score(result, data_desc, column = "score")
 
 \item{data_desc}{vector of strings providing details}
 
-\item{column}{character string specifies column of score}
+\item{column}{character string specifies column of score.}
 }
 \value{
 plot object
 }
 \description{
-TODO use plot_ecdf_column, adjust to make meta_condition, condition, and replicate dependent
+The user is responsible for correct filtering and grouping of the 
+\code{result} object.
+\code{data_desc} is used to provide a descriptive name for each observation.
 }

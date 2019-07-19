@@ -23,7 +23,8 @@ get_robust <- function(condition, mat) {
 # helper: apply boolean operator "&"(all),"|"(any) on all columns 
 #' @noRd
 get_mask <- function(mat, op) {
-  mat <- t(apply(mat, 1, function(x) { x > 0 }))
+  # t(apply(mat, 1, function(x) { x > 0 }))
+  mat <- mat > 0
   if (identical(op, all) || identical(op, any)) {
     mat <- t(apply(mat, 2, op))
   } else {

@@ -9,7 +9,7 @@
 #' 
 #' @export
 plot_ecdf_coverage <- function(result, data_desc, coverage_column = "coverage") {
-  p <- plot_ecdf_column(result, coverage, data_desc) + 
+  p <- plot_ecdf_column(result, coverage_column, data_desc) + 
     ggplot2::xlab("Coverage")
 
   p
