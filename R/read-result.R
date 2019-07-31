@@ -207,6 +207,24 @@ create_bases <- function(df, conditions, column) {
       ) %>%
       dplyr::ungroup() %>%
       rbind(r)
+    if (ARREST_POS_COLUMN %in% names(r)) {
+      r <- dplyr::distinct(
+        r, 
+        contig, start, end, strand, 
+        ARREST_POS_COLUMN, 
+        condition, replicate,
+        base_type,
+        .keep_all = TRUE
+      )
+    } else {
+      r <- dplyr::distinct(
+        r, 
+        contig, start, end, strand, 
+        condition, replicate,
+        base_type,
+        .keep_all = TRUE
+      )
+    }
   }
 
   r

@@ -5,7 +5,7 @@
 \title{Plot cumulative allele count.}
 \usage{
 plot_ecdf_allele_count(result, data_desc,
-  allele_count_column = "allele_count")
+  allele_count_column = "allele_count", ...)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
@@ -13,6 +13,8 @@ plot_ecdf_allele_count(result, data_desc,
 \item{data_desc}{vector of characters strings providing details about the sample.}
 
 \item{allele_count_column}{character sting specifing the name of the column.}
+
+\item{...}{parameters forwared to plot_ecdf_column.}
 }
 \value{
 ggplot2 plot object.

@@ -32,7 +32,7 @@ add_summary <- function(result, column, aggregate, summarise, suffix = "") {
   # adjust group_by with user provided aggregate
   opt_site_vars <- OPT_SITE_VARS
   if (aggregate == "condition") {
-    opt_site_vars <- c(opt_site_vars, aggregate())
+    opt_site_vars <- c(opt_site_vars, aggregate)
   }
 
   # create name of new summary column
@@ -50,7 +50,7 @@ add_summary <- function(result, column, aggregate, summarise, suffix = "") {
   
   result <- group_by_site(
     result, 
-    OPT_SITE_VARS, 
+    opt_site_vars, 
     primary, base_type
   ) %>%
     dplyr::mutate(!!rlang::sym(new_variable):=summary_helper(!!rlang::sym(column))) %>%

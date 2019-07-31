@@ -18,7 +18,7 @@ get_score_helper <- function(primary, base_type, score) {
 filter_by_min_score <- function(result, min_score, column = "score") {
   result <- group_by_site(result, "meta_condition") %>%
     dplyr::filter(
-      get_score_helper(primary, base_type, !!rlang::sym(column)) >= min_score
+      all(get_score_helper(primary, base_type, !!rlang::sym(column)) >= min_score)
     ) %>%
     dplyr::ungroup() %>%
     copy_jacusa_attributes(result, .)
@@ -41,7 +41,7 @@ filter_by_min_score <- function(result, min_score, column = "score") {
 filter_by_max_score <- function(result, max_score, column = "score") {
   result <- group_by_site(result, "meta_condition") %>%
     dplyr::filter(
-      get_score_helper(primary, base_type, !!rlang::sym(column)) <= max_score
+      all(get_score_helper(primary, base_type, !!rlang::sym(column)) <= max_score)
     ) %>%
     dplyr::ungroup() %>%
     copy_jacusa_attributes(result, .)

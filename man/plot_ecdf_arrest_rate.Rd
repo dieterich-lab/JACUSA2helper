@@ -5,7 +5,7 @@
 \title{Plot cumulative arrest rate.}
 \usage{
 plot_ecdf_arrest_rate(result, data_desc,
-  arrest_rate_column = "arrest_rate")
+  arrest_rate_column = "arrest_rate", ...)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
@@ -13,6 +13,8 @@ plot_ecdf_arrest_rate(result, data_desc,
 \item{data_desc}{vector of characters strings providing details about the sample.}
 
 \item{arrest_rate_column}{character sting specifing the name of the column.}
+
+\item{...}{parameters forwared to plot_ecdf_column.}
 }
 \value{
 ggplot2 plot object.

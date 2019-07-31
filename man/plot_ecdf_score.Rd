@@ -4,7 +4,7 @@
 \alias{plot_ecdf_score}
 \title{Plot cumulative score.}
 \usage{
-plot_ecdf_score(result, data_desc, column = "score")
+plot_ecdf_score(result, data_desc, column = "score", ...)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}}
@@ -12,6 +12,8 @@ plot_ecdf_score(result, data_desc, column = "score")
 \item{data_desc}{vector of strings providing details}
 
 \item{column}{character string specifies column of score.}
+
+\item{...}{parameters forwared to plot_ecdf_column.}
 }
 \value{
 plot object

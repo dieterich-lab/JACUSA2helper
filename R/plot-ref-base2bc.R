@@ -17,11 +17,10 @@ plot_ref_base2bc <- function(result, column = "ref_base2bc") {
     ggplot2::geom_bar() +
     ggplot2::xlab("Base change")  +
     ggplot2::scale_fill_discrete(name = "Base change") +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1))
-
-  if ("meta_condition" %in% names(result)) {
-    p <- p + ggplot2::facet_wrap(~ meta_condition)
-  }
+    ggplot2::theme(
+      legend.position = "bottom", 
+      axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)
+    )
 
   p
 }

@@ -15,35 +15,30 @@
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param column character string to be used for plotting.
 #' @param data_desc vector of characters strings providing details about the sample.
+#' @param main_group character string to be used to define colour.
+#' @param sub_group character string to be used to define linetype.
 #' @param name character string defines name of the legend.
 #' @return ggplot2 plot object.
 #'
 #' @export
-plot_ecdf_column <- function(result, column, data_desc, name = "Data description") {
+plot_ecdf_column <- function(result, column, data_desc, main_group, sub_group = NULL, name = "Data description") {
   if (nrow(result) != length(data_desc)) {
     stop("'data_desc' does not match number of entries of 'result'")
   }
 
-  
-  
   result[["data_desc"]] <- NULL
   result <- tibble::add_column(result, data_desc)
 
-  main <- ifelse("meta_condition" %in% names(result), "meta_condition", "condition")
-
-  columns <- c("group", "data_desc")
-  if ("replicate" %in% names(result)) {
-    columns <- c("replicate", columns)
-    
-    result$group <- interaction(
-      result[[main]],
-      result[["replicate"]]
-    )
-  } else {
-    result$group <- result[[main]]
+  groups <- c(main_group)
+  if (! is.null(sub_group)) {
+    groups <- c(groups, sub_group)
   }
+  result$group <- do.call(
+    interaction,
+    list(result[groups])
+  )
 
-  columns <- c(main, columns)
+  columns <- c(groups, "group", "data_desc")
   meta_desc <- dplyr::distinct(
     result, !!!rlang::syms(columns)
   )
@@ -51,26 +46,39 @@ plot_ecdf_column <- function(result, column, data_desc, name = "Data description
   limits <- as.vector(meta_desc[["group"]])
   labels <- meta_desc[["data_desc"]]
 
-  p <- ggplot2::ggplot(
-    result, 
-    ggplot2::aes(
-      x = !!rlang::sym(column), 
-      colour = group
+  p <- NULL
+  if (is.null(sub_group)) {
+    p <- ggplot2::ggplot(
+      result, 
+      ggplot2::aes(
+        x = !!rlang::sym(column), 
+        colour = group
+      )
     )
-  ) +
-    ggplot2::scale_colour_manual(
+  } else {
+    p <- ggplot2::ggplot(
+      result, 
+      ggplot2::aes(
+        x = !!rlang::sym(column), 
+        colour = group,
+        linetype = group
+      )
+    )
+  }
+
+  p <- p + ggplot2::scale_colour_manual(
       name = name,
       labels = labels,
       limits = limits,
-      values = meta_desc[[main]] %>% as.integer()
+      values = factor(meta_desc[[main_group]]) %>% as.integer()
     )
 
-  if ("replicate" %in% names(result)) {
+  if (! is.null(sub_group)) {
     p <- p + ggplot2::scale_linetype_manual(
       name = name,
       labels = labels,
       limits = limits,
-      values = meta_desc[["replicate"]] %>% as.integer()
+      values = factor(meta_desc[[sub_group]]) %>% as.integer()
     )
   }
 
@@ -78,10 +86,6 @@ plot_ecdf_column <- function(result, column, data_desc, name = "Data description
     ggplot2::xlab(column) +
     ggplot2::ylab("Density") +
     ggplot2::stat_ecdf(geom = "step")
-
-  if ("meta_condition" %in% names(result) && "condition" %in% names(result)) {
-    p <- p + ggplot2::facet_grid(~ condition)
-  }
 
   p
 }

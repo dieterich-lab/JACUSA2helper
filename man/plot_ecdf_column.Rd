@@ -4,7 +4,8 @@
 \alias{plot_ecdf_column}
 \title{Generic plot for cumulative data (EXPERIMENTAL)}
 \usage{
-plot_ecdf_column(result, column, data_desc, name = "Data description")
+plot_ecdf_column(result, column, data_desc, main_group, sub_group = NULL,
+  name = "Data description")
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
@@ -12,6 +13,10 @@ plot_ecdf_column(result, column, data_desc, name = "Data description")
 \item{column}{character string to be used for plotting.}
 
 \item{data_desc}{vector of characters strings providing details about the sample.}
+
+\item{main_group}{character string to be used to define colour.}
+
+\item{sub_group}{character string to be used to define linetype.}
 
 \item{name}{character string defines name of the legend.}
 }

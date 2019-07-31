@@ -10,10 +10,11 @@
 #' @param result object created by \code{read_result()} or \code{read_results()}
 #' @param data_desc vector of strings providing details
 #' @param column character string specifies column of score.
+#' @param ... parameters forwared to plot_ecdf_column.
 #' @return plot object
 #'
 #' @export
-plot_ecdf_score <- function(result, data_desc, column = "score") {
+plot_ecdf_score <- function(result, data_desc, column = "score", ...) {
   if (nrow(result) != length(data_desc)) {
     stop("data_desc does not match number of entries of result")
   }
@@ -31,5 +32,5 @@ plot_ecdf_score <- function(result, data_desc, column = "score") {
     result, meta_condition, contig, start, end, strand, !!rlang::sym(column), data_desc
   )
 
-  plot_ecdf_column(result, column, result$data_desc)
+  plot_ecdf_column(result, column, result$data_desc, ...)
 }

@@ -4,7 +4,7 @@
 \alias{plot_ecdf_coverage}
 \title{Plot cumulative read coverage.}
 \usage{
-plot_ecdf_coverage(result, data_desc, coverage_column = "coverage")
+plot_ecdf_coverage(result, data_desc, coverage_column = "coverage", ...)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
@@ -12,6 +12,8 @@ plot_ecdf_coverage(result, data_desc, coverage_column = "coverage")
 \item{data_desc}{vector of characters strings providing details about the sample.}
 
 \item{coverage_column}{character sting specifing the name of the column.}
+
+\item{...}{parameters forwared to plot_ecdf_column.}
 }
 \value{
 ggplot2 plot object.
