@@ -10,15 +10,20 @@
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param ref_field character string "ref_base" or a condition number (1 or 2) to define reference base.
+#' @param max_bc boolean TODO
 #' @return result object with base changes added.
 #' 
 #' @export
-add_ref_base2bc <- function(result, ref_field) {
+add_ref_base2bc <- function(result, ref_field, max_bc = FALSE) {
   tmp_result <- result
+  if (max_bc) {
+    result <- group_by_site(result, "meta_condition") %>%
+      dplyr::mutate(site_max_bc = get_max_bc_helper(bc_A, bc_C, bc_G, bc_T))
+  }
   if (ref_field == REF_BASE_COLUMN) {
-    result <- add_default_ref_base2bc(result)
+    result <- add_default_ref_base2bc(result, max_bc)
   } else if (is.numeric(ref_field)) {
-    result <- add_ref_base2bc_by_condition(result, ref_field)
+    result <- add_ref_base2bc_by_condition(result, ref_field, max_bc)
   } else {
     stop("Unknown ref_field: ", ref_field)
   }
@@ -28,9 +33,9 @@ add_ref_base2bc <- function(result, ref_field) {
 }
 
 #' @noRd
-add_default_ref_base2bc <- function(result) {
+add_default_ref_base2bc <- function(result, max_bc = FALSE) {
   # make sure, we have only ONE reference base per site
-  if (any(nchar(result[[REF_BASE_COLUMN]]) != 1)) {
+  if (! max_bc && any(nchar(result[[REF_BASE_COLUMN]]) != 1)) {
     stop(REF_BASE_COLUMN, " != 1 not allowed")
   }
   # use reference base "from FASTA reference"
@@ -38,14 +43,19 @@ add_default_ref_base2bc <- function(result) {
     result, 
     OPT_SITE_VARS, 
     condition, replicate
-  ) %>%
-    dplyr::mutate(ref_base2bc = get_ref_base2bc(ref_base, bc))
+  )
+  
+  if (max_bc) {
+    result <- dplyr::mutate(result, ref_base2max_bc = get_ref_base2bc(ref_base, site_max_bc))
+  } else {
+    result <- dplyr::mutate(result, ref_base2bc = get_ref_base2bc(ref_base, bc))
+  }
 
   result
 }
 
 #' @noRd
-add_ref_base2bc_by_condition <- function(result, ref_condition) {
+add_ref_base2bc_by_condition <- function(result, ref_condition, max_bc = False) {
   if (length(ref_condition) != 1 | ! ref_condition %in% result$condition) {
     stop("Unknown condition: ", ref_condition)
   }
@@ -72,8 +82,30 @@ add_ref_base2bc_by_condition <- function(result, ref_condition) {
   result <- group_by_site(
     result,
     OPT_SITE_VARS
-  ) %>%
-    dplyr::mutate(ref_base2bc = extract_ref_base2bc(condition, bc))
+  )
+  if (max_bc) {
+    dplyr::mutate(result, ref_base2max_bc = extract_ref_base2bc(condition, site_max_bc))
+  } else {
+    dplyr::mutate(result, ref_base2bc = extract_ref_base2bc(condition, bc))
+  }
 
   result
+}
+
+#' @noRd
+get_max_bc_helper <- function(bc_A, bc_C, bc_G, bc_T, max_allele_count = 2) {
+  bc_A <- sum(bc_A)
+  bc_C <- sum(bc_C)
+  bc_G <- sum(bc_G)
+  bc_T <- sum(bc_T)
+  v <- c(bc_A, bc_C, bc_G, bc_T)
+  names(v) <- JACUSA2helper:::BASES
+  v <- v[v > 0]
+  
+  max_bc <- sort(v, decreasing = TRUE) %>%
+    names() %>%
+    paste0(collapse = "")
+  allele_count <- nchar(max_bc)
+  
+  substr(max_bc, 1, min(allele_count, max_allele_count))
 }

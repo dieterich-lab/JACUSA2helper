@@ -4,10 +4,12 @@
 \alias{filter_by_robust_arrest_events}
 \title{Retains sites that contain an arrest event in all replicates in at least one condition.}
 \usage{
-filter_by_robust_arrest_events(result)
+filter_by_robust_arrest_events(result, min_diff = NULL)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
+
+\item{min_diff}{TODO}
 }
 \value{
 result object with sites where at least one condition contains the arrest event in all replicates.

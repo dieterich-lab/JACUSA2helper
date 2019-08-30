@@ -13,13 +13,19 @@
 #' 
 #' @importFrom magrittr %>%
 #' @param result created by \code{read_result()} or \code{read_results()}.
+#' @param max_bc boolean TODO
 #' @return result object with base change ratio added.
 #' 
 #' @export 
-add_ref_base2bc_ratio <- function(result) {
-  check_column_exists(result, "ref_base2bc")
+add_ref_base2bc_ratio <- function(result, max_bc = FALSE) {
+  column <- "ref_base2bc"
+  if (max_bc) {
+    column <- "ref_base2max_bc"
+  }
+  column_ratio <- paste0(column, "_ratio")
 
-  ref_base <- result$ref_base2bc
+  check_column_exists(result, column)
+  ref_base <- result[[column]]
   
   # need to distinguish data:
   # * other or
@@ -28,14 +34,14 @@ add_ref_base2bc_ratio <- function(result) {
   # otherwise, ratio will be 0.0
   i <- grepl(BC_CHANGE_SEP, ref_base)
   if (any(i)) {
-    ref_base[i] <- strsplit(result$ref_base2bc[i], BC_CHANGE_SEP) %>%
+    ref_base[i] <- strsplit(result[[column]][i], BC_CHANGE_SEP) %>%
       lapply("[[", 1) %>%
       unlist()
 
     if (any(nchar(ref_base[i]) != 1)) {
       stop("More than 1 allele for reference base is not allowed!")
     }
-    observed_bc <- strsplit(result$ref_base2bc[i], BC_CHANGE_SEP) %>%
+    observed_bc <- strsplit(result[[column]][i], BC_CHANGE_SEP) %>%
       lapply("[[", 2) %>%
       unlist()
     if (any(nchar(observed_bc) > 1)) {
@@ -44,11 +50,18 @@ add_ref_base2bc_ratio <- function(result) {
   }
 
   # default ratio
-  result$ref_base2bc_ratio <- 0.0
+  result[[column_ratio]] <- 0.0
   if (any(i)) {
-    result$ref_base2bc_ratio[i] <- get_ref_base2bc_ratio(
+    m <- result[i, paste0("bc_", BASES)]
+    variant_bc <- NULL
+    if (max_bc) {
+      variant_bc <- result[["site_max_bc"]]
+    }
+
+    result[[column_ratio]][i] <- get_ref_base2bc_ratio(
       ref_base[i],
-      result[i, paste0("bc_", BASES)]
+      m,
+      variant_bc
     )
   }
 

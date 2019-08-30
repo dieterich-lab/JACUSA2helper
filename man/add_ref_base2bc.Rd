@@ -4,12 +4,14 @@
 \alias{add_ref_base2bc}
 \title{Adds base change column to JACUSA2 result object.}
 \usage{
-add_ref_base2bc(result, ref_field)
+add_ref_base2bc(result, ref_field, max_bc = FALSE)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
 \item{ref_field}{character string "ref_base" or a condition number (1 or 2) to define reference base.}
+
+\item{max_bc}{boolean TODO}
 }
 \value{
 result object with base changes added.

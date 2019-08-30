@@ -4,12 +4,14 @@
 \alias{get_ref_base2bc_ratio}
 \title{Calculates base call change ratio (e.g.: editing frequency).}
 \usage{
-get_ref_base2bc_ratio(ref_base, bc_matrix)
+get_ref_base2bc_ratio(ref_base, bc_matrix, observed_bc = NULL)
 }
 \arguments{
 \item{ref_base}{vector of reference bases.}
 
 \item{bc_matrix}{matrix of observed base calls.}
+
+\item{variant_bc}{TODO}
 }
 \value{
 vector of base call change ratios.

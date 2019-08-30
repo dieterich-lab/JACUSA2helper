@@ -84,15 +84,19 @@ get_ref_base2bc <- function(ref_base, observed_bc) {
 #'
 #' @param ref_base vector of reference bases.
 #' @param bc_matrix matrix of observed base calls.
+#' @param variant_bc TODO
 #' @return vector of base call change ratios.
 #'
 #' @export
-get_ref_base2bc_ratio <- function(ref_base, bc_matrix) {
+get_ref_base2bc_ratio <- function(ref_base, bc_matrix, observed_bc = NULL) {
   colnames(bc_matrix) <- BASES
-  observed_bc <- apply(bc_matrix > 0, 1, function(m) { 
-    return(paste0(BASES[m], collapse = "")) 
-  })
 
+  if (is.null(observed_bc)) {
+    observed_bc <- apply(bc_matrix > 0, 1, function(m) { 
+      return(paste0(BASES[m], collapse = "")) 
+    })
+  }
+  
   # calculates the variant base between ref_base and observed_bc
   variant_bc <- mapply(function(r, o) {
     # remove reference base - only the variant base should remain
@@ -189,6 +193,8 @@ mask_ref_base2bc <- function(ref_base2bc, keep) {
   keep <- c(keep, BC_CHANGE_NO_CHANGE)
   i <- ref_base2bc %in% keep
   if (any(i)) {
-    result$ref_base2bc[! i] <- BC_CHANGE_OTHER
+    ref_base2bc[! i] <- BC_CHANGE_OTHER
   }
+
+  ref_base2bc
 }

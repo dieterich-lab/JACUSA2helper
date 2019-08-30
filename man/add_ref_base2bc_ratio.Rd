@@ -4,10 +4,12 @@
 \alias{add_ref_base2bc_ratio}
 \title{Adds base call change ratio to a JACUSA2 result object.}
 \usage{
-add_ref_base2bc_ratio(result)
+add_ref_base2bc_ratio(result, max_bc = FALSE)
 }
 \arguments{
 \item{result}{created by \code{read_result()} or \code{read_results()}.}
+
+\item{max_bc}{boolean TODO}
 }
 \value{
 result object with base change ratio added.

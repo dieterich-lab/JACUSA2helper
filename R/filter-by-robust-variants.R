@@ -9,9 +9,9 @@
 #' @export 
 filter_by_robust_variants <- function(result) {
   # check only two alleles per site
-  if (! check_max_alleles(result, 2)) {
-    stop("Data contains sites with > 2 alleles. Please remove those sites.")
-  }
+  #if (! check_max_alleles(result, 2)) {
+  #  stop("Data contains sites with > 2 alleles. Please remove those sites.")
+  #}
 
   result <- group_by_site(result, "meta_condition") %>%
     dplyr::filter(
