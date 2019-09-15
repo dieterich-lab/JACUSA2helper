@@ -2,7 +2,7 @@
 % Please edit documentation in R/add-non-ref-base-ratio.R
 \name{add_non_ref_base_ratio}
 \alias{add_non_ref_base_ratio}
-\title{TODO}
+\title{Adds non reference base ratio to JACUSA2 result object.}
 \usage{
 add_non_ref_base_ratio(result)
 }
@@ -13,5 +13,5 @@ add_non_ref_base_ratio(result)
 result object with base changes added.
 }
 \description{
-TODO
+Total read coverage = reference BC + non-reference base BCs.
 }

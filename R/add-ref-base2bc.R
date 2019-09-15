@@ -10,7 +10,7 @@
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param ref_field character string "ref_base" or a condition number (1 or 2) to define reference base.
-#' @param max_bc boolean TODO
+#' @param max_bc boolean use most frequent BC or all observed BCs at site, (Default: FALSE)
 #' @return result object with base changes added.
 #' 
 #' @export
@@ -84,9 +84,9 @@ add_ref_base2bc_by_condition <- function(result, ref_condition, max_bc = False) 
     OPT_SITE_VARS
   )
   if (max_bc) {
-    dplyr::mutate(result, ref_base2max_bc = extract_ref_base2bc(condition, site_max_bc))
+    result <- dplyr::mutate(result, ref_base2max_bc = extract_ref_base2bc(condition, site_max_bc))
   } else {
-    dplyr::mutate(result, ref_base2bc = extract_ref_base2bc(condition, bc))
+    result <- dplyr::mutate(result, ref_base2bc = extract_ref_base2bc(condition, bc))
   }
 
   result

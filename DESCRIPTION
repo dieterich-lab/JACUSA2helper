@@ -1,9 +1,9 @@
 Package: JACUSA2helper
 Type: Package
 Title: Post-processing for JACUSA2 output
-Version: 1.90
+Version: 1.95
 Depends: R (>= 2.10)
-Date: 2019-08-12
+Date: 2019-09-14
 Author: Michael Piechotta
 Maintainer: <michael.piechotta@gmail.com>
 Description: This package enables post-processing of JACUSA2 output: read, filter, plot, write.

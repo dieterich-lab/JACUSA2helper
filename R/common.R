@@ -7,7 +7,7 @@
 #'  \item{add}{Adds some field to an existing JACUSA2 result object and return the modified object, e.g.: \code{add_ref_base2bc()}.}
 #'  \item{check}{Performs some checks on a result object, e.g.: \code{check_max_alleles()}.}
 #'  \item{filter}{Will remove sites from a result object with some filtering criteria, e.g.: \code{filter_by_coverage()}}
-#'  \item{"other"}{TODO}
+#'  \item{plot}{Plots certain characteristics of a JACUSA2 result object.}
 #' }
 #' 
 #' The following methods from JACUSA2 are supported:
@@ -19,7 +19,7 @@
 #' }
 #' 
 #' One major new feature of JACUSA2 is the identification of read arrest events. 
-#' In this method the vector of base call is partitioned into read arrest and read through bases.
+#' In this method, the vector of base call is partitioned into read arrest and read through bases.
 #' 
 #' When working with stranded RNA-Seq data, inverting base calls is not necessary because
 #' JACUSA2 will automatically invert Single End (SE) and Paired End (PE) depending on the
@@ -32,15 +32,13 @@
 #' JACUSA2 result files via \code{results <- read_results(files, meta_conditions)} where \code{meta_conditions} is a 
 #' vector of character strings that provides a descriptive name for each file in \code{files}.
 #' 
-#' @section sites:
-#' site, which is a defined as a location in genome using: contig, start, end, and strand information.
-#' TODO sites 
-#' primary, base_type
+#' @section site:
+#' A site is defined as a location using: contig, start, end, and strand information.
+#' See:
+#' \describe{
+#'   \item{group_by_site}{Groups JACUSA2 result object by coordinates and optional columns.}
 #' 
 #' @section read/write functions:
-#' The functions read_result, and write_result facilitate input and output operations on JACUSA2 
-#' result files.
-#'
 #' See:
 #' \describe{
 #'   \item{read_result}{Reads and unpacks a JACUSA2 result file and creates a result object.}
@@ -50,22 +48,19 @@
 #' }
 #'
 #' @section add functions:
-#' TODO
-#' 
 #' See:
 #' \describe{
-#'   \item{add_arrest_rate}{}
-#'   \item{add_ref_base2bc}{}
-#'   \item{add_ref_base2bc_ratio}{}
-#'   \item{add_summary}{}
+#'   \item{add_arrest_rate}{Adds arrest rate to JACUSA2 result object.}
+#'   \item{add_ref_base2bc}{Adds base change column to JACUSA2 result object.}
+#'   \item{add_ref_base2bc_ratio}{Adds base call change ratio to a JACUSA2 result object.}
+#'   \item{add_non_ref_base2bc_ratio}{Adds non reference base ratio to JACUSA2 result object.}
+#'   \item{add_summary}{Adds a summary of a column in a JACUSA2 result object.}
 #' }
 #'
 #' @section check function:
-#' TODO
-#'
 #' See:
 #' \describe{
-#'   \item{check_max_alleles}{}
+#'   \item{check_max_alleles}{Checks if site contains less or equal number of allowed alleles.}
 #' }
 #'
 #' @section filter functions:
@@ -74,20 +69,13 @@
 #'
 #' See:
 #' \describe{
-#'	 \item{filter_by_allele_count}{}
-#'   \item{filter_by_coverage}{}
-#'   \item{filter_by_max_score}{}
-#'   \item{filter_by_min_score}{}
-#'   \item{filter_by_robust_arrest_events}{}
-#'   \item{filter_by_robust_variants}{}
-#' }
-#'
-#' @section "other" functions:
-#' TODO
-#'
-#' See:
-#' \itemize{
-#'   \item{}{}
+#'	 \item{filter_by_allele_count}{Filters sites by the number of alleles per site.}
+#'   \item{filter_by_coverage}{Filters sites by read coverage (total, per replicates, etc.)}
+#'   \item{filter_by_filter_info}{Filters sites by artefacts.}
+#'   \item{filter_by_max_score}{Retains sites by maximal score.}
+#'   \item{filter_by_min_score}{Retains sites by minimal score.}
+#'   \item{filter_by_robust_arrest_events}{Retains sites that contain an arrest event in all replicates in at least one condition.}
+#'   \item{filter_by_robust_variants}{Retains sites that contain a variant base in all replicates in at least one condition.}
 #' }
 #'
 #' @docType package

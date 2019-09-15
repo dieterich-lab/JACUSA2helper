@@ -9,7 +9,7 @@ filter_by_robust_arrest_events(result, min_diff = NULL)
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{min_diff}{TODO}
+\item{min_diff}{numeric minimal difference of arrest rates (Default: NULL)}
 }
 \value{
 result object with sites where at least one condition contains the arrest event in all replicates.

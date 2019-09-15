@@ -6,7 +6,7 @@
 #'
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()} or \code{read_results()}.
-#' @param min_diff TODO
+#' @param min_diff numeric minimal difference of arrest rates (Default: NULL)
 #' @return result object with sites where at least one condition contains the arrest event in all replicates.
 #' 
 #' @export 

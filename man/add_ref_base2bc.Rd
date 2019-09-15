@@ -11,7 +11,7 @@ add_ref_base2bc(result, ref_field, max_bc = FALSE)
 
 \item{ref_field}{character string "ref_base" or a condition number (1 or 2) to define reference base.}
 
-\item{max_bc}{boolean TODO}
+\item{max_bc}{boolean use most frequent BC or all observed BCs at site, (Default: FALSE)}
 }
 \value{
 result object with base changes added.

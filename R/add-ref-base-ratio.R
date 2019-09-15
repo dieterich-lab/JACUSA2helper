@@ -1,19 +1,23 @@
 #' Adds base call change ratio to a JACUSA2 result object.
 #' 
 #' Calculates and adds base call change ratio (e.g.: editing frequency) 
-#' to a JACUSA2 result object. The "ref_base2bc" column needs to be populated by 
-#' calling \code{add_ref_base2bc()}. 
+#' to a JACUSA2 result object. Two sources for base call changes are supported.
+#' Per default (argument: \code{max_bc = FALSE}) the "ref_base2bc" column is used and
+#' needs to be populated by calling \code{add_ref_base2bc()}. 
+#' Otherwise (\code{max_bc = TRUE}), column "ref_base2max_bc" will be used. Populate with
+#' \code{add_ref_base2bc(max_bc = TRUE)}
 #' 
 #' The following restrictions apply to column "ref_base2bc":
 #' \itemize{
 #'   \item There must be only one reference base. A->G is okay, but AG->G is NOT allowed!
 #'   \item There must be only one non-reference base. A->G is okay, but A->CG is NOT allowed!
 #' }
-#' Make sure to filter \code{result} with \code{filter_by_alleles()} to comply with this restrictions.
+#' Make sure to filter \code{result} with \code{filter_by_alleles()} to comply with this restrictions or
+#' use \code{max_bc = TRUE} to avoid them altogether. 
 #' 
 #' @importFrom magrittr %>%
 #' @param result created by \code{read_result()} or \code{read_results()}.
-#' @param max_bc boolean TODO
+#' @param max_bc boolean use "ref_base2max_bc" or "ref_base2bc" column, (Default: FALSE). 
 #' @return result object with base change ratio added.
 #' 
 #' @export 

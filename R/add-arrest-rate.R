@@ -17,11 +17,8 @@ add_arrest_rate <- function(result) {
   arrest_rate_helper <- function(base_type, coverage) {
     arrest <- coverage[base_type == ARREST_COLUMN]
     through <- coverage[base_type == THROUGH_COLUMN]
-    # safe guard
-    stopifnot(length(arrest_rate) == 1)
-    arrest_rate <- arrest_rate(arrest, through)
-
-    return(arrest_rate)
+    
+    return(arrest_rate(arrest, through))
   }
   
   result <- group_by_site(

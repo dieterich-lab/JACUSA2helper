@@ -11,7 +11,7 @@ get_ref_base2bc_ratio(ref_base, bc_matrix, observed_bc = NULL)
 
 \item{bc_matrix}{matrix of observed base calls.}
 
-\item{variant_bc}{TODO}
+\item{observed_bc}{pre-calculated observed base calls, (Default: NULL).}
 }
 \value{
 vector of base call change ratios.
@@ -24,4 +24,5 @@ The following restrictions apply to column "ref_base" and "bc_matrix" apply:
   \item In "bc_matrix" must contain only one non-reference base. A->G is okay, but A->CG is NOT allowed!
 }
 Make sure to filter \code{result} with \code{filter_by_alleles()} to comply with this restrictions.
+This restriction can be bypassed by supplying \code{observed_bc}, e.g. use most frequent non ref bc per site.
 }

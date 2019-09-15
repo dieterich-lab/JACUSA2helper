@@ -13,7 +13,7 @@
 #'
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()} or \code{read_results()}.
-#' @param column character string specifing the column to use for the summary
+#' @param column character string specifing the column to use.
 #' @param aggregate character string defining how to aggregate: "site" or "condition".
 #' @param summarise function to be used for \code{column} to generate summary.
 #' @param suffix optional character string to add to the name of the new summary column.

@@ -6,6 +6,7 @@
 #' @importFrom magrittr %>%
 #' @param bc vector of base calls.
 #' @return number of unique alleles.
+#' 
 #' @export
 get_allele_count <- function(bc) {
   alleles <- strsplit(bc, "") %>%
@@ -81,10 +82,11 @@ get_ref_base2bc <- function(ref_base, observed_bc) {
 #'   \item In "bc_matrix" must contain only one non-reference base. A->G is okay, but A->CG is NOT allowed!
 #' }
 #' Make sure to filter \code{result} with \code{filter_by_alleles()} to comply with this restrictions.
-#'
+#' This restriction can be bypassed by supplying \code{observed_bc}, e.g. use most frequent non ref bc per site.
+
 #' @param ref_base vector of reference bases.
 #' @param bc_matrix matrix of observed base calls.
-#' @param variant_bc TODO
+#' @param observed_bc pre-calculated observed base calls, (Default: NULL).
 #' @return vector of base call change ratios.
 #'
 #' @export
@@ -147,7 +149,7 @@ merge_ref_base2bc <- function(ref_base2bc) {
   # merge A->G and other to: ?
   # 1. A->G
   # 2. other
-  # 3. file error (currently)
+  # 3. error (currently)
   if (any(ref_base2bc %in% BC_CHANGE_OTHER)) {
     if (all((ref_base2bc %in% BC_CHANGE_OTHER))) {
       return(BC_CHANGE_OTHER)

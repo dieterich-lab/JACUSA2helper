@@ -53,9 +53,9 @@ test_that("add_ref_base2bc works as expected of condition", {
     BC_CHANGE_NO_CHANGE, 
     BC_CHANGE_NO_CHANGE
   ) 
-
+  
   expect_equal(
     add_ref_base2bc(r, 2),
-    expected  
+    expected
   )
 })

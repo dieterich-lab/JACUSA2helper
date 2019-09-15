@@ -9,7 +9,7 @@ add_summary(result, column, aggregate, summarise, suffix = "")
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{column}{character string specifing the column to use for the summary}
+\item{column}{character string specifing the column to use.}
 
 \item{aggregate}{character string defining how to aggregate: "site" or "condition".}
 
