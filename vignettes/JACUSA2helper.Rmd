@@ -1,0 +1,183 @@
+---
+title: "JACUSA2helper"
+author: "Michael Piechotta"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: JACUSA2helper.bib
+link-citations: yes
+vignette: >
+  %\VignetteIndexEntry{JACUSA2helper}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+library(JACUSA2helper)
+set.seed(777)
+```
+
+A typical workflow for analysing [JACUSA2](https://github.com/dieterich-lab/JACUSA2) 
+output file(s) with [JACUSA2helper](https://github.com/dieterich-lab/JACUSA2helper) 
+consists of:
+
+* Read JACUSA2 output file(s).
+
+* Add optional data, depending on the result file, e.g.: `add_arrest_rate()` for *rt-arrest*.
+
+* Filter result object by some criteria, e.g.: `filter_by_coverage()`.
+
+* Plot filtered result object or write filtered result object back to hard drive.
+
+JACUSA2helper supports the analysis of the following method output from JACUSA2: *call-{1,2}*, *pileup*, *rt-arrest*, and *lrt-arrest*(experimental).
+Check the [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf) for more details.
+
+Here we will focus on single pairwise comparisons of one or two conditions of one output file.
+If you want to analyse multiple files with similar pairwise comparisons, read `vignette("JACUSA2helper-meta-conditions")` for an introduction of the concept of meta-conditions. 
+
+## Extended site
+
+While previously in JACUSA1, a site could be uniquely identified as one line in the output by the coordinate columns: 'contig', 'start', 'end', and 'strand', output of JACUSA2 became more complex with the introduction of new features such as discovery of arrest events, read/base stratification and INDEL count differential calling.
+
+In *rt-arrest* and *lrt-arrest* for example, base calls can be distiguished into two categories:
+* Read through base calls are located withing a read.
+* Arrest base calls are located at the end of a read, due to termination during first strand synthesis.
+Therefore, the base column $$baseij : i \in Condition, j \in Replicates of i$$ known form *call-{1,2}* and *pileup*, is split into two columns
+'arrest_basesij' and 'through_bases' for *rt-arrest* and *lrt-arrest*.
+
+
+
+Check Section "" of [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf) for a details on arrest events and data characteristics.
+
+The boolean value in the `primary` column indicates for each row if this row is contained in the primary result file or if it has been derived.
+
+`base_type` column 
+
+## Variant calling - Data: rdd (RNA-DNA-differences)
+
+To introduce the basic verbs for manipulating JAUCSA2 output, we'll use `JACUSA2helper:rdd`. This dataset contains a subset from @Piechotta2017 and is documented in `?rdd`
+
+#```{r}
+#library(JACUSA2helper)
+#dim(rdd)
+#rdd
+#```
+
+Note that `JACUSA2helper::rdd` is a tibble - check [tibble](http://tibble.tidyverse.org) for more details. 
+
+
+
+Check details on [dplyr](https://github.com/tidyverse/dplyr) for more and read `vignette("dplyr")`.
+
+## Variant calling - RNA-RNA-differences
+
+## Arrest events
+
+```{r}
+library(JACUSA2helper)
+data(HIVRT)
+colnames(HIVRT)
+HIVRT
+```
+
+# Experimental features
+## *lrt-arrest*
+## *Read/Base Stratification*
+
+Multiple pairwise comparisons with different meta-conditions.
+
+The following methods from JACUSA2 are supported:
+* *call-{1,2}*: 
+
+
+
+One major new feature of JACUSA2 is the identification of read arrest events.
+The vector of base call is partitioned into read arrest and read through bases.
+
+## Tidy
+
+## Site
+A *site* is defined as a location in genome using: contig, start, end, and strand information.
+`group_by_site()`
+
+#* primary, base_type
+
+# TODO
+#* tidy data 
+#* reference
+
+The central data structure in JACUSA2helper is the JACUSA2 result object that follows the tidy data approach to feature easy interaction with dplyr and ggplot2.
+
+TODO wide long
+
+## Stranded data
+
+When working with stranded RNA-Seq data, inverting base calls is not necessary because
+JACUSA2 will automatically invert Single End (SE) and Paired End (PE) depending on the
+provided library type option "-P" UNSTRANDED|FR_FIRSTSTRAND|RF_SECOND_STRAND".
+
+A JACUSA2 result object can be created via \code{result <- read_result("jacusa2.out")} and is currently represented as a tibble. 
+
+## Meta condition
+
+JACUSA2helper supports the analysis of several related JACUSA2 result files via` `results <- read_results(files, meta_conditions)` where `meta_conditions` is a 
+vector of character strings that provides a descriptive name for each file in `files?`.
+
+* meta conditiona and filtering 
+* meta conditions and ploting
+
+## TODO
+
+* base stratification
+* lrt-arrest
+
+# Input/Output
+
+The functions read_result, and write_result facilitate input and output operations on JACUSA2 result files.
+
+* `read_result()` Reads and unpacks a JACUSA2 result file and creates a result object.
+* `read_results()` Allows to combine multiple result files and distinguish them with meta conditions.
+* `write_result()` This will pack result object and write its contents back to a file.
+* `write_bedGraph()` Writes a vector of values as bedGraph file.
+
+# Add optional data
+
+* `add_arrest_rate()`
+* `add_ref_base2bc()`
+* `add_ref_base2bc_ratio()`
+* `add_summary()`
+
+# Filter result object
+This function set enables filtering by read coverage or enforcing a minimal number of variant base calls per sample.
+
+* `filter_by_allele_count()`
+* `filter_by_coverage()`
+* `filter_by_max_score()`
+* `filter_by_min_score()`
+* `filter_by_robust_arrest_events()`
+* `filter_by_robust_variants()`
+
+## Check functions
+
+* `check_max_alleles()`
+
+# Plot result object
+#* meta_condition
+#* condition, replicate
+
+## Read output(s)
+
+There are two functions to read JACUSA2 output `read_result(file)` and 'read_results(files, meta_conditions)' which is explained in  `vignette("JACUSA2helper-meta-conditions")`.
+
+Use `result <- read_result("JACUSA2.out")` to read and create a JACUSA2 result object from a JACUSA2 output file `JACUSA2.out`.
+
+```{r}
+# simulate reading
+result <- HIVRT 
+
+# show jacusa specific attribtutes
+attributes(HIVRT)[c("jacusa_method_type", "jacusa_header")]
+```
+
+## References

@@ -1,46 +1,25 @@
-context("filter_by_filter_info")
+context("helper_filter")
 
-filter_get_count <- function(df, artefacts) {
-  df <- filter_by_filter_info(df, artefacts)
-  nrow(df)
-}
-
-create_result <- function() {
-  r <- tibble::tribble(
-    ~contig, ~start, ~end, ~strand, ~condition, ~replicate, ~primary, ~base_type, ~filter_info,
-    1,      1,    2,     "+",          1,          1,     TRUE,    "total",        "B;M",
-    1,      1,    2,     "+",          1,          2,     TRUE,    "total",        "B;M",
-    1,      1,    2,     "+",          2,          1,     TRUE,    "total",        "B;M",
-    1,      1,    2,     "+",          2,          2,     TRUE,    "total",        "B;M",
-    1,      2,    3,     "+",          1,          1,     TRUE,    "total",        "B;Y",
-    1,      2,    3,     "+",          1,          2,     TRUE,    "total",        "B;Y",
-    1,      2,    3,     "+",          2,          1,     TRUE,    "total",        "B;Y",
-    1,      2,    3,     "+",          2,          2,     TRUE,    "total",        "B;Y",
-  )
-
-  r
-}
-
-test_that("filter_by_filter_info works as expected", {
-  r <- create_result()
+test_that("filter_artefact fails on missing option", {
   expect_error(
-    filter_get_count(r, c()),
+    filter_artefact(c(EMPTY, EMPTY, EMPTY), ""),
     "artefacts cannot be 0"
   )
 })
 
-test_that("filter_by_filter_info works as expected", {
-  r <- create_result()
+test_that("filter_artefact works as expected", {
   expect_equal(
-    filter_get_count(r, c("D")),
-    nrow(r)
+    filter_artefact(c(EMPTY, EMPTY, EMPTY), "D"),
+    c(FALSE, FALSE, FALSE)
   )
+  
   expect_equal(
-    filter_get_count(r, c("B", "M")),
-    0
+    filter_artefact(c("D", "D;B", EMPTY), "B"),
+    c(FALSE, TRUE, FALSE)
   )
+  
   expect_equal(
-    filter_get_count(r, c("M", "Y")),
-    0
+    filter_artefact(c("D", "D;B", EMPTY), "D"),
+    c(TRUE, TRUE, FALSE)
   )
 })

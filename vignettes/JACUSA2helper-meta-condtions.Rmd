@@ -1,0 +1,109 @@
+---
+title: "JACUSA2helper meta conditions"
+author: "Michael Piechotta"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: JACUSA2helper.bib
+link-citations: yes
+vignette: >
+  %\VignetteIndexEntry{JACUSA2helper-meta-conditions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+library(JACUSA2helper)
+```
+
+See [JACUSA2helper vignette](TODOl) for general description of analysis with JACUSA2helper.
+
+In the following we will exeplify the advance use of metda-conditions to combine multiple pairwise comparisons
+and the analysis.
+
+
+
+# Read
+
+# Filter
+
+# Plot
+
+# Store
+
+Here we will use the attached Zhou et al. 2018 data set, where the authors
+Zhou2018 et al. 2018 map RNA modification of pseudouridine \Psi by chemically modifying
+pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse
+transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and
+SIIIMg). 
+
+
+
+
+## Site
+A *site* is defined as a location in genome using: contig, start, end, and strand information.
+`group_by_site()`
+
+#* primary, base_type
+
+# TODO
+#* tidy data 
+#* reference
+
+The central data structure in JACUSA2helper is the JACUSA2 result object that follows the tidy data approach to feature easy interaction with dplyr and ggplot2.
+
+TODO wide long
+
+## Stranded data
+
+When working with stranded RNA-Seq data, inverting base calls is not necessary because
+JACUSA2 will automatically invert Single End (SE) and Paired End (PE) depending on the
+provided library type option "-P" UNSTRANDED|FR_FIRSTSTRAND|RF_SECOND_STRAND".
+
+A JACUSA2 result object can be created via \code{result <- read_result("jacusa2.out")} and is currently represented as a tibble. 
+
+## Meta condition
+
+JACUSA2helper supports the analysis of several related JACUSA2 result files via` `results <- read_results(files, meta_conditions)` where `meta_conditions` is a 
+vector of character strings that provides a descriptive name for each file in `files?`.
+
+* meta conditiona and filtering 
+* meta conditions and ploting
+
+## TODO
+
+* base stratification
+* lrt-arrest
+
+# Input/Output
+
+The functions read_result, and write_result facilitate input and output operations on JACUSA2 result files.
+
+* `read_result()` Reads and unpacks a JACUSA2 result file and creates a result object.
+* `read_results()` Allows to combine multiple result files and distinguish them with meta conditions.
+* `write_result()` This will pack result object and write its contents back to a file.
+* `write_bedGraph()` Writes a vector of values as bedGraph file.
+
+# Add optional data
+
+* `add_arrest_rate()`
+* `add_ref_base2bc()`
+* `add_ref_base2bc_ratio()`
+* `add_summary()`
+
+# Filter result object
+This function set enables filtering by read coverage or enforcing a minimal number of variant base calls per sample.
+
+* `filter_by_allele_count()`
+* `filter_by_coverage()`
+* `filter_by_max_score()`
+* `filter_by_min_score()`
+* `filter_by_robust_arrest_events()`
+* `filter_by_robust_variants()`
+
+## References
+

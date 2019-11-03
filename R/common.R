@@ -4,10 +4,13 @@
 #' A package that provides the following categories of functions to post-process result files of JACUSA2:
 #' \describe{
 #'  \item{read/write}{Read and write JACUSA2 result files, e.g.: \code{read_result()}.}
-#'  \item{add}{Adds some field to an existing JACUSA2 result object and return the modified object, e.g.: \code{add_ref_base2bc()}.}
+#'  \item{add}{Adds some field to an existing JACUSA2 result object and return the modified object, e.g.: \code{add_sub()}.}
+#'  \item{get}{TODO}
+#'  \item{col(s)}{col(umns)TODO}
 #'  \item{check}{Performs some checks on a result object, e.g.: \code{check_max_alleles()}.}
 #'  \item{filter}{Will remove sites from a result object with some filtering criteria, e.g.: \code{filter_by_coverage()}}
 #'  \item{plot}{Plots certain characteristics of a JACUSA2 result object.}
+#'  \item{other}{Retrieves some field from an existing JACUSA2 result object. \code{base_type}}
 #' }
 #' 
 #' The following methods from JACUSA2 are supported:
@@ -32,11 +35,14 @@
 #' JACUSA2 result files via \code{results <- read_results(files, meta_conditions)} where \code{meta_conditions} is a 
 #' vector of character strings that provides a descriptive name for each file in \code{files}.
 #' 
+#' Check \code{vignette(TODO)} for a general introduction and \code{vignette(TODO meta conditions)} for details about meta conditions.
+#' 
 #' @section site:
 #' A site is defined as a location using: contig, start, end, and strand information.
 #' See:
 #' \describe{
 #'   \item{group_by_site}{Groups JACUSA2 result object by coordinates and optional columns.}
+#' }
 #' 
 #' @section read/write functions:
 #' See:
@@ -51,9 +57,9 @@
 #' See:
 #' \describe{
 #'   \item{add_arrest_rate}{Adds arrest rate to JACUSA2 result object.}
-#'   \item{add_ref_base2bc}{Adds base change column to JACUSA2 result object.}
-#'   \item{add_ref_base2bc_ratio}{Adds base call change ratio to a JACUSA2 result object.}
-#'   \item{add_non_ref_base2bc_ratio}{Adds non reference base ratio to JACUSA2 result object.}
+#'   \item{add_sub}{Adds base substitution column to JACUSA2 result object.}
+#'   \item{add_sub_ratio}{Adds base substitution ratio for all bases to a JACUSA2 result object.}
+#'   \item{add_TODOnon_ref_base2bc_ratio}{Adds non reference base ratio to JACUSA2 result object.}
 #'   \item{add_summary}{Adds a summary of a column in a JACUSA2 result object.}
 #' }
 #'

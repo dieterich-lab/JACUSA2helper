@@ -11,7 +11,7 @@
 #'
 #' @export
 plot_ecdf_allele_count <- function(result, data_desc, allele_count_column = "allele_count", ...) {
-  p <- plot_ecdf_column(result, allele_count, data_desc, ...) + 
+  p <- plot_ecdf_column(result, allele_count_column, data_desc, ...) + 
     ggplot2::xlab("Allele count")
 
   p

@@ -4,12 +4,10 @@
 \alias{group_by_site}
 \title{Groups JACUSA2 result object by coordinates and optional columns.}
 \usage{
-group_by_site(result, opt_vars = c(), ...)
+group_by_site(result, ...)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
-
-\item{opt_vars}{optional variables to group by (need NOT to be present).}
 
 \item{...}{forward options to dplyr::group_by.}
 }
@@ -19,7 +17,6 @@ grouped result object.
 \description{
 This is supposed to be used within a dplyr pipeline to
 group JACUSA2 result object by coordinates: contig, start, end, strand -> a site. 
-Possible values for opt_vars are:
-"meta_condition", "arrest_pos", etc. This allows to correctly group in case of 
-structured data that was generated with JACUSA2: rt-arrest, lrt-arrest and base stratification.
+This allows to correctly group in case of structured data that was generated with JACUSA2: 
+\emph{rt-arrest}, \emph{lrt-arrest}, and read/base stratification.
 }

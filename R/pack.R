@@ -12,7 +12,7 @@
 #' 
 #' @export
 pack <- function(result) {
-  require_jacusa_method(result)
+  require_method(result)
   # order is important!!! to match order of column in JACUSA2 result format
   group_vars <- group_by_site(result, OPT_SITE_VARS) %>% dplyr::group_vars()
   packed <- dplyr::full_join(pack_bases(result), pack_info(result), by = group_vars) %>% 
@@ -24,10 +24,10 @@ pack <- function(result) {
 
 #' @noRd
 pack_bases <- function(result) {
-  require_jacusa_method(result)
+  require_method(result)
   # needs to be called before dplyr
   # otherwise attributes are lost
-  type <- get_jacusa_method(result)
+  type <- get_method(result)
 
   bases_str <- "bases_str"
   result <- tidyr::unite(result, bases_str, bc_A, bc_C, bc_G, bc_T, sep = ",")

@@ -1,48 +1,34 @@
-# Guess paritioning of conditions and replicates from labels
 #' @noRd
-guess_conditions <- function(type, header_names) {
+get_condition_replicate <- function(type, header_names) {
   if (type == UNKNOWN_METHOD_TYPE) {
     stop("Unknown type: ", type)
   }
-
-  conditions <- 0
+  
+  cond_rep <- NULL
   if (type == CALL_PILEUP_METHOD_TYPE) {
     prefix <- BASES_COLUMN
     cond_rep <- extract_condition_replicate(header_names, prefix)
-    conditions <- find_conditions(cond_rep)
-  } else if (type == LRT_ARREST_METHOD_TYPE) {
+  } else if (type %in% c(RT_ARREST_METHOD_TYPE, LRT_ARREST_METHOD_TYPE)) {
     prefix1 <- ARREST_COLUMN
     cond_rep1 <- extract_condition_replicate(header_names, prefix1)
-    conditions1 <- find_conditions(cond_rep1)
     prefix2 <- THROUGH_COLUMN
     cond_rep2 <- extract_condition_replicate(header_names, prefix2)
-    conditions2 <- find_conditions(cond_rep2)
-    if (conditions1 != conditions2) {
-      stop("Error guessing conditions for lrt-arrest: cond1, cond2 = ", 
-           conditions1, conditions2)
+    if (! all(cond_rep1 == cond_rep2)) {
+      stop("Error guessing conditions for ", type, ":", 
+           "cond_rep1 = ", cond_rep1, " and ", 
+           "cond_rep2 = ", cond_rep2
+      )
     }
-    conditions <- conditions1
-  } else if (type == RT_ARREST_METHOD_TYPE) {
-    prefix1 <- ARREST_COLUMN
-    cond_rep1 <- extract_condition_replicate(header_names, prefix1)
-    conditions1 <- find_conditions(cond_rep1)
-    prefix2 <- THROUGH_COLUMN
-    cond_rep2 <- extract_condition_replicate(header_names, prefix2)
-    conditions2 <- find_conditions(cond_rep2)
-    if (conditions1 != conditions2) {
-      stop("Error guessing conditions for rt-arrest: cond1, cond2 = ", 
-           conditions1, conditions2)
-    }
-    conditions <- conditions1
+    cond_rep <- cond_rep1
   } else {
     stop("Unknown type: ", type)
   }
   
-  if (conditions < 1) {
-    stop("Conditions could not be guessed from: ", header_names)
+  if (is.null(cond_rep)) {
+    stop("cond_rep could not be guessed from: ", header_names)
   }
   
-  conditions
+  cond_rep
 }
 
 # find number of conditions 
@@ -68,7 +54,8 @@ find_conditions <- function(cond_rep) {
 #' @noRd
 extract_condition_replicate <- function(header_names, prefix) {
   prefix <- paste0("^", prefix)
-  i <- grep(prefix, header_names)
+  i <- grep(paste0(prefix, ".+[0-9]+$"), header_names)
+  
   if (length(i) == 0) {
     stop("Condition replicate part could not be extracted.")
   }

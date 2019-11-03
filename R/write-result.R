@@ -9,10 +9,9 @@
 #' @param result object create by \code{read_result}.
 #' @param file character string naming a file for writing 
 #' @param txt character string to be added to the JACUSA2 header. If "", nothing will be added.
-#' 
 #' @export
 write_result <- function(result, file, txt = "") {
-  require_jacusa_method(result)
+  require_method(result)
   if ("meta_condition" %in% names(result)) {
     stop("result contains meta_condition column. Write results individually!")
   }

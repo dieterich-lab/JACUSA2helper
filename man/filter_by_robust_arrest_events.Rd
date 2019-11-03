@@ -4,12 +4,14 @@
 \alias{filter_by_robust_arrest_events}
 \title{Retains sites that contain an arrest event in all replicates in at least one condition.}
 \usage{
-filter_by_robust_arrest_events(result, min_diff = NULL)
+filter_by_robust_arrest_events(result, suffix = NULL, ...)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{min_diff}{numeric minimal difference of arrest rates (Default: NULL)}
+\item{suffix}{TODO}
+
+\item{...}{passed to internal \code{group_by_site()}}
 }
 \value{
 result object with sites where at least one condition contains the arrest event in all replicates.
@@ -17,5 +19,13 @@ result object with sites where at least one condition contains the arrest event 
 \description{
 Enforces that at least one condition contains an arrest event in all replicates. 
 The result object must be the output of the following JACUSA2 methods: 
-rt-arrest or lrt-arrest.
+\emph{rt-arrest} or \emph{lrt-arrest}.
+}
+\examples{
+data(HIVRT)
+result <- add_arrest_rate(HIVRT)
+str(filter_by_robust_arrest_events(result))
+# filtereing requiring a minimal difference between mean arrest rates from both conditions
+# mean(arrest_rate1) - mean(arrest_rate2) >= 0.1
+#str(filter_by_robust_arrest_events(result), min_diff = 0.1)
 }

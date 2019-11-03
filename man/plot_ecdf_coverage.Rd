@@ -13,7 +13,7 @@ plot_ecdf_coverage(result, data_desc, coverage_column = "coverage", ...)
 
 \item{coverage_column}{character sting specifing the name of the column.}
 
-\item{...}{parameters forwared to plot_ecdf_column.}
+\item{...}{parameters forwarded to plot_ecdf_column.}
 }
 \value{
 ggplot2 plot object.

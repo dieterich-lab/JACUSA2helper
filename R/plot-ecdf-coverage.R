@@ -5,7 +5,7 @@
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param data_desc vector of characters strings providing details about the sample.
 #' @param coverage_column character sting specifing the name of the column.
-#' @param ... parameters forwared to plot_ecdf_column.
+#' @param ... parameters forwarded to plot_ecdf_column.
 #' @return ggplot2 plot object.
 #' 
 #' @export

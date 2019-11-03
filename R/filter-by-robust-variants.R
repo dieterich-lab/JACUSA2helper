@@ -4,33 +4,30 @@
 #'
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()} or \code{read_results()}.
+#' @param base_type string defining the column to use as base counts. Default: bases.
+#' @param ... passed to internal \code{group_by_site} statement. Add additional grouping variable here, e.g.: "meta_condition".
 #' @return result object with sites where at least one condition contains the variant base in all replicates.
-#' 
+#' @examples
+#' data(rdd)
+#' str(filter_by_robust_variants(rdd))
 #' @export 
-filter_by_robust_variants <- function(result) {
-  # check only two alleles per site
-  #if (! check_max_alleles(result, 2)) {
-  #  stop("Data contains sites with > 2 alleles. Please remove those sites.")
-  #}
-
-  result <- group_by_site(result, "meta_condition") %>%
-    dplyr::filter(
-      robust_variants_helper(primary, base_type, condition, bc_A, bc_C, bc_G, bc_T)
-    ) %>% 
-    copy_jacusa_attributes(result, .)
+filter_by_robust_variants <- function(result, base_type = "bases", ...) {
+  result <- group_by_site(result, ...) %>%
+    filter_by(robust_variants(condition, base_type))
 
   dplyr::ungroup(result)
 }
 
-#' @noRd
-robust_variants_helper <- function(primary, base_type, condition, bc_A, bc_C, bc_G, bc_T) {
-  i <- primary & base_type == "total"
-  condition <- condition[i]
-  bc_A <- bc_A[i]
-  bc_C <- bc_C[i]
-  bc_G <- bc_G[i]
-  bc_T <- bc_T[i]
-  mat <- matrix(c(bc_A, bc_C, bc_G, bc_T), ncol = 4, byrow = FALSE)
-
-  get_robust(condition, mat)
+#' TODO
+#' 
+#' TODO
+#' 
+#' @param condition TODO
+#' @param bases TODO
+#' @return TODO
+#' @examples
+#' TODO
+#' @export
+robust_variants <- function(condition, bases) {
+  robust(condition, bases)
 }

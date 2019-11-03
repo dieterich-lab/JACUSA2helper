@@ -2,66 +2,57 @@
 #'
 #' Enforces that at least one condition contains an arrest event in all replicates. 
 #' The result object must be the output of the following JACUSA2 methods: 
-#' rt-arrest or lrt-arrest.
+#' \emph{rt-arrest} or \emph{lrt-arrest}.
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang syms
 #' @param result object created by \code{read_result()} or \code{read_results()}.
-#' @param min_diff numeric minimal difference of arrest rates (Default: NULL)
+#' @param suffix TODO
+#' @param ... passed to internal \code{group_by_site()}
 #' @return result object with sites where at least one condition contains the arrest event in all replicates.
-#' 
+#' @examples
+#' data(HIVRT)
+#' result <- add_arrest_rate(HIVRT)
+#  # default robust filtering
+#' str(filter_by_robust_arrest_events(result))
+#' # filtereing requiring a minimal difference between mean arrest rates from both conditions
+#' # mean(arrest_rate1) - mean(arrest_rate2) >= 0.1
+#' #str(filter_by_robust_arrest_events(result), min_diff = 0.1)
 #' @export 
-filter_by_robust_arrest_events <- function(result, min_diff = NULL) {
-  require_jacusa_method(result, c(RT_ARREST_METHOD_TYPE, LRT_ARREST_METHOD_TYPE))
-
-  result <- group_by_site(result, "meta_condition") %>%
-    dplyr::filter(
-      robust_arrest_events_helper(primary, base_type, condition, replicate, coverage)
-    ) %>%
-    copy_jacusa_attributes(result, .)
-
-  if (! is.null(min_diff)) {
-    result <- group_by_site(result, "meta_condition") %>%
-      dplyr::filter(
-        get_difference_helper(primary, base_type, condition, arrest_rate) >= min_diff
-      ) %>%
-      copy_jacusa_attributes(result, .)
+filter_by_robust_arrest_events <- function(result, suffix = NULL, ...) {
+  require_method(
+    result, c(RT_ARREST_METHOD_TYPE, LRT_ARREST_METHOD_TYPE)
+  )
+  
+  arrest_col <- ARREST_COLUMN
+  through_col <- THROUGH_COLUMN
+  if (! is.null(suffix)) {
+    arrest_col <- paste(arrest_col, suffix, sep = "_")
+    through_col <- paste(through_col, suffix, sep = "_")
   }
+  
+  result <- group_by_site(result, ...) %>%
+    filter_by(robust_arrest_events(condition, !!rlang::sym(arrest_col), !!rlang::sym(through_col)))
 
   dplyr::ungroup(result)
 }
 
-#' @noRd
-get_difference_helper <- function(
-  primary, base_type, 
-  condition, 
-  arrest_rate) {
-
-  i <- primary == TRUE & base_type == "total"
-
-  mean1 <- mean(arrest_rate[i & condition == 1])
-  mean2 <- mean(arrest_rate[i & condition == 2])
-
-  abs(mean1 - mean2)
-}
-
-#' @noRd
-robust_arrest_events_helper <- function(
-  primary, base_type, 
-  condition, replicate, 
-  coverage) {
-
-  i <- primary & base_type %in% c(ARREST_COLUMN, THROUGH_COLUMN)
-  df <- data.frame(
-    condition = condition[i], 
-    replicate = replicate[i],
-    base_type = base_type[i],
-    coverage = coverage[i],
-    stringsAsFactors = FALSE
+#' TODO
+#' 
+#' This is intended to be used within a \code{group_by_site()} statement. TODO
+#' 
+#' @param condition TODO
+#' @param arrest_cov TODO
+#' @param through_cov TODO
+#' @return TODO
+#' @examples
+#' TODO
+#' @export
+robust_arrest_events <- function(condition, arrest_cov, through_cov) {
+  df <- tibble::tibble(
+    arrest_cov = arrest_cov,
+    through_cov = through_cov,
   )
-  df <- tidyr::spread(df, base_type, coverage, convert = TRUE)
-  condition <- df$condition
-  df <- df[, c(ARREST_COLUMN, THROUGH_COLUMN)]
-  mat <- as.matrix(df)
-
-  get_robust(condition, mat)
+  
+  robust(condition, df)
 }

@@ -19,3 +19,7 @@ result object with sites where score <= max_score.
 \description{
 Retains sites that have score <= max_score.
 }
+\examples{
+data(HIVRT)
+str(filter_by_max_score(HIVRT, max_score = 0.05, column = "pvalue"))
+}

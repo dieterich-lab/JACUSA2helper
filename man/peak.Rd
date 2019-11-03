@@ -4,10 +4,12 @@
 \alias{peak}
 \title{Formats JACUSA2 result object as in JACUSA2 result output.}
 \usage{
-peak(result)
+peak(result, columns = NULL)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
+
+\item{columns}{TODO}
 }
 \value{
 object structured as in JACUSA2 result format

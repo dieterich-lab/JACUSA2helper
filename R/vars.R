@@ -1,7 +1,7 @@
 # fields to store in attributes 
-METHOD_TYPE <- "jacusa_method_type"
-HEADER <- "jacusa_header"
-UNPACKED <- "jacusa_unpacked"
+METHOD_TYPE <- "method_type"
+HEADER <- "header"
+UNPACKED <- "unpacked"
 
 # convenience: All possible bases
 BASES <- c("A", "C", "G", "T")
@@ -11,7 +11,7 @@ EMPTY <- "*"
 BC_CHANGE_SEP <- "->"
 # no change between DNA and RNA: "A -> A" transformed to "no change"
 BC_CHANGE_NO_CHANGE <- "no change"
-# when interested only in specific base change, e.g.: A->G, the remaining are termed other
+# when interested only in specific base change, e.g.: A->G, the remaining are termed:
 BC_CHANGE_OTHER <- "other"
 
 # Helpers defining supported types by JACUSA2
@@ -27,16 +27,31 @@ SUPPORTED_METHOD_TYPES <- c(
   LRT_ARREST_METHOD_TYPE
 )
 
+# JACUSA2 CLI option -B
+READ_SUB_COLUMN <- "read_sub"
+READ_SUB_MARKED <- "marked"
+READ_SUB_UNMARKED <- "unmarked"
+
 # method specific column:
 BASES_COLUMN <- "bases"
-ARREST_COLUMN <- "arrest_bases"
-THROUGH_COLUMN <- "through_bases"
+ARREST_COLUMN <- "arrest"
+THROUGH_COLUMN <- "through"
 #
 ARREST_POS_COLUMN <- "arrest_pos"
 
 # definition of a site
 SITE <- c("contig", "start", "end", "strand")
-OPT_SITE_VARS <- c("meta_condition", ARREST_POS_COLUMN) #  TODO add factor for base stratification
+
+COVERAGE <- "cov"
+BC_OBS <- "bc_obs"
+BC_RATIO <- "bc_ratio"
+BASE_SUB <- "base_sub"
+BASE_SUB_RATIO <- "base_ratio"
+NON_REF_RATIO <- "non_ref_ratio"
+
+ARREST_RATE <- "arrest_rate"
+
+FIX_NUMERIC_COLUMNS <- c("arrest_score")
 
 # a JACUSA2 result file is structured in:
 # BED_COLUMNS,"method specific columns",INFO_COLUMN,FILTER_INFO_COLUMN,REF_BASE_COLUMN
