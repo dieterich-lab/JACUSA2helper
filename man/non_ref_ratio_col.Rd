@@ -7,14 +7,14 @@
 non_ref_ratio_col(base_type)
 }
 \arguments{
-\item{base_type}{string TODO}
+\item{base_type}{string specifiying base column. Default: bases.}
 }
 \value{
 string the represents the column name for non reference ratio for \code{base_type}.
 }
 \description{
 Column name for non reference ratio for \code{base_type}. 
-\code{base_type} will be used a suffix to create the column name:
-"non_ref_ratio[_\code{base_type}]". Using \code{base_type = "bases"} 
-will result in the field "non_ref_ratio".
+\code{base_type} will be used to create the column name:
+\code{non_ref_ratio[_base_type]}. Using \code{base_type = "bases"} 
+will result in the field \code{non_ref_ratio}.
 }

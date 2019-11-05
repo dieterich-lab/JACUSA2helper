@@ -19,15 +19,3 @@ Plots the distribution of base substitutions.
 The user is responsible for correct filtering and grouping of the 
 \code{result} object.
 }
-\examples{
-library(magrittr)
-data(rdd)
-# 1st condition is gDNA - we use it to define ref_base
-result <- redefine_ref_base(rdd, condition = 1)
-result <- add_sub(rdd)
-# filter by coverage and score
-filtered <- result \%>\% 
-  filter_by_coverage(min_coverage = 10) \%>\% 
-  filter_by_min_score(min_score = 2)
-plot_sub(filtered) + ggplot2::facet_grid(replicate ~ .)
-}

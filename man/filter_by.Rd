@@ -2,21 +2,27 @@
 % Please edit documentation in R/helper-filter.R
 \name{filter_by}
 \alias{filter_by}
-\title{TODO}
+\title{Filter and preserve attributes of result object.}
 \usage{
 filter_by(result, ...)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{...}{forwared to internal \code{dplyr::filter()} statement.}
+\item{...}{forwarded to internal \code{dplyr::filter()} statement.}
 }
 \value{
-TODO
+result object TODO
 }
 \description{
-TODO
+Filters and preserves attributes of result object. 
+Use this instead of \code{dplyr::filter}, otherwise JACUSA2 header and type information 
+will be lost from result object.
 }
 \examples{
-TODO
+data(rdd)
+# remove sites that are marked by artefact filter "D"
+grouped <- group_by_site(rdd)
+filtered <- filter_by(grouped, filter_artefact(filter, c("D")))
+str(filtered)
 }

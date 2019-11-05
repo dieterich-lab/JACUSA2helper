@@ -13,8 +13,8 @@
 	\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 	\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 	\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
-	\item filter_info: ","-separated character string showing feature filter information. Empty field is equal to "*"
-	\item ref_base: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
+	\item filter: ","-separated character string showing feature filter information. Empty field is equal to "*"
+	\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 	\item base_type: Character string inndicating what type of base calls are shown. Here: "total", "arrest_bases", or "through_bases".
 	\item condition: Numeric value: "1"(here: +GMC) or "2"(-GMC)
 	\item replicate: Numeric value: "1" or "2" for all conditions
@@ -43,7 +43,7 @@ condition from Zhou 2018:
   \item SIIIMg.
 }
 This dataset exemplifies the usefullness of combinding multiple pairwise comparisons and make them distinguishable by
-"meta_condition" field.
+"meta" field.
 }
 \details{
 Check Section "Reverse transcriptase arrest events" in https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf

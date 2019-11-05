@@ -13,7 +13,8 @@ coverage(bases)
 numeric vector of coverage for \code{bases}.
 }
 \description{
-Calculates coverage from base counts. \code{bases} is expected to be a nx4 matrix or data frame.
+Calculates coverage from base counts. 
+\code{bases} is expected to be a nx4 matrix or data frame.
 }
 \examples{
 bases <- matrix(
@@ -21,7 +22,7 @@ bases <- matrix(
     10, 0, 0, 0,
      6, 2, 0, 0),
   ncol = 4, 
-  byrow = T
+  byrow = TRUE
 )
 str(coverage(bases))
 }

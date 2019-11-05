@@ -4,17 +4,44 @@
 #'
 #' @param file string that represents the filename of the JACUSA2 output.
 #' @param unpack_info boolean indicating if additional data stored in 'info' field should be unpacked.
-#' @examples
-#' TODO
 #' @export
 read_result <- function(file, unpack_info = TRUE) {
+  file_info <- pre_read(file)
+  # check that a header could be parsed
+  if (is.null(file_info$data_header)) {
+    stop("No data header line for file: ", file)
+  }  
+  
+  condition_info <- process_condition(file_info$type, file_info$data_header)
+  # check that conditions could be guessed
+  if (condition_info$conditions < 1 || 
+      length(condition_info$cond2rep) != condition_info$conditions) {
+    stop("Conditions could not be guessed for file: ", file)
+  }
+
+  data <- read_data(file, file_info$skip_lines, file_info$data_header)
+  # create result depending on determined method type 
+  result <- create_result(
+    file_info$type, 
+    condition_info$cond_rep, 
+    data, 
+    unpack_info
+  )
+  
+  # finally store header information (e.g.: JACUSA2 version) in result
+  result <- set_header(result, file_info$jacusa_header)
+  
+  result
+}
+
+#' @noRd
+pre_read <- function(file) {
   # parse comments ^(#|##) to determine result/method type and number of conditions
   con <- file(file, "r")
-  cond_rep <- NULL
+  type <- UNKNOWN_METHOD_TYPE
   skip_lines <- 0
   data_header <- NULL
-  jacusa_header <- NULL
-  # possible result/method types: check SUPPORTED_METHOD_TYPES
+  jacusa_header <- c()
   while (TRUE) {
     line = readLines(con, n = 1)
     # quit reading: nothing to read or first no header line 
@@ -23,40 +50,48 @@ read_result <- function(file, unpack_info = TRUE) {
     }
     # count header lines to ignore
     skip_lines <- skip_lines + 1
-
+    
     if (length(grep("^##", line)) != 0) { # JACUSA2 header line
       jacusa_header <- c(jacusa_header, trimws(gsub("(^##)", "", line)))
     } else if (length(grep("^#contig", line)) > 0) { # data header line
       # try to guess result/method by header line
       # type will be valid or guess_file_type throws an error
       type <- guess_file_type(line)
-
+      
       # parse and store header
       # fix header: #contig -> contig
       data_header <- sub("^#", "", line);
       data_header <- unlist(strsplit(data_header, "\t"))
-
-      # guess number of conditions
-      cond_rep <- get_condition_replicate(type, data_header)
     }
   }
   # finished pre-processing
   close(con)
   
-  # check that a header could be parsed
-  if (is.null(data_header)) {
-    stop("No data header line for file: ", file)
-  }
-  
-  conditions <- find_conditions(cond_rep)
-  cond2rep <- get_cond2rep(cond_rep)
-  
-  # check that conditions could be guessed
-  if (conditions < 1 || length(cond2rep) != conditions) {
-    stop("Conditions could not be guessed for file: ", file)
-  }
+  list(
+    type = type,
+    skip_lines = skip_lines,
+    data_header = data_header,
+    jacusa_header = jacusa_header
+  )
+}
 
-  # read data
+#' @noRd
+process_condition <- function(type, data_header) {
+  # guess number of conditions
+  cond_rep <- get_condition_replicate(
+    type, 
+    data_header
+  )
+  
+  list(
+    cond_rep = cond_rep,
+    conditions = find_conditions(cond_rep),
+    cond2rep = get_cond2rep(cond_rep)
+  )
+}
+
+#' @noRd
+read_data <- function(file, skip_lines, data_header) {
   data <- data.table::fread(
     file, 
     skip = skip_lines, 
@@ -65,13 +100,8 @@ read_result <- function(file, unpack_info = TRUE) {
     showProgress = TRUE
   )  
   colnames(data) <- data_header
-
-  # create result depending on determined method type 
-  result <- create_result(type, cond_rep, data, unpack_info)
-  # finally store header information (e.g.: JACUSA2 version) in result
-  result <- set_header(result, jacusa_header)
-
-  tibble::as_tibble(result)
+  
+  data
 }
 
 # Create result for type and conditions from data 
@@ -79,52 +109,68 @@ read_result <- function(file, unpack_info = TRUE) {
 create_result <- function(type, cond_rep, data, unpack_info) {
   # replace redundant and unnecessary columns with id
   data$id <- 1:nrow(data)
-  # add more columns in method specific if-clause
-  store_columns <- c(FILTER_INFO_COLUMN, REF_BASE_COLUMN)
-  # add more columns in method specific if-clause
-  method_column_prefix <- NULL
   
-  # container for result
-  result <- NULL
-  if(type == CALL_PILEUP_METHOD_TYPE) {
-    store_columns <- c(BED_COLUMNS, store_columns)
-    method_column_prefix <- BASES_COLUMN
-  } else if (type %in% c(RT_ARREST_METHOD_TYPE, LRT_ARREST_METHOD_TYPE)) {
-    # this methods has pvalues as default score
-    store_columns <- c(gsub("score", "pvalue", BED_COLUMNS), store_columns)
-    method_column_prefix <- c(ARREST_COLUMN, THROUGH_COLUMN)
-    if (type == LRT_ARREST_METHOD_TYPE) {
-      store_columns <- c(store_columns, ARREST_POS_COLUMN)
-    }
-  } else {
-    stop("Unknown type: ", type)
+  columns <- process_columns(type)
+  if (META_CONDITION_COLUMN %in% names(data)) {
+    columns$store <- c(columns$store, META_CONDITION_COLUMN)
   }
+
   # split data 
-  # general purpose, e.g.: coordinates, filter_info, ref_base, etc.
-  tmp_data <- dplyr::select(data, c(store_columns, "id"))
+  # general purpose, e.g.: coordinates, filter, ref, [meta] etc.
+  tmp_data <- dplyr::select(data, c(columns$store, "id"))
   # method specific, e.g.: bases11, arrest_pos, etc.
-  data <- dplyr::select(data, -store_columns)
+  data <- dplyr::select(data, -c(columns$store))
   
   result <- process_fields(
     data, 
     cond_rep, 
-    as.vector(outer(method_column_prefix, cond_rep, paste0)), # all combinations of method_columns and cond_red
+    as.vector(outer(columns$method_prefix, cond_rep, paste0)), # all combinations of method_columns and cond_red
     unpack_info
   )
 
   # merge split data
-  result <- merge(tmp_data, result, by = "id")
-
+  result <- merge(tmp_data, result, by = "id") %>% 
+    tibble::as_tibble()
+  
   # add cov etc.
-  result <- post_process(type, method_column_prefix, result)  
+  result <- post_process(type, columns$method_prefix, result)
   # TODO rearrange
   result <- set_method(result, type)
   
   # make factors
-  result$condition <- as.factor(result$condition)
-  result$replicate <- as.factor(result$replicate)
+  result[[CONDITION_COLUMN]] <- as.factor(result[[CONDITION_COLUMN]])
+  result[[REPLICATE_COLUMN]] <- as.factor(result[[REPLICATE_COLUMN]])
   
   result
+}
+
+#' @noRd
+process_columns <- function(type) {
+  # add more columns in method specific if-clause
+  store <- c(FILTER_INFO_COLUMN, REF_BASE_COLUMN)
+  # add more columns in method specific if-clause
+  method_prefix <- NULL
+  
+  # container for result
+  result <- NULL
+  if(type == CALL_PILEUP_METHOD_TYPE) {
+    store <- c(BED_COLUMNS, store)
+    method_prefix <- BASES_COLUMN
+  } else if (type %in% c(RT_ARREST_METHOD_TYPE, LRT_ARREST_METHOD_TYPE)) {
+    # this methods has pvalues as default score
+    store <- c(gsub("score", "pvalue", BED_COLUMNS), store)
+    method_prefix <- c(ARREST_COLUMN, THROUGH_COLUMN)
+    if (type == LRT_ARREST_METHOD_TYPE) {
+      store <- c(store, ARREST_POS_COLUMN)
+    }
+  } else {
+    stop("Unknown type: ", type)
+  }
+  
+  list(
+    store = store,
+    method_prefix = method_prefix
+  )
 }
 
 #' @noRd
@@ -139,7 +185,7 @@ unpack_variables <- function(data) {
 spread_variables <- function(data, columns) {
   tidyr::gather(data, "key", "value", columns) %>%
     tidyr::extract(
-      key, c("variable", "condition", "replicate"),
+      key, c("variable", CONDITION_COLUMN, REPLICATE_COLUMN),
       regex = "^(.+[^0-9]{1})([0-9]{1})([0-9]+)", # variable|condition|replicate
       remove = TRUE, convert = TRUE
     ) %>%
@@ -197,8 +243,9 @@ process_fields <- function(data, cond_rep, method_columns, unpack_info) {
 post_process <- function(type, method_column_prefix, result) {
   for (col in method_column_prefix) {
     bases_str <- fix_empty_bases(result[[col]])
-    result[[col]] <- extract_bases(bases_str)
-    result <- add_bc_obs(result, col)
+    bases <- extract_bases(bases_str)
+    result[[col]] <- bases
+    result <- add_bc(result, col)
     result <- add_cov(result, col)
   }
   
@@ -209,7 +256,7 @@ post_process <- function(type, method_column_prefix, result) {
   } else if (type %in% c(RT_ARREST_METHOD_TYPE, LRT_ARREST_METHOD_TYPE)) {
     # derived from arrest and through columns
     result[[BASES_COLUMN]] <- result[[ARREST_COLUMN]] + result[[THROUGH_COLUMN]]
-    result <- add_bc_obs(result)
+    result <- add_bc(result)
     result <- add_cov(result)
     result <- add_arrest_rate(result)
     

@@ -7,13 +7,13 @@
 arrest_rate_col(suffix = NULL)
 }
 \arguments{
-\item{suffix}{TODO}
+\item{suffix}{string to specifiy base columns to retrieve arrest rate. Default: NULL}
 }
 \value{
-string the represents the column name for arrest rate for \code{suffix}.
+string the represents the column name for arrest rate with  marked \code{suffix}.
 }
 \description{
 Column name for arrest ratio for \code{suffix}. 
-\code{suffix} will be used a suffix to create the column name:
-"arrest_rate[_\code{suffix}]".
+\code{suffix} will be used to create the column name:
+\code{arrest_rate[_suffix]}.
 }

@@ -9,7 +9,7 @@ peak(result, columns = NULL)
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{columns}{TODO}
+\item{columns}{TODO, Default: NULL use all columns.}
 }
 \value{
 object structured as in JACUSA2 result format
@@ -17,4 +17,8 @@ object structured as in JACUSA2 result format
 \description{
 Allows to peak at a result object and provides a user friendly format.
 Converts data from long to wide format. @seealso \code{pack()}
+}
+\examples{
+data(rdd)
+str(peak(rdd, "bases"))
 }

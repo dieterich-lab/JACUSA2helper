@@ -9,11 +9,15 @@ add_arrest_rate(result, suffix = NULL)
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{suffix}{TODO Default: NULL}
+\item{suffix}{string added to specifiy base columns to calculate arrest rate. Default: NULL}
 }
 \value{
-result object with arrest rate field "arrest_rate[_\code{suffix}]" added.
+result object with arrest rate field \code{arrest_rate[_suffix]} added.
 }
 \description{
 Adds arrest rate calculated from \code{arrest[_suffix]} and \code{through[_suffix]} columns.
+}
+\examples{
+data(HIVRT)
+result <- add_arrest_rate(HIVRT)
 }

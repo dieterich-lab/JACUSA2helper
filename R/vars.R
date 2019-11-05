@@ -43,11 +43,15 @@ ARREST_POS_COLUMN <- "arrest_pos"
 SITE <- c("contig", "start", "end", "strand")
 
 COVERAGE <- "cov"
-BC_OBS <- "bc_obs"
+BC <- "bc"
 BC_RATIO <- "bc_ratio"
-BASE_SUB <- "base_sub"
-BASE_SUB_RATIO <- "base_ratio"
+BASE_SUB <- "sub"
+BASE_SUB_RATIO <- "sub_ratio"
 NON_REF_RATIO <- "non_ref_ratio"
+
+CONDITION_COLUMN <- "cond"
+REPLICATE_COLUMN <- "repl"
+META_CONDITION_COLUMN <- "meta"
 
 ARREST_RATE <- "arrest_rate"
 
@@ -58,5 +62,5 @@ FIX_NUMERIC_COLUMNS <- c("arrest_score")
 BED_COLUMNS <- c("contig", "start", "end", "name", "score", "strand")
 # convenience: info fields
 INFO_COLUMN <- "info"
-FILTER_INFO_COLUMN <- "filter_info"
-REF_BASE_COLUMN <- "ref_base"
+FILTER_INFO_COLUMN <- "filter"
+REF_BASE_COLUMN <- "ref"

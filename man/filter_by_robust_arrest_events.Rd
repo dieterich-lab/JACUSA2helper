@@ -9,7 +9,7 @@ filter_by_robust_arrest_events(result, suffix = NULL, ...)
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{suffix}{TODO}
+\item{suffix}{string to specifiy base columns to filter on. Default: NULL}
 
 \item{...}{passed to internal \code{group_by_site()}}
 }

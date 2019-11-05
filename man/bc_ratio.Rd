@@ -17,5 +17,6 @@ Calculates base call ratios for base counts.
 \code{bases} is expected to be a nx4 matrix or data frame.
 }
 \examples{
-TODO
+bases <- matrix(c(5, 0, 5, 0,  1, 1, 1, 1), byrow = TRUE, ncol = 4)
+ratio <- bc_ratio(bases)
 }

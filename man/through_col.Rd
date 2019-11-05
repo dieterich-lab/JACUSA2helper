@@ -7,13 +7,13 @@
 through_col(suffix = NULL)
 }
 \arguments{
-\item{suffix}{TODO}
+\item{suffix}{string to specifiy base columns to retrieve through bases Default: NULL}
 }
 \value{
-string the represents the column name for through for \code{suffix}.
+string the represents the column name for through bases marked with \code{suffix}.
 }
 \description{
 Column name for through base counts for \code{suffix}. 
-\code{suffix} will be used a suffix to create the column name:
+\code{suffix} will be used to create the column name:
 "through[_\code{suffix}]".
 }

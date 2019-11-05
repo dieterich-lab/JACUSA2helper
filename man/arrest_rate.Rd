@@ -15,10 +15,10 @@ arrest_rate(arrest_cov, through_cov)
 numeric vector of arrest rates.
 }
 \description{
-Calculates arrest rate from read coverage from arrest and through reads.
+Calculates arrest rate from arrest and through reads.
 }
 \examples{
 arrest_cov <- c(10, 1, 0)
 through_cov <- c(0, 1, 1)
-str(arrest_rate(arrest_cov, thrugh_cov))
+str(arrest_rate(arrest_cov, through_cov))
 }

@@ -7,13 +7,13 @@
 arrest_col(suffix = NULL)
 }
 \arguments{
-\item{suffix}{TODO}
+\item{suffix}{string to specifiy base columns to retrieve arrest bases Default: NULL}
 }
 \value{
-string the represents the column name for arrest for \code{suffix}.
+string the represents the column name for arrest bases marked with \code{suffix}.
 }
 \description{
 Column name for arrest base counts for \code{suffix}. 
-\code{suffix} will be used a suffix to create the column name:
+\code{suffix} will be used to create the column name:
 "arrest[_\code{suffix}]".
 }

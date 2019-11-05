@@ -2,25 +2,31 @@
 % Please edit documentation in R/bc-ratio.R
 \name{add_bc_ratio}
 \alias{add_bc_ratio}
-\title{Adds base call ratio to a JACUSA2 result object.}
+\title{Adds base call ratio.}
 \usage{
 add_bc_ratio(result, base_type = "bases")
 }
 \arguments{
 \item{result}{created by \code{read_result()} or \code{read_results()}.}
 
-\item{base_type}{string specifying column prefix. "arrest", "through", or "NULL", default: NULL.}
+\item{base_type}{string specifying base column. Default: bases.}
 }
 \value{
 result object with base call ratio added.
 }
 \description{
-Calculates and adds base call ratio to a JACUSA2 result object.
-TODO
+Calculates and adds base call ratio for all possible bases.
+For a given \code{base_type}, calculates a base ratio vector \code{bc_ratio[_base_type]} 
+for all possible bases (A, C, G, and T).
 }
 \examples{
 data(rdd)
-# use default base calls to define ratio
+# use default bases to define ratio
 result <- add_bc_ratio(rdd)
-TODOstr(subset(result, select = grep("bc_ratio", names(result))))
+str(subset(result, select = grep("bc_ratio", names(result))))
+
+data(HIVRT)
+# use arrest bases
+result <- add_bc_ratio(HIVRT, "arrest")
+subset(result, select = grep("bc_ratio_arrest", names(result)))
 }

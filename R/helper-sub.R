@@ -1,5 +1,3 @@
-
-
 #' Merges base substitutions.
 #' 
 #' Usefull, when creating summaries for base changes with \code{add_summary()}.
@@ -43,21 +41,21 @@ merge_sub <- function(subs) {
 
   # format of m: 1. column ref. base, 2. column observed non-ref. base
   m <- do.call(rbind, strsplit(subs, BC_CHANGE_SEP))
-  ref_base <- unique(m[, 1])
-  observed_bc <- strsplit(m[, 2], "") %>%
+  ref <- unique(m[, 1])
+  bc <- strsplit(m[, 2], "") %>%
     unlist() %>% 
     unique() %>%
     sort()
 
-  if (length(ref_base) != 1) {
+  if (length(ref) != 1) {
     stop(
       "Reference base is required to be identical for all observations: ", 
       paste0(subs, collapse = ", ")
     )
   }
-  observed_bc <- paste0(sort(observed_bc), collapse = "")
+  bc <- paste0(sort(bc), collapse = "")
 
-  base_sub(ref_base, observed_bc)
+  base_sub(ref, bc)
 }
 
 #' Mask a set of base substitutions.
@@ -66,22 +64,22 @@ merge_sub <- function(subs) {
 #' be masked. This function will hide the remaining base substitutions by renaming them to \emph{other}.
 #' 
 #' @importFrom magrittr %>%
-#' @param sub vector of base call substitutions.
+#' @param subs vector of base call substitutions.
 #' @param keep vector of base call substitutions to be highlighted. All other will be renamed to \emph{other}.
 #' @return vector of base call substitutions.
-#' sub <- c("A->G", "A->C", "no change")
+#' subs <- c("A->G", "A->C", "no change")
 #' # "A->G" "other" "no change"
-#' mask_sub(sub, c("A->G"))
+#' mask_sub(subs, c("A->G"))
 #' 
 #' # "other" "other" "no change"
-#' mask_sub(sub, c("A->T"))
+#' mask_sub(subs, c("A->T"))
 #' @export
-mask_sub <- function(sub, keep) {
+mask_sub <- function(subs, keep) {
   keep <- c(keep, BC_CHANGE_NO_CHANGE)
-  i <- sub %in% keep
+  i <- subs %in% keep
   if (any(i)) {
-    sub[! i] <- BC_CHANGE_OTHER
+    subs[! i] <- BC_CHANGE_OTHER
   }
 
-  sub
+  subs
 }

@@ -4,21 +4,21 @@
 \alias{mask_sub}
 \title{Mask a set of base substitutions.}
 \usage{
-mask_sub(sub, keep)
+mask_sub(subs, keep)
 }
 \arguments{
-\item{sub}{vector of base call substitutions.}
+\item{subs}{vector of base call substitutions.}
 
 \item{keep}{vector of base call substitutions to be highlighted. All other will be renamed to \emph{other}.}
 }
 \value{
 vector of base call substitutions.
-sub <- c("A->G", "A->C", "no change")
+subs <- c("A->G", "A->C", "no change")
 # "A->G" "other" "no change"
-mask_sub(sub, c("A->G"))
+mask_sub(subs, c("A->G"))
 
 # "other" "other" "no change"
-mask_sub(sub, c("A->T"))
+mask_sub(subs, c("A->T"))
 }
 \description{
 When only a subset of all possibles base substitutions is interesting, the remaining base substitutions can 

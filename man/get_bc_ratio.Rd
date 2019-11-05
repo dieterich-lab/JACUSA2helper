@@ -9,10 +9,10 @@ get_bc_ratio(result, base_type = "bases")
 \arguments{
 \item{result}{created by \code{read_result()} or \code{read_results()}.}
 
-\item{base_type}{string specifying column prefix. "arrest", "through", or "NULL", default: NULL.}
+\item{base_type}{string specifying base column. Default: bases.}
 }
 \value{
-numeric matrix of base call ratios for \code{base_type}.
+numeric tibble of base call ratios for \code{base_type}.
 }
 \description{
 Extracts base call ratio for some \code{base_type} from a JACUSA2 result object.
@@ -21,5 +21,10 @@ Extracts base call ratio for some \code{base_type} from a JACUSA2 result object.
 data(rdd)
 # use default bases to define ratio
 ratio <- get_bc_ratio(rdd)
+str(ratio)
+
+data(HIVRT)
+# use arrest bases to define ratio
+ratio <- get_bc_ratio(rdd, "arrest")
 str(ratio)
 }

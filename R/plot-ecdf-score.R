@@ -24,12 +24,12 @@ plot_ecdf_score <- function(result, data_desc, column = "score", ...) {
   result <- tibble::add_column(result, data_desc = data_desc)
 
   # add fake meta_condition to use existing plot code
-  if (! "meta_condition" %in% names(result)) {
-    result$meta_condition <- as.factor("default")
+  if (! META_CONDITION_COLUMN %in% names(result)) {
+    result[[META_CONDITION_COLUMN]] <- as.factor("default")
   }
   # condense result:
   result <- dplyr::distinct(
-    result, meta_condition, contig, start, end, strand, !!rlang::sym(column), data_desc
+    result, !!rlang::sym(META_CONDITION_COLUMN), contig, start, end, strand, !!rlang::sym(column), data_desc
   )
 
   plot_ecdf_column(result, column, result$data_desc, ...)

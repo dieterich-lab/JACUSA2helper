@@ -15,8 +15,10 @@ get_non_ref_ratio(result, base_type = "bases")
 numeric vector of non reference substitution ratios for \code{base_type}.
 }
 \description{
-Retrives non reference ratio based on \code{ref_base} and base calls specified by \code{base_type}.
+Retrives non reference ratio based on \code{ref} and base calls specified by \code{base_type}.
 }
 \examples{
-TODO
+data(rdd)
+result <- add_non_ref_ratio(rdd)
+get_non_ref_ratio(result)
 }

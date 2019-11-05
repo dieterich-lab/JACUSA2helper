@@ -1,5 +1,5 @@
 ## JACUSA2 Version: 2.0.0-RC11 rt-arrest -c 100 -p 2 -a Y -P1 FR_SECONDSTRAND -P2 FR_SECONDSTRAND -r rt-arrest-SIIIRTMg.out SIIIRTMg_+CMC.bam SIIIRTMg_-CMC.bam
-#contig	start	end	name	pvalue	strand	arrest11	through11	arrest21	through21	info	filter_info	ref_base
+#contig	start	end	name	pvalue	strand	arrest11	through11	arrest21	through21	info	filter	ref
 NR_003286_RNA18SN5	0	1	rt-arrest	0.4111933972399996	+	49,55,22,22499	*	1235,853,1114,71729	*	arrest_score=0.6753475494547274	*	T
 NR_003286_RNA18SN5	1	2	rt-arrest	2.571087091784996E-6	+	50665,393,138,4545	22838,13,4,374	13667,635,296,3091	44632,28,18,32818	arrest_score=22.112658701109467	*	A
 NR_003286_RNA18SN5	2	3	rt-arrest	1.5496222633570866E-4	+	901,1557,249,1492	547,81257,87,220	389,3157,506,4711	32696,63139,38,316	arrest_score=14.310933355343877	*	C

@@ -1,6 +1,6 @@
-context("bc_obs")
+context("base_call")
 
-test_that("bc_obs works as expected", {
+test_that("base_call works as expected", {
   bases <- tibble::tribble(
     ~A, ~C, ~G, ~T,
      1,  0,  0,  0,
@@ -19,7 +19,7 @@ test_that("bc_obs works as expected", {
   )
   
   expect_equal(
-    bc_obs(bases),
+    base_call(bases),
     expected  
   )
 })

@@ -1,5 +1,5 @@
 ## JACUSA1 TODO
-#contig	start	end	name	score	strand	bases11	bases21	bases22	info	filter_info	ref_base
+#contig	start	end	name	score	strand	bases11	bases21	bases22	info	filter	ref
 7	139416535	139416536	variant	0.920963008189574	+	0,0,0,51	0,1,0,38	0,1,0,36	*	D	T
 12	56215997	56215998	variant	1.6547922817881	-	0,0,0,37	0,1,0,1	0,1,0,1	*	D	T
 7	55211165	55211166	variant	1.38867653152556	-	0,0,0,23	0,1,0,4	0,1,0,3	*	D	T

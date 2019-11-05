@@ -1,7 +1,7 @@
 context("non_ref_ratio")
 
 test_that("non_ref_ratio works as expected", {
-  ref_base <- c("A", "A", "G", "C", "T")
+  ref <- c("A", "A", "G", "C", "T")
   bases <- tibble::tribble(
     ~A, ~C, ~G, ~T,
      1,  0,  0,  0,
@@ -20,7 +20,7 @@ test_that("non_ref_ratio works as expected", {
   )
 
   expect_equal(
-    non_ref_ratio(ref_base, bases),
+    non_ref_ratio(ref, bases),
     expected  
   )
 })

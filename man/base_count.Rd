@@ -4,31 +4,31 @@
 \alias{base_count}
 \title{Retrieves the total number of observed unique bases.}
 \usage{
-base_count(bc_obs, ref_base = NULL)
+base_count(bc, ref = NULL)
 }
 \arguments{
-\item{bc_obs}{vector of strings with observed base calls.}
+\item{bc}{vector of strings with observed base calls.}
 
-\item{ref_base}{vector of strings with reference base,}
+\item{ref}{vector of strings with reference bases}
 }
 \value{
-numeric total number of bases.
+numeric vector of total number of bases.
 }
 \description{
 Retrieves the total number of observed unique bases for \code{base_type}.
-If \code{ref_base} is provided, reference base will be considered for counting, e.g.:
+If \code{ref} is provided, reference base will be considered for counting, e.g.:
 At some site only base 'A' was observed but the reference was 'T'.
 \code{base_count} will be:
 \itemize{
- \item 1, when \code{ref_base} is NOT provided, or
- \item 2, when \code{ref_base} is provided.
+ \item 1, when \code{ref} is NOT provided, or
+ \item 2, when \code{ref} is provided.
 }
 }
 \examples{
-bc_obs <- c("A", "AG", "C")
-str(base_count(bc_obs))
+bc <- c("A", "AG", "C")
+str(base_count(bc))
 
 # use default observed base calls and condsider reference base
-ref_base <- c("A", "A", "T")
-str(base_count(bc_obs, ref_base))
+ref <- c("A", "A", "T")
+str(base_count(bc, ref))
 }

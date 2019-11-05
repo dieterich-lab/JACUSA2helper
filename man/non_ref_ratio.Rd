@@ -4,10 +4,10 @@
 \alias{non_ref_ratio}
 \title{Calculate non reference ratio from base counts and reference base.}
 \usage{
-non_ref_ratio(ref_base, bases)
+non_ref_ratio(ref, bases)
 }
 \arguments{
-\item{ref_base}{string vector of reference bases.}
+\item{ref}{string vector of reference bases.}
 
 \item{bases}{nx4 matrix or data frame of base call counts.}
 }
@@ -15,5 +15,15 @@ non_ref_ratio(ref_base, bases)
 numeric vector of non reference substitution ratios for \code{base_type}.
 }
 \description{
-Retrives non reference ratio based on \code{ref_base} and base calls specified by \code{base_type}.
+Retrives non reference ratio based on \code{ref} and base calls specified by \code{base_type}.
+}
+\examples{
+ref <- c("A", "A", "A")
+bases <- tibble::tribble(
+  ~A, ~C, ~G, ~T,
+  10,  0,  5,  5,
+   0,  1,  1,  1,
+   1,  1,  1,  1
+)
+str(non_ref_ratio(ref, bases))
 }

@@ -9,14 +9,15 @@ get_arrest_rate(result, suffix = NULL)
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{suffix}{TODO}
+\item{suffix}{string added to specifiy base columns to retrieve arrest rate. Default: NULL}
 }
 \value{
 numeric vector with arrest rates for base counts with \code{suffix}.
 }
 \description{
-TODO
+Retrieves arrest rate from \code{arrest[_suffix]} and \code{through[_suffix]} columns.
 }
 \examples{
-TODO
+data(HIVRT)
+str(get_arrest_rate(HIVRT))
 }

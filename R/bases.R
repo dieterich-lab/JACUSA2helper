@@ -2,8 +2,8 @@
 # A, C, G, T
 # 0, 0, 0, 0
 #' @noRd
-extract_bases <- function(bases_str, sep = ",") {
-  m <- strsplit(bases_str, sep) %>%
+extract_bases <- function(base_str, sep = ",") {
+  m <- strsplit(base_str, sep) %>%
     lapply(as.numeric) %>%
     do.call(rbind, .)
   colnames(m) <- BASES
@@ -11,13 +11,13 @@ extract_bases <- function(bases_str, sep = ",") {
   tibble::as_tibble(m)
 }
 
+# replace EMPTY base call vectors with 0,0,0,0
 #' @noRd
-fix_empty_bases <- function(bases_str) {
-  # replace EMPTY base call vectors with 0,0,0,0
-  empty_bases_i <- bases_str == EMPTY
+fix_empty_bases <- function(base_str) {
+  empty_bases_i <- base_str == EMPTY
   if (any(empty_bases_i)) {
-    bases_str[empty_bases_i] <- paste0(rep(0, length(BASES)), collapse = ",")
+    base_str[empty_bases_i] <- paste0(rep(0, length(BASES)), collapse = ",")
   }
   
-  bases_str
+  base_str
 }

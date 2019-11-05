@@ -4,12 +4,14 @@
 \alias{read_results}
 \title{Reads multiple related JACUSA2 results.}
 \usage{
-read_results(files, meta_conditions)
+read_results(files, meta_conditions, unpack_info = TRUE)
 }
 \arguments{
 \item{files}{vector of JACUSA2 result files.}
 
 \item{meta_conditions}{vector of strings providing details about each file.}
+
+\item{unpack_info}{boolean indicating if additional data stored in 'info' field should be unpacked.}
 }
 \value{
 combined JACUSA2 result object.

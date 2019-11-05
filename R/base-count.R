@@ -1,33 +1,33 @@
 #' Retrieves the total number of observed unique bases.
 #'
 #' Retrieves the total number of observed unique bases for \code{base_type}.
-#' If \code{ref_base} is provided, reference base will be considered for counting, e.g.:
+#' If \code{ref} is provided, reference base will be considered for counting, e.g.:
 #' At some site only base 'A' was observed but the reference was 'T'.
 #' \code{base_count} will be:
 #' \itemize{
-#'  \item 1, when \code{ref_base} is NOT provided, or
-#'  \item 2, when \code{ref_base} is provided.
+#'  \item 1, when \code{ref} is NOT provided, or
+#'  \item 2, when \code{ref} is provided.
 #' }
 #'
 #' @importFrom magrittr %>%
-#' @param bc_obs vector of strings with observed base calls.
-#' @param ref_base vector of strings with reference base, 
-#' @return numeric total number of bases.
+#' @param bc vector of strings with observed base calls.
+#' @param ref vector of strings with reference bases 
+#' @return numeric vector of total number of bases.
 #' @examples
-#' bc_obs <- c("A", "AG", "C")
-#' str(base_count(bc_obs))
+#' bc <- c("A", "AG", "C")
+#' str(base_count(bc))
 #' 
 #' # use default observed base calls and condsider reference base
-#' ref_base <- c("A", "A", "T")
-#' str(base_count(bc_obs, ref_base))
+#' ref <- c("A", "A", "T")
+#' str(base_count(bc, ref))
 #' @export
-base_count <- function(bc_obs, ref_base = NULL) {
-  if (! is.null(ref_base)) {
-    bc_obs <- paste0(bc_obs, ref_base)
+base_count <- function(bc, ref = NULL) {
+  if (! is.null(ref)) {
+    bc <- paste0(bc, ref)
   }
   
-  strsplit(bc_obs, "") %>% 
-    lapply(unique) %>% 
-    lapply(length) %>% 
+  strsplit(bc, "") %>% 
+    lapply(unique) %>% # remove duplicats
+    lapply(length) %>% # how many bases?
     unlist()
 }

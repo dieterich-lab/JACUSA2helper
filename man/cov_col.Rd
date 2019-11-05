@@ -7,14 +7,14 @@
 cov_col(base_type = "bases")
 }
 \arguments{
-\item{base_type}{string TODO}
+\item{base_type}{string specifiying base column. Default: bases.}
 }
 \value{
-string the represents the column name for coverage for \code{base_type}.
+string that represents the column name for coverage for \code{base_type}.
 }
 \description{
 Column name for coverage for \code{base_type}. 
-\code{base_type} will be used a suffix to create the column name:
-"coverage[_\code{base_type}]". Using \code{base_type = "bases"} 
-will result in the field "coverage".
+\code{base_type} will be used to create the column name:
+\code{coverage[_base_type]}. Using \code{base_type = "bases"} 
+will result in the field \code{coverage}.
 }

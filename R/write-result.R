@@ -1,19 +1,23 @@
-#' Writes a JACUSA2 result object to a file.
-#' 
-#' Writes a JACUSA2 result object to a file. 
-#' The optional character \code{txt} will be added to the JACUSA2 header 
-#' along with the version of this package.
-#'
-#' @importFrom magrittr %>%
-#' @importFrom rlang syms
-#' @param result object create by \code{read_result}.
-#' @param file character string naming a file for writing 
-#' @param txt character string to be added to the JACUSA2 header. If "", nothing will be added.
-#' @export
+# TODo
+# Writes a JACUSA2 result object to a file.
+# 
+# Writes a JACUSA2 result object to a file. 
+# The optional character \code{txt} will be added to the JACUSA2 header 
+# along with the version of this package.
+#
+# @importFrom magrittr %>%
+# @importFrom rlang syms
+# @param result object create by \code{read_result}.
+# @param file character string naming a file for writing 
+# @param txt character string to be added to the JACUSA2 header. If "", nothing will be added.
+# @export
+
+#' @noRd
 write_result <- function(result, file, txt = "") {
   require_method(result)
-  if ("meta_condition" %in% names(result)) {
-    stop("result contains meta_condition column. Write results individually!")
+  if (META_CONDITION_COLUMN %in% names(result)) {
+    stop("result contains meta condition column: ", META_CONDITION_COLUMN, 
+         ". Write results individually!")
   }
 
   packed <- pack(result)

@@ -2,7 +2,6 @@
 #'
 #' Retains sites that have score >= min_score.
 #' 
-#' @importFrom magrittr %>%
 #' @importFrom rlang syms
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param min_score numeric value that specifies the minimal score.
@@ -20,7 +19,6 @@ filter_by_min_score <- function(result, min_score, column = "score") {
 #'
 #' Retains sites that have score <= max_score.
 #'
-#' @importFrom magrittr %>%
 #' @importFrom rlang syms
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param max_score numeric value that specifies the maximal score.

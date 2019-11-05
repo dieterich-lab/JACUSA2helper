@@ -2,7 +2,7 @@
 % Please edit documentation in R/coverage.R
 \name{add_cov}
 \alias{add_cov}
-\title{Add coverage}
+\title{Add coverage.}
 \usage{
 add_cov(result, base_type = "bases")
 }
@@ -18,5 +18,7 @@ result object with read coverage added.
 Adds coverage specific for base counts stored in column \code{base_type}.
 }
 \examples{
-TODO
+data(rdd)
+result <- add_cov(rdd)
+str(result[["cov"]])
 }

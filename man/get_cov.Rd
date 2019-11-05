@@ -9,14 +9,20 @@ get_cov(result, base_type = "bases")
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{base_type}{string defining base counts that were used to define base substitution. Default: bases.}
+\item{base_type}{string defining base counts that were used to define coverage. Default: bases.}
 }
 \value{
 numeric vector with coverage information for \code{base_type}.
 }
 \description{
-Retrieves coverge for base counts stored under "\code{base_type}".
+Retrieves coverge for base counts stored under \code{base_type}.
 }
 \examples{
-TODO
+data(HIVRT)
+# coverage for ALL reads
+str(get_cov(HIVRT))
+# coverage for arrest reads 
+str(get_cov(HIVRT, "arrest"))
+# coverage for through reads 
+str(get_cov(HIVRT, "through"))
 }

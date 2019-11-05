@@ -4,13 +4,13 @@
 #' A package that provides the following categories of functions to post-process result files of JACUSA2:
 #' \describe{
 #'  \item{read/write}{Read and write JACUSA2 result files, e.g.: \code{read_result()}.}
-#'  \item{add}{Adds some field to an existing JACUSA2 result object and return the modified object, e.g.: \code{add_sub()}.}
-#'  \item{get}{TODO}
-#'  \item{col(s)}{col(umns)TODO}
-#'  \item{check}{Performs some checks on a result object, e.g.: \code{check_max_alleles()}.}
-#'  \item{filter}{Will remove sites from a result object with some filtering criteria, e.g.: \code{filter_by_coverage()}}
-#'  \item{plot}{Plots certain characteristics of a JACUSA2 result object.}
-#'  \item{other}{Retrieves some field from an existing JACUSA2 result object. \code{base_type}}
+#'  \item{add...}{Adds some field to an existing JACUSA2 result object and return the modified object, e.g.: \code{add_sub()}.}
+#'  \item{get...}{Retrieves some field from an existing JACUSA2 result object, e.g.: \code{get_sub()}}
+#'  \item{...col(s)}{Helper function, to specify a column based of \code{base_type} or \code{suffix}, e.g.: \code{bc_col(base_type = "arrest")}}
+#'  \item{TODO check}{Performs some checks on a result object, e.g.: \code{check_max_alleles()}.}
+#'  \item{TODO filter}{Will remove sites from a result object with some filtering criteria, e.g.: \code{filter_by_coverage()}}
+#'  \item{TODOplot}{Plots certain characteristics of a JACUSA2 result object.}
+#'  \item{other}{TODO}
 #' }
 #' 
 #' The following methods from JACUSA2 are supported:
@@ -32,7 +32,7 @@
 #' tidy data approach to feature easy interaction with dplyr and ggplot2.
 #' A JACUSA2 result object can be created via \code{result <- read_result("jacusa2.out")} and is 
 #' currently represented as a tibble. Furthermore, JACUSA2helper supports the analysis of several related
-#' JACUSA2 result files via \code{results <- read_results(files, meta_conditions)} where \code{meta_conditions} is a 
+#' JACUSA2 result files via \code{results <- read_results(files, meta)} where \code{meta_conditions} is a 
 #' vector of character strings that provides a descriptive name for each file in \code{files}.
 #' 
 #' Check \code{vignette(TODO)} for a general introduction and \code{vignette(TODO meta conditions)} for details about meta conditions.
@@ -59,7 +59,7 @@
 #'   \item{add_arrest_rate}{Adds arrest rate to JACUSA2 result object.}
 #'   \item{add_sub}{Adds base substitution column to JACUSA2 result object.}
 #'   \item{add_sub_ratio}{Adds base substitution ratio for all bases to a JACUSA2 result object.}
-#'   \item{add_TODOnon_ref_base2bc_ratio}{Adds non reference base ratio to JACUSA2 result object.}
+#'   \item{add_TODOnon_ref2bc_ratio}{Adds non reference base ratio to JACUSA2 result object.}
 #'   \item{add_summary}{Adds a summary of a column in a JACUSA2 result object.}
 #' }
 #'
@@ -77,7 +77,7 @@
 #' \describe{
 #'	 \item{filter_by_allele_count}{Filters sites by the number of alleles per site.}
 #'   \item{filter_by_coverage}{Filters sites by read coverage (total, per replicates, etc.)}
-#'   \item{filter_by_filter_info}{Filters sites by artefacts.}
+#'   \item{filter_by_filter}{Filters sites by artefacts.}
 #'   \item{filter_by_max_score}{Retains sites by maximal score.}
 #'   \item{filter_by_min_score}{Retains sites by minimal score.}
 #'   \item{filter_by_robust_arrest_events}{Retains sites that contain an arrest event in all replicates in at least one condition.}

@@ -19,6 +19,3 @@ TODO
 \description{
 This is intended to be used within a \code{group_by_site()} statement. TODO
 }
-\examples{
-TODO
-}

@@ -1,7 +1,7 @@
 context("base_sub")
 
 test_that("base_sub works as expected", {
-  ref_base <- c("A", "A", "T", "A")
+  ref <- c("A", "A", "T", "A")
   bc <- c("A", "AG", "C", "ACGT")
   
   expected <- c(
@@ -12,7 +12,7 @@ test_that("base_sub works as expected", {
   )
 
   expect_equal(
-    base_sub(ref_base, bc),
+    base_sub(ref, bc),
     expected
   )
 })
@@ -20,6 +20,6 @@ test_that("base_sub works as expected", {
 test_that("base_sub fails on ", {
   expect_error(
     base_sub("AG", paste("A", "G", sep = BC_CHANGE_SEP)),
-    "All ref_base elements must be *"
+    "All ref elements must be *"
   )
 })
