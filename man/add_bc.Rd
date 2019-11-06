@@ -17,19 +17,3 @@ result object with observed base calls added.
 \description{
 Adds observed base calls calculated for base column specified by \code{base_type}.
 }
-\examples{
-data(rdd)
-result <- add_bc(rdd)
-str(result[["bases"]])
-
-# for rt-arrest
-data(HIVRT)
-# add observed base calls for arrest reads
-result <- add_bc(HIVRT, "arrest")
-# add observed base calls for through reads
-result <- add_bc(result, "through")
-# only print observed base calls for 
-# arrest and through reads
-cols <- paste0("bc_", c("arrest", "through"))
-str(result[, cols])
-}

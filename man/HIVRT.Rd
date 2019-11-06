@@ -13,17 +13,19 @@
 	\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 	\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 	\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
-	\item filter: ","-separated character string showing feature filter information. Empty field is equal to "*"
+	\item filter: "TODO,"-separated character string showing feature filter information. Empty field is equal to "*"
 	\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-	\item base_type: Character string inndicating what type of base calls are shown. Here: "total", "arrest_bases", or "through_bases".
-	\item condition: Numeric value: "1"(here: +GMC) or "2"(-GMC)
-	\item replicate: Numeric value: "1" or "2" for all conditions
-	\item bc_A: Numeric value representing base call count for A
-	\item bc_C: Numeric value representing base call count for C
-	\item bc_G: Numeric value representing base call count for G
-	\item bc_T: Numeric value representing base call count for T
-	\item bc: Observed base calls for this site. Combination of: "A", "C", "G", and "T"
-   \item cov: Numeric value indicating the read coverage for this site
+	\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
+	\item arrest: tibble representing counts for A, C, G, and T base calls for arrest reads.
+	\item through: tibble representing counts for A, C, G, and T base calls for through reads.
+	\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
+	\item repl: Numeric value: "1" or "2" for all conditions
+	\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
+	\item bc_arrest: Observed base calls for this site for arrest reads. Combination of: "A", "C", "G", and "T"
+	\item bc_through: Observed base calls for this site for through reads. Combination of: "A", "C", "G", and "T"
+   \item cov: Numeric value indicating the read coverage for this site for all reads.
+   \item cov_arrest: Numeric value indicating the read coverage for this site for arrest reads.
+   \item cov_through: Numeric value indicating the read coverage for this site for through reads.
 }}
 \usage{
 data(HIVRT)

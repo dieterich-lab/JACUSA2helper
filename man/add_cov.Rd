@@ -17,8 +17,3 @@ result object with read coverage added.
 \description{
 Adds coverage specific for base counts stored in column \code{base_type}.
 }
-\examples{
-data(rdd)
-result <- add_cov(rdd)
-str(result[["cov"]])
-}

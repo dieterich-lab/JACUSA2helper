@@ -15,5 +15,5 @@ string the represents the column name for through bases marked with \code{suffix
 \description{
 Column name for through base counts for \code{suffix}. 
 \code{suffix} will be used to create the column name:
-"through[_\code{suffix}]".
+\code{through[_suffix]}".
 }

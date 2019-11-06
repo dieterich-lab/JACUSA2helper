@@ -17,7 +17,8 @@ extract_ref(cond, bc, ref_cond)
 vector of reference base(s) defined by \code{ref_cond} from \code{bc}.
 }
 \description{
-TODO
+Extracts reference base from observed base calls. 
+Can be used within an \code{group_by_site()} statement.
 }
 \examples{
 cond <- c(1, 1, 2, 2)

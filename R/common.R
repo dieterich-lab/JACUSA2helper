@@ -87,3 +87,8 @@
 #' @docType package
 #' @name JACUSA2helper
 NULL
+
+# TODO
+# read_sub
+# plots
+# write_result

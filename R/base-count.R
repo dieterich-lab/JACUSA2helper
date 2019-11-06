@@ -27,7 +27,7 @@ base_count <- function(bc, ref = NULL) {
   }
   
   strsplit(bc, "") %>% 
-    lapply(unique) %>% # remove duplicats
+    lapply(unique) %>% # remove duplicates
     lapply(length) %>% # how many bases?
     unlist()
 }

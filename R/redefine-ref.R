@@ -26,7 +26,8 @@ redefine_ref <- function(result, ref_cond, base_type = "bases", keep_old = NULL)
 
 #' Extract reference base from observed base calls.
 #' 
-#' TODO
+#' Extracts reference base from observed base calls. 
+#' Can be used within an \code{group_by_site()} statement.
 #' 
 #' @param cond vector of numeric.
 #' @param bc vector of string representing base calls.

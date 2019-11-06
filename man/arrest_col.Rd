@@ -15,5 +15,5 @@ string the represents the column name for arrest bases marked with \code{suffix}
 \description{
 Column name for arrest base counts for \code{suffix}. 
 \code{suffix} will be used to create the column name:
-"arrest[_\code{suffix}]".
+\code{arrest[_suffix]}".
 }

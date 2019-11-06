@@ -17,7 +17,3 @@ result object with arrest rate field \code{arrest_rate[_suffix]} added.
 \description{
 Adds arrest rate calculated from \code{arrest[_suffix]} and \code{through[_suffix]} columns.
 }
-\examples{
-data(HIVRT)
-result <- add_arrest_rate(HIVRT)
-}

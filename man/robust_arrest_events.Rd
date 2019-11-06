@@ -2,20 +2,22 @@
 % Please edit documentation in R/filter-by-robust-arrest-event.R
 \name{robust_arrest_events}
 \alias{robust_arrest_events}
-\title{TODO}
+\title{Helper to call \code{robust()}.}
 \usage{
 robust_arrest_events(condition, arrest_cov, through_cov)
 }
 \arguments{
-\item{condition}{TODO}
+\item{condition}{numeric vector of conditions.}
 
-\item{arrest_cov}{TODO}
+\item{arrest_cov}{numeric vector of coverage for arrest reads.}
 
-\item{through_cov}{TODO}
+\item{through_cov}{numeric vector of coverage for through reads.}
 }
 \value{
-TODO
+logical vector TODO
 }
 \description{
-This is intended to be used within a \code{group_by_site()} statement. TODO
+This is intended to be used within a \code{group_by_site()} statement.
+Returns logical vector of robust sites requiring all values from
+\code{arrest_cov} or \code{through_cov} to > 0 for at least one condition.
 }

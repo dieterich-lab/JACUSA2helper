@@ -36,14 +36,16 @@ filter_by_robust_arrest_events <- function(result, suffix = NULL, ...) {
   dplyr::ungroup(result)
 }
 
-#' TODO
+#' Helper to call \code{robust()}.
 #' 
-#' This is intended to be used within a \code{group_by_site()} statement. TODO
+#' This is intended to be used within a \code{group_by_site()} statement.
+#' Returns logical vector of robust sites requiring all values from
+#' \code{arrest_cov} or \code{through_cov} to > 0 for at least one condition.
 #' 
-#' @param condition TODO
-#' @param arrest_cov TODO
-#' @param through_cov TODO
-#' @return TODO
+#' @param condition numeric vector of conditions.
+#' @param arrest_cov numeric vector of coverage for arrest reads.
+#' @param through_cov numeric vector of coverage for through reads.
+#' @return logical vector TODO
 #' @export
 robust_arrest_events <- function(condition, arrest_cov, through_cov) {
   df <- tibble::tibble(

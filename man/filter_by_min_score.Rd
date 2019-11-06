@@ -20,6 +20,6 @@ result object with sites where score >= min_score.
 Retains sites that have score >= min_score.
 }
 \examples{
-data(HIVRT)
-str(filter_by_min_score(HIVRT, min_score = 2, column = "pvalue"))
+data(rdd)
+str(filter_by_min_score(rdd, min_score = 2))
 }

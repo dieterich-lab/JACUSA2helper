@@ -5,10 +5,6 @@
 #' @param result object created by \code{read_result()} or \code{redfsad_results()}.
 #' @param base_type string defining the column to use as base counts. Default: bases.
 #' @return result object with read coverage added.
-#' @examples
-#' data(rdd)
-#' result <- add_cov(rdd)
-#' str(result[["cov"]])
 #' @export
 add_cov <- function(result, base_type = "bases") {
   check_column_exists(result, base_type)

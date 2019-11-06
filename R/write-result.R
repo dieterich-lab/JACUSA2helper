@@ -1,4 +1,6 @@
-# TODo
+# TODO
+#=====
+
 # Writes a JACUSA2 result object to a file.
 # 
 # Writes a JACUSA2 result object to a file. 

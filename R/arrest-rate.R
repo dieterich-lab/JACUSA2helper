@@ -5,9 +5,6 @@
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param suffix string added to specifiy base columns to calculate arrest rate. Default: NULL
 #' @return result object with arrest rate field \code{arrest_rate[_suffix]} added.
-#' @examples
-#' data(HIVRT)
-#' result <- add_arrest_rate(HIVRT)
 #' @export
 add_arrest_rate <- function(result, suffix = NULL) {
   check_column_exists(result, arrest_col(suffix))
@@ -69,7 +66,7 @@ arrest_rate_col <- function(suffix = NULL) {
 #' 
 #' Column name for arrest base counts for \code{suffix}. 
 #' \code{suffix} will be used to create the column name:
-#' "arrest[_\code{suffix}]".
+#' \code{arrest[_suffix]}".
 #' 
 #' @param suffix string to specifiy base columns to retrieve arrest bases Default: NULL
 #' @return string the represents the column name for arrest bases marked with \code{suffix}.
@@ -82,7 +79,7 @@ arrest_col <- function(suffix = NULL) {
 #' 
 #' Column name for through base counts for \code{suffix}. 
 #' \code{suffix} will be used to create the column name:
-#' "through[_\code{suffix}]".
+#' \code{through[_suffix]}".
 #' 
 #' @param suffix string to specifiy base columns to retrieve through bases Default: NULL
 #' @return string the represents the column name for through bases marked with \code{suffix}.

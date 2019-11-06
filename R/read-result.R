@@ -30,6 +30,7 @@ read_result <- function(file, unpack_info = TRUE) {
   
   # finally store header information (e.g.: JACUSA2 version) in result
   result <- set_header(result, file_info$jacusa_header)
+  result <- set_method(result, file_info$type)
   
   result
 }
@@ -134,9 +135,7 @@ create_result <- function(type, cond_rep, data, unpack_info) {
   
   # add cov etc.
   result <- post_process(type, columns$method_prefix, result)
-  # TODO rearrange
-  result <- set_method(result, type)
-  
+
   # make factors
   result[[CONDITION_COLUMN]] <- as.factor(result[[CONDITION_COLUMN]])
   result[[REPLICATE_COLUMN]] <- as.factor(result[[REPLICATE_COLUMN]])

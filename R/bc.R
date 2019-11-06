@@ -5,21 +5,6 @@
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param base_type string defining the column to use as base counts. Default: bases.
 #' @return result object with observed base calls added.
-#' @examples
-#' data(rdd)
-#' result <- add_bc(rdd)
-#' str(result[["bases"]])
-#' 
-#' # for rt-arrest
-#' data(HIVRT)
-#' # add observed base calls for arrest reads
-#' result <- add_bc(HIVRT, "arrest")
-#' # add observed base calls for through reads
-#' result <- add_bc(result, "through")
-#' # only print observed base calls for 
-#' # arrest and through reads
-#' cols <- paste0("bc_", c("arrest", "through"))
-#' str(result[, cols])
 #' @export
 add_bc <- function(result, base_type = "bases") {
   check_column_exists(result, base_type)
@@ -77,7 +62,7 @@ base_call <- function(bases) {
   )
   colnames(bc) <- BASES
   
-  bc[! bases > 0] <- ""
+  bc[bases == 0] <- ""
   l <- as.list(bc)
   
   do.call(stringr::str_c, c(l, sep = ""))

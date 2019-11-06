@@ -11,7 +11,7 @@ filter_by_robust_variants(result, base_type = "bases", ...)
 
 \item{base_type}{string defining the column to use as base counts. Default: bases.}
 
-\item{...}{passed to internal \code{group_by_site} statement. Add additional grouping variable here, e.g.: "meta_condition".}
+\item{...}{passed to internal \code{group_by_site} statement. Add additional grouping variable here, e.g.: \code{meta}.}
 }
 \value{
 result object with sites where at least one condition contains the variant base in all replicates.

@@ -3,10 +3,10 @@
 #' Enforces that at least one condition contains the variant base in all replicates. 
 #'
 #' @importFrom magrittr %>%
- #' @importFrom rlang syms
+#' @importFrom rlang syms
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param base_type string defining the column to use as base counts. Default: bases.
-#' @param ... passed to internal \code{group_by_site} statement. Add additional grouping variable here, e.g.: "meta_condition".
+#' @param ... passed to internal \code{group_by_site} statement. Add additional grouping variable here, e.g.: \code{meta}.
 #' @return result object with sites where at least one condition contains the variant base in all replicates.
 #' @examples
 #' data(rdd)

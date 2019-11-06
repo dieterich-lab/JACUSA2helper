@@ -83,3 +83,18 @@ mask_sub <- function(subs, keep) {
 
   subs
 }
+
+#' Transform read substitution.
+#' 
+#' Transforms read substitution. JACUSA2 can stratify reads based on 
+#' base substitutions "-B A2G". This function will transform "A2G" to "A->G".
+#' 
+#' @param subs string vector of read substitutions.
+#' @return string vector of base substitution.
+#' @examples
+#' subs <- c("*", "A2G", "*")
+#' clean_read_sub(subs)
+#' @export
+clean_read_sub <- function(subs) {
+  i <- gsub("2", BC_CHANGE_SEP, subs)
+}
