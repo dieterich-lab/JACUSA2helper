@@ -11,9 +11,6 @@
 #' \item arrest, or 
 #' \item through
 #' }
-#' TODO
-#' Additionally, if read/base stratification has been used additional columns with the suffix "_marked" will be
-#' added.
 #' 
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param base_type string defining the column to use as base counts. Default: bases.
@@ -58,11 +55,11 @@ get_sub_ratio <- function(result, base_type = "bases") {
 #' Calculates base substitution ratio (e.g.: editing frequency) for \code{ref} and base counts stored
 #' in nx4 matrix \code{bases}.
 #' \code{ref} must have only one reference base. A->G is okay, but AG->G is NOT allowed!
-#' TODO what if more than 2 alleles, what does other_bc do
+#' If \code{bc} is not provided, only one non-reference base in \code{bases} is allowed!
 #'
 #' @param ref vector of reference bases.
 #' @param bases matrix of observed base call counts.
-#' @param bc vector strings that represents observed base calls. Default: NULL, will be calculated from \code{bases}.
+#' @param bc vector strings that represents observed base calls. Default: "bases".
 #' @return vector of base callsubstitution ratios.
 #' @examples
 #' ref <- c("A", "A", "T")

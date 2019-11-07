@@ -17,7 +17,7 @@ result object with base substitutions added.
 \description{
 Adds base substitution column to a JACUSA2 result object.
 There must be only one reference base. A->G is okay, but AG->G is NOT allowed! 
-Make sure to filter \code{result} with \code{filter_by_alleles() TODO} to comply with this restriction.
+Make sure to filter \code{result} to comply with this restriction.
 }
 \examples{
 data(rdd)

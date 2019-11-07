@@ -12,7 +12,7 @@ filter_by(result, ...)
 \item{...}{forwarded to internal \code{dplyr::filter()} statement.}
 }
 \value{
-result object TODO
+result object after filtering with JACUSA2 specific attributes data preserved.
 }
 \description{
 Filters and preserves attributes of result object. 

@@ -2,7 +2,7 @@
 #' 
 #' Adds base substitution column to a JACUSA2 result object.
 #' There must be only one reference base. A->G is okay, but AG->G is NOT allowed! 
-#' Make sure to filter \code{result} with \code{filter_by_alleles() TODO} to comply with this restriction.
+#' Make sure to filter \code{result} to comply with this restriction.
 #' 
 #' @importFrom magrittr %>%
 #' @param result object created by \code{read_result()} or \code{read_results()}.

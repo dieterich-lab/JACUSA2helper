@@ -1,7 +1,5 @@
 context("robust")
 
-# TODO
-
 test_that("robust works on 1 condition", {
   m_true <- matrix(
     c(0, 1,

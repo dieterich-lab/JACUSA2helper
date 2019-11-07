@@ -27,9 +27,6 @@ Depending on your data and JACUSA2 command line options the following values are
 \item arrest, or 
 \item through
 }
-TODO
-Additionally, if read/base stratification has been used additional columns with the suffix "_marked" will be
-added.
 }
 \examples{
 data(rdd)

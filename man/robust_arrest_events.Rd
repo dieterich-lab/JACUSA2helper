@@ -14,7 +14,7 @@ robust_arrest_events(condition, arrest_cov, through_cov)
 \item{through_cov}{numeric vector of coverage for through reads.}
 }
 \value{
-logical vector TODO
+logical vector of robust sites.
 }
 \description{
 This is intended to be used within a \code{group_by_site()} statement.

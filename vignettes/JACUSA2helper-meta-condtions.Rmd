@@ -3,7 +3,7 @@ title: "JACUSA2helper meta conditions"
 author: "Michael Piechotta"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
-bibliography: JACUSA2helper.bib
+bibliography: JACUSA2helper-meta-conditions.bib
 link-citations: yes
 vignette: >
   %\VignetteIndexEntry{JACUSA2helper-meta-conditions}
@@ -18,92 +18,217 @@ knitr::opts_chunk$set(
 )
 options(tibble.print_min = 4L, tibble.print_max = 4L)
 library(JACUSA2helper)
+library(magrittr)
+set.seed(777)
 ```
 
-See [JACUSA2helper vignette](TODOl) for general description of analysis with JACUSA2helper.
+See `vignette("JACUSA2helper-meta-conditions")` for general description of analysis with JACUSA2helper.
+For details on JACUSA2, check the [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf).
 
-In the following we will exeplify the advance use of metda-conditions to combine multiple pairwise comparisons
-and the analysis.
-
-
-
-# Read
-
-# Filter
-
-# Plot
-
-# Store
-
-Here we will use the attached Zhou et al. 2018 data set, where the authors
-Zhou2018 et al. 2018 map RNA modification of pseudouridine \Psi by chemically modifying
-pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse
-transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and
-SIIIMg). 
-
-
-
-
-## Site
-A *site* is defined as a location in genome using: contig, start, end, and strand information.
-`group_by_site()`
-
-#* primary, base_type
-
-# TODO
-#* tidy data 
-#* reference
-
-The central data structure in JACUSA2helper is the JACUSA2 result object that follows the tidy data approach to feature easy interaction with dplyr and ggplot2.
-
-TODO wide long
-
-## Stranded data
-
-When working with stranded RNA-Seq data, inverting base calls is not necessary because
-JACUSA2 will automatically invert Single End (SE) and Paired End (PE) depending on the
-provided library type option "-P" UNSTRANDED|FR_FIRSTSTRAND|RF_SECOND_STRAND".
-
-A JACUSA2 result object can be created via \code{result <- read_result("jacusa2.out")} and is currently represented as a tibble. 
+In the following, the use of meta conditions to combine multiple pairwise comparisons will be shown.
 
 ## Meta condition
 
-JACUSA2helper supports the analysis of several related JACUSA2 result files via` `results <- read_results(files, meta_conditions)` where `meta_conditions` is a 
-vector of character strings that provides a descriptive name for each file in `files?`.
+JACUSA2helper supports the analysis of several related JACUSA2 result files via `results <- read_results(files, meta_conds)` where `meta_conds` is a vector of strings that provides a descriptive name for each file in the vector of strings `files`.
 
-* meta conditiona and filtering 
-* meta conditions and ploting
+Here, we will use the the @Zhou2018 data set, where the authors map RNA modification of pseudouridine ($\Psi$) by chemically modifying pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse
+transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and
+SIIIMg). All three data sets are available in JACUSA2helper via `data()`. Additionally, we have compiled a combined  data set `data(Zhou2018)` that utilizes meta conditions. Note, that this data has NO replicates!
 
-## TODO
+```{r}
+data(Zhou2018)
+unique(Zhou2018$meta_cond)
+```
 
-* base stratification
-* lrt-arrest
+### Group By Site (and other)
 
-# Input/Output
+When manipulating a multi `results` object created by `read_results()`, it is crucial to distinguish the following grouping statements in an analysis pipeline:
 
-The functions read_result, and write_result facilitate input and output operations on JACUSA2 result files.
+* `group_by_site(results) %>% ...` and
+* `group_by_site(results, meta_cond) %>% ...`.
 
-* `read_result()` Reads and unpacks a JACUSA2 result file and creates a result object.
-* `read_results()` Allows to combine multiple result files and distinguish them with meta conditions.
-* `write_result()` This will pack result object and write its contents back to a file.
-* `write_bedGraph()` Writes a vector of values as bedGraph file.
+The first statement will apply any subsequent functions to ALL sites regardless of the meta condition while the
+last statement will apply to sites of EACH meta condition!
 
-# Add optional data
+## Number of sites
 
-* `add_arrest_rate()`
-* `add_ref_base2bc()`
-* `add_ref_base2bc_ratio()`
-* `add_summary()`
+The number of sites can be calculate in multiple ways giving different numbers for a multi `results` object.
 
-# Filter result object
-This function set enables filtering by read coverage or enforcing a minimal number of variant base calls per sample.
+The following statement will determine the number of covered sites per contig and meta condition:
 
-* `filter_by_allele_count()`
-* `filter_by_coverage()`
-* `filter_by_max_score()`
-* `filter_by_min_score()`
-* `filter_by_robust_arrest_events()`
-* `filter_by_robust_variants()`
+```{r}
+dplyr::distinct(Zhou2018, contig, start, end, strand, meta_cond) %>% 
+  dplyr::group_by(contig, meta_cond) %>% 
+  dplyr::count() # count in a group
+```
 
-## References
+This statement will determine the number of covered sites per contig regardless of the meta condition:
+
+```{r}
+dplyr::distinct(Zhou2018, contig, start, end, strand) %>% 
+  dplyr::group_by(contig) %>% 
+  dplyr::count() # count in a group
+```
+
+# Filter
+
+Filter by coverage regardless of the meta condition.
+
+```{r}
+filtered_all <- Zhou2018 %>% 
+  group_by_site() %>%
+  filter_by(all(cov >= 20000)) %>% 
+  dplyr::distinct(contig, start, end, strand, meta_cond) %>%
+  dplyr::group_by(contig, meta_cond) %>% 
+  dplyr::count() # count in a group
+filtered_all
+```
+
+Filter by coverage of each meta condition.
+
+```{r}
+filtered_meta <- Zhou2018 %>% 
+  group_by_site(meta_cond) %>%
+  filter_by(all(cov >= 20000)) %>% 
+  dplyr::distinct(contig, start, end, strand, meta_cond) %>%
+  dplyr::group_by(contig, meta_cond) %>% 
+  dplyr::count() # count in a group
+filtered_meta
+```
+
+# Plot
+
+First, we add a description `cond_desc` of the conditions to the result object. The data sets of `Zhou2018` have been layout out in such a way that condition 1 and 2 correspond to carbodiimide (+CMC) treatment and control (-CMC), respectively.
+
+```{r}
+data(Zhou2018)
+result <- Zhou2018 %>% 
+  filter_by(strand == "+")
+
+# create nice label
+result$cond_desc <- ""
+result$cond_desc[result$cond == 1] <- "+CMC"
+result$cond_desc[result$cond == 2] <- "-CMC"
+
+result$group <- do.call(interaction, result[c("cond", "repl")])
+# relate group={cond(ition), repl(icat)}, and nice label
+meta_desc <- dplyr::distinct(result, cond, repl, group, cond_desc)
+# map group values to nice labels (cond_desc)
+limits <- as.vector(meta_desc[["group"]])
+labels <- meta_desc[["cond_desc"]]
+```
+
+Next, we define a ggplot2 object that allows to merge legend for different scales. Check [combine legends]{https://ozh2014.wordpress.com/2017/06/26/combine-related-legends-into-one-in-ggplot2/} for details.
+In brief, we use `colour` to represent cond(ition) and `linetype` to represent repl(icate) an relate their possible combinations to descriptive `labels`.
+
+```{r}
+colour_scale <- ggplot2::scale_colour_manual(
+    name = "Treatment",
+    labels = labels,
+    limits = limits,
+    values = factor(meta_desc[["cond"]]) %>% as.integer()
+  )
+linetype_scale <- ggplot2::scale_linetype_manual(
+    name = "Treatment",
+    labels = labels,
+    limits = limits,
+    values = factor(meta_desc[["repl"]]) %>% as.integer()
+  )
+```
+
+## Pvalue distribution 
+
+Plot of the empirical cumulative distributions of pvalues for all meta conditions.
+
+```{r}
+result %>% 
+  dplyr::distinct(contig, start, end, strand, meta_cond, pvalue) %>%
+  ggplot2::ggplot(ggplot2::aes(x = pvalue, colour = meta_cond)) +
+  ggplot2::labs(colour = "Meta condition") +
+  ggplot2::ylab("Density") +
+  ggplot2::stat_ecdf(geom = "step") +
+  ggplot2::xlab("pvalue") +
+  ggplot2::theme(legend.position = "bottom") 
+
+```
+
+## Empirical cumulative arrest rate distribution
+
+```{r}
+result %>% 
+  ggplot2::ggplot(ggplot2::aes(x = arrest_rate, colour = group, linetype = group)) +
+  ggplot2::stat_ecdf(geom = "step") +
+  colour_scale +
+  linetype_scale +
+  ggplot2::xlab("Density") +
+  ggplot2::xlab("Arrest rate") +
+  ggplot2::theme(legend.position = "bottom") + 
+  ggplot2::facet_grid(meta_cond ~ .)
+```
+
+## Compare coverage
+
+```{r}
+result %>% 
+  ggplot2::ggplot(ggplot2::aes(x = cov, colour = group, linetype = group)) +
+  ggplot2::stat_ecdf(geom = "step") +
+  colour_scale +
+  linetype_scale +
+  ggplot2::scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) + 
+  ggplot2::xlab("Read Coverage") +
+  ggplot2::theme(legend.position = "bottom") + 
+  ggplot2::facet_grid(meta_cond ~ .)
+```
+
+
+## Compare arrest rate
+
+We plot the arrest rate for all three meta conditions and +CMC and -CMC treatment.
+
+```{r}
+result %>% 
+  filter_by_max_score(max_score = 0.00001, column = "pvalue") %>%
+  group_by_site(meta_cond) %>%
+  filter_by(all(cov >= 20000)) %>%
+  dplyr::ungroup() %>%
+  dplyr::select(contig, start, end, strand, meta_cond, cond, arrest_rate) %>%
+  dplyr::mutate(cond = paste0("arrest_rate", cond)) %>%
+  tidyr::spread(cond, arrest_rate) %>%
+  ggplot2::ggplot(ggplot2::aes(x = arrest_rate1, y = arrest_rate2, colour = meta_cond)) +
+    ggplot2::geom_point() + 
+    ggplot2::ylab("arrest rate -CMC") + 
+    ggplot2::xlab("arrest rate +CMC") + 
+    ggplot2::facet_grid(. ~ meta_cond) +
+    ggplot2::geom_abline(linetype = "dashed", colour = "gray") +
+    ggplot2::labs(colour = "Meta condition") +
+    ggplot2::theme(legend.position = "bottom")
+```
+
+We plot the arrest rate delta of +CMC and -CMC treatment for all three meta conditions and add  Pseudouridine sites (black points) from [3Dmodmap]{https://people.biochem.umass.edu/fournierlab/3dmodmap/main.php}.
+
+```{r}
+data(modmap)
+mod <- modmap %>% 
+  dplyr::filter(rrna == "NR_003286_RNA18SN5", base == "PseudoU")
+
+result %>%
+  filter_by(contig == "NR_003286_RNA18SN5") %>%
+  filter_by_max_score(0.00001, "pvalue") %>%
+  group_by_site(meta_cond) %>%
+  filter_by(all(cov >= 20000)) %>%
+  peak(peak_cols = c("arrest_rate")) %>%
+  dplyr::mutate(arrest_rate_delta = arrest_rate11 - arrest_rate21) %>%
+  ggplot2::ggplot(ggplot2::aes(x = end, y = arrest_rate_delta, fill = meta_cond)) +
+    ggplot2::geom_bar(stat = "identity") +
+    ggplot2::geom_point(data = mod, ggplot2::aes(x = pos, y = 0), fill = "black") +
+    ggplot2::xlab("Position on RNA18SN5") +
+    ggplot2::ylab("arrest rate (+CMC - -CMC)") +
+    ggplot2::theme(legend.position = "bottom") +
+    ggplot2::labs(fill = "Meta condition")
+```
+
+# References
 

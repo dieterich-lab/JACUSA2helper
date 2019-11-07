@@ -6,7 +6,7 @@
 #' 
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param ... forwarded to internal \code{dplyr::filter()} statement.
-#' @return result object TODO
+#' @return result object after filtering with JACUSA2 specific attributes data preserved.
 #' @examples
 #' data(rdd)
 #' # remove sites that are marked by artefact filter "D"

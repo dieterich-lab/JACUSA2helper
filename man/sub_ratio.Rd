@@ -11,7 +11,7 @@ sub_ratio(ref, bases, bc = NULL)
 
 \item{bases}{matrix of observed base call counts.}
 
-\item{bc}{vector strings that represents observed base calls. Default: NULL, will be calculated from \code{bases}.}
+\item{bc}{vector strings that represents observed base calls. Default: "bases".}
 }
 \value{
 vector of base callsubstitution ratios.
@@ -20,7 +20,7 @@ vector of base callsubstitution ratios.
 Calculates base substitution ratio (e.g.: editing frequency) for \code{ref} and base counts stored
 in nx4 matrix \code{bases}.
 \code{ref} must have only one reference base. A->G is okay, but AG->G is NOT allowed!
-TODO what if more than 2 alleles, what does other_bc do
+If \code{bc} is not provided, only one non-reference base in \code{bases} is allowed!
 }
 \examples{
 ref <- c("A", "A", "T")

@@ -5,13 +5,13 @@
 #' that differ in some meta condition.
 #' 
 #' @param files vector of JACUSA2 result files.
-#' @param meta_conditions vector of strings providing details about each file.
+#' @param meta_conds vector of strings providing details about each file.
 #' @param unpack_info boolean indicating if additional data stored in 'info' field should be unpacked.
 #' @return combined JACUSA2 result object.
 #'
 #' @export
-read_results <- function(files, meta_conditions, unpack_info = TRUE) {
-  stopifnot(length(files) == length(meta_conditions))
+read_results <- function(files, meta_conds, unpack_info = TRUE) {
+  stopifnot(length(files) == length(meta_conds))
   
   condition_info <- NULL
   types <- SUPPORTED_METHOD_TYPES
@@ -52,7 +52,7 @@ read_results <- function(files, meta_conditions, unpack_info = TRUE) {
     headers[[meta_condition]] <- file_info$jacusa_header
     
     return(data)
-  }, files, meta_conditions, USE.NAMES = FALSE, SIMPLIFY = FALSE)
+  }, files, meta_conds, USE.NAMES = FALSE, SIMPLIFY = FALSE)
   # combine read files
 
   data <- dplyr::bind_rows(l)

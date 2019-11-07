@@ -4,19 +4,21 @@
 \alias{peak}
 \title{Formats JACUSA2 result object as in JACUSA2 result output.}
 \usage{
-peak(result, columns = NULL)
+peak(result, peak_cols, id_cols = c("contig", "start", "end", "strand"))
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{columns}{TODO, Default: NULL use all columns.}
+\item{peak_cols}{string vector specifiying columns to peak at.}
+
+\item{id_cols}{string vector specifiying columns to use as site id, Default: contig, start, end, strand.}
 }
 \value{
-object structured as in JACUSA2 result format
+result object structured as in JACUSA2 result format.
 }
 \description{
 Allows to peak at a result object and provides a user friendly format.
-Converts data from long to wide format. @seealso \code{pack()}
+Converts data from long to wide format.
 }
 \examples{
 data(rdd)

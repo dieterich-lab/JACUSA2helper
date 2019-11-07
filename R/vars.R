@@ -51,7 +51,7 @@ NON_REF_RATIO <- "non_ref_ratio"
 
 CONDITION_COLUMN <- "cond"
 REPLICATE_COLUMN <- "repl"
-META_CONDITION_COLUMN <- "meta"
+META_CONDITION_COLUMN <- "meta_cond"
 
 ARREST_RATE <- "arrest_rate"
 

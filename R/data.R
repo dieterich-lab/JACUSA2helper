@@ -24,7 +24,7 @@
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
-#'		\item filter: ";TODO"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 #'		\item cond: Numeric value: "1"(here: gDNA) or "2"(here: RNA)
 #'		\item repl: Numeric value: "1" for gDNA(no replicates) and "1" or "2" for RNA(1 replicate)
@@ -61,7 +61,7 @@
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
-#'		\item filter: "TODO,"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 #'		\item bases: Numeric tibble representing counts for A, C, G, and T base calls.
 #'		\item cond: Numeric value: "1"(here: ADAR KD) or "2"(here: unreated)
@@ -99,7 +99,7 @@
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
-#'		\item filter: "TODO,"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 #'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
 #'		\item arrest: tibble representing counts for A, C, G, and T base calls for arrest reads.
@@ -143,7 +143,7 @@
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
-#'		\item filter: "TODO,"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 #'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
 #'		\item arrest: tibble representing counts for A, C, G, and T base calls for arrest reads.
@@ -187,7 +187,7 @@
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
-#'		\item filter: "TODO,"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 #'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
 #'		\item arrest: tibble representing counts for A, C, G, and T base calls for arrest reads.
@@ -240,7 +240,7 @@
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
-#'		\item filter: ","-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 #'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
 #'		\item arrest: tibble representing counts for A, C, G, and T base calls for arrest reads.
@@ -256,3 +256,24 @@
 #'    \item meta: Character string indicating the dataset. Here: "HIVRT", "SIIIRTMn", or "SIIIRTMn".
 #' }
 "Zhou2018"
+
+#' rRNA modification map of rRNAs according to Piekna-Przybylska2007
+#' 
+#' Data (18S and 28S) has been download from: http://people.biochem.umass.edu/fournierlab/3dmodmap/
+#' and coordinates habe been lifted to hg38.
+#'
+#' @docType data
+#' 
+#' @usage data(modmap)
+#' 
+#' @references D. Piekna-Przybylska, W. A. Decatur, and M. J. Fournier (2007).•↲
+#'             The 3D rRNA modification maps database: with interactive tools for ribosome analysis.•↲
+#'             Nucleic Acids Research.Jan;36:D178-83. Epub 2007 Oct 18.
+#' 
+#' @format a data.frame with 3 elements:
+#' \itemize{
+#'   \item rrna: String, either "NR_003286_RNA18SN5" or "NR_003287_RNA28SN5".
+#'   \item pos: Numeric 1-index position.
+#'   \item base: String, reference base(A, C, G, T) or modification(Am, Cm, Gm, m1A, m3U, m5C, m62A, m6A, m7G, PseudoU, PseudoUm, or Um)
+#' }
+"modmap"

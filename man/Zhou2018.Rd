@@ -13,7 +13,7 @@
 	\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 	\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 	\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
-	\item filter: ","-separated character string showing feature filter information. Empty field is equal to "*"
+	\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 	\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 	\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
 	\item arrest: tibble representing counts for A, C, G, and T base calls for arrest reads.

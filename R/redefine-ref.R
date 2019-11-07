@@ -15,9 +15,11 @@ redefine_ref <- function(result, ref_cond, base_type = "bases", keep_old = NULL)
     result[[keep_old]] <- result[[REF_BASE_COLUMN]]
   }
   
-  result <- group_by_site(result) %>% 
+  
+  result <- result %>% 
+    group_by_site() %>% 
     dplyr::mutate(
-      !!rlang::sym(REF_BASE_COLUMN):=extract_ref(!!rlang::sym(CONDITION_COLUMN), get_bc(., base_type))
+      !!rlang::sym(REF_BASE_COLUMN):=extract_ref(!!rlang::sym(CONDITION_COLUMN), !!rlang::sym(bc_col(base_type)), ref_cond)
     ) %>%
     copy_attr(result, .)
   
@@ -44,7 +46,7 @@ extract_ref <- function(cond, bc, ref_cond) {
   if (length(ref_cond) != 1 | ! ref_cond %in% cond) {
     stop("Unknown ref_condition: ", ref_cond)
   }
-  
+
   ref <- bc
   ref_i <- cond == ref_cond
   tmp_ref <- ref[ref_i] %>% unique() %>% sort() %>% paste0()

@@ -45,7 +45,7 @@ filter_by_robust_arrest_events <- function(result, suffix = NULL, ...) {
 #' @param condition numeric vector of conditions.
 #' @param arrest_cov numeric vector of coverage for arrest reads.
 #' @param through_cov numeric vector of coverage for through reads.
-#' @return logical vector TODO
+#' @return logical vector of robust sites.
 #' @export
 robust_arrest_events <- function(condition, arrest_cov, through_cov) {
   df <- tibble::tibble(

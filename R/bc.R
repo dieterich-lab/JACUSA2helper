@@ -68,6 +68,29 @@ base_call <- function(bases) {
   do.call(stringr::str_c, c(l, sep = ""))
 }
 
+#' Calculate the most abundant non reference base call.
+#' 
+#' Calculates the most abundant non reference base call. 
+#' \code{bases} is expected to be a nx4 matrix or data frame.
+#' 
+#' @param ref string vector reference bases.
+#' @param bases nx4 matrix or data frame of base call counts or ratio.
+#' @return string vector of most abundant non reference base call for \code{bases}.
+#' @export
+base_call_non_ref <- function(ref, bases) { 
+  # set refere base to -1
+  #browser()
+  if (is.vector(bases)) {
+    bases[ref] <- -1
+    
+    return(names(bases[which.max(bases)]))
+  }
+  
+  bases[cbind(1:length(ref), match(ref, names(bases)))] <- -1
+
+  names(bases)[max.col(bases)]
+}
+
 #' Column name for observed base calls for \code{base_type}.
 #' 
 #' Column name for observed base calls for \code{base_type}. 

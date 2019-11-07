@@ -21,5 +21,5 @@ filter_by_robust_variants <- function(result, base_type = "bases", ...) {
       )
     )
 
-  dplyr::ungroup(result)
+  result
 }

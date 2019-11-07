@@ -13,7 +13,7 @@
 	\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 	\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 	\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
-	\item filter: ";TODO"-separated character string showing feature filter information. Empty field is equal to "*"
+	\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 	\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 	\item cond: Numeric value: "1"(here: gDNA) or "2"(here: RNA)
 	\item repl: Numeric value: "1" for gDNA(no replicates) and "1" or "2" for RNA(1 replicate)

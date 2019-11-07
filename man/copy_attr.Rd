@@ -2,18 +2,18 @@
 % Please edit documentation in R/read-result.R
 \name{copy_attr}
 \alias{copy_attr}
-\title{TODO}
+\title{Copy JACUSA2 specific data.}
 \usage{
 copy_attr(src, dest)
 }
 \arguments{
-\item{src}{TODO}
+\item{src}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{dest}{TODO}
+\item{dest}{object created by \code{read_result()} or \code{read_results()}.}
 }
 \value{
 \code{dest} with attributes copied from \code{src}
 }
 \description{
-TODO
+Copies JACUSA2 specific data.
 }

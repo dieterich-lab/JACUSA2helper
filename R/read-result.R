@@ -191,7 +191,7 @@ spread_variables <- function(data, columns) {
     tidyr::spread(variable, value)
 }
 
-# helper functions to create data container to hold data
+# helper functions to create data co  ntainer to hold data
 #' @noRd
 process_fields <- function(data, cond_rep, method_columns, unpack_info) {
   cond2rep <- get_cond2rep(cond_rep)
@@ -222,9 +222,9 @@ process_fields <- function(data, cond_rep, method_columns, unpack_info) {
       data <- dplyr::select(data, -V1) 
     }
   }
-  columns <- NULL
+  columns <- method_columns
   if (! is.null(variables)) {
-    columns <- c(method_columns, variables)
+    columns <- c(columns, variables)
   }
   
   # convert wide to long
@@ -271,19 +271,18 @@ post_process <- function(type, method_column_prefix, result) {
   }
   
   if (READ_SUB_COLUMN %in% names(result)) {
-    print("Let it flow")
-    browser()
+    # TODO
   }
   
   result
 }
 
-#' TODO
+#' Copy JACUSA2 specific data.
 #' 
-#' TODO
+#' Copies JACUSA2 specific data.
 #' 
-#' @param src TODO
-#' @param dest TODO
+#' @param src object created by \code{read_result()} or \code{read_results()}.
+#' @param dest object created by \code{read_result()} or \code{read_results()}.
 #' @return \code{dest} with attributes copied from \code{src}
 #' @export
 copy_attr <- function(src, dest) {
