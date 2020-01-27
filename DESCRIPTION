@@ -1,7 +1,7 @@
 Package: JACUSA2helper
 Type: Package
 Title: Post-processing for JACUSA2 output
-Version: 1.98
+Version: 1.98-1
 Depends: R (>= 2.10)
 Date: 2019-11-10
 Author: Michael Piechotta

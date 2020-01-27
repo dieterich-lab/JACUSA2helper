@@ -40,3 +40,19 @@ filter_artefact <- function(filter, artefacts) {
   
   grepl(paste0(artefacts, collapse = "|"), filter)
 }
+
+#' Filters all sites with an artefact
+#'
+#' Removes sites that sites that have been marked by any feature/artefact filter. 
+#' @param filter vector of strings that contains artefact filter information. 
+#' @return vector of logical.
+#' @examples
+#' data(rdd)
+#' # remove sites that are marked by artefact filter "D"
+#' grouped <- group_by_site(rdd)
+#' filtered <- filter_by(grouped, filter_all_artefacts(filter))
+#' str(filtered)
+#' @export
+filter_all_artefacts <- function(filter) {
+  filter_artefact(filter, c(paste0('\\', EMPTY)))
+}
