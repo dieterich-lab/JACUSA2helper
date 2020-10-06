@@ -106,6 +106,11 @@ read_result <- function(file, showProgress = TRUE, desc = c(), cores = 1) {
     stop("Unknown type: ", type)
   }
   result <- .process_bases(data, columns, condition_desc, cores)
+  if (type %in% c(.RT_ARREST_METHOD_TYPE, .LRT_ARREST_METHOD_TYPE)) {
+    result[["bases"]] <- lapply(paste0("cond", 1:length(condition_desc)), function(x) {
+      return(result[[.RT_ARREST_COLUMN]][[x]] + result[[.RT_THROUGH_COLUMN]][[x]])
+    }) 
+  }
 
   conditions <- length(condition_desc)
   
@@ -113,18 +118,30 @@ read_result <- function(file, showProgress = TRUE, desc = c(), cores = 1) {
     return(Reduce('+', x))
   }, mc.cores = min(conditions, cores), mc.preschedule = FALSE)
   total_bases <- Reduce('+', condition_bases)
-  
+
+  # add coverage  
+  condition_cov <- parallel::mclapply(condition_bases, function(x) {
+    return(rowSums(x))
+  }, mc.cores = min(conditions, cores), mc.preschedule = FALSE)
+  result[["cov"]] <- tidyr::as_tibble(condition_cov)
+  result[["cov"]][["total"]] <- Reduce('+', condition_cov)
+
   # add base call
-  result$bc <- apply(total_bases[, .BASES], 1, function(x) { 
-    paste0(.BASES[x > 0], collapse = "")
-  })
+  bases <- parallel::mcmapply(function(base_counts, base) {
+    return(ifelse(base_counts > 0, base, ""))
+    }, total_bases, .BASES, mc.cores = min(length(.BASES), cores), mc.preschedule = FALSE
+  )
+  result <- dplyr::bind_cols(result, tidyr::as_tibble(bases) %>% tidyr::unite(!!!.BASES, sep = "", col = "bc"))
   # add allele count
   result$allele_count <- nchar(result$bc)
 
   # unpack info field
-  info <- tidyr::separate_rows(result[, c("id", "info")], info, sep = ";") %>% 
-    tidyr::separate(info, into = c("key", "value"), sep = "=", fill = "right") %>%
-    tidyr::pivot_wider(names_from = key, values_from=value)
+  info <- tidyr::separate_rows(result[, c("id", "info")], info, sep = ";")
+  x <- strsplit(info$info, "=") %>% do.call(rbind, .) %>% as.data.frame() %>% tidyr::as_tibble()
+  colnames(x) <- c("key", "value")
+  info <- info[, "id"]
+  info <- dplyr::bind_cols(info, x) %>% tidyr::pivot_wider(names_from = key, values_from=value)
+  
   result <- dplyr::inner_join(result, info, by = "id")
 
   # parse indels ondemand
@@ -146,12 +163,13 @@ read_result <- function(file, showProgress = TRUE, desc = c(), cores = 1) {
   cols <- unique(matches$"col")
   result[cols][is.na(result[cols])] <- paste0(rep(0, length(types)), collapse = ",")
 
-  counts <- parallel::mclapply(matches$col, function(col) {
-    return(
-      result[col] %>% 
-        tidyr::separate(!!col, c("reads", "coverage"), sep = ",", remove = TRUE, convert = TRUE) %>%
-        tidyr::as_tibble()
-    )
+  counts <- parallel::mclapply(result[cols], function(x) {
+    x <- lapply(strsplit(x, ","), as.numeric) %>% 
+      do.call(rbind, .) %>% 
+      as.data.frame() %>%
+      tidyr::as_tibble()
+    colnames(x) <- c("reads", "coverage")
+    return(x)
   }, mc.cores = cores, mc.preschedule = FALSE)
   names(counts) <- matches$col
   
@@ -213,15 +231,16 @@ read_result <- function(file, showProgress = TRUE, desc = c(), cores = 1) {
   
   # expand base call columns from "," encoded strings
   # convert string: "0,10,2,0" to new columns: bc_A = 0, bc_C = 10, bc_G = 2, bc_T = 0
-  bases <- parallel::mclapply(matches$col, function(col) {
-    return(
-      df[col] %>% 
-        tidyr::separate(!!col, .BASES, sep = ",", remove = TRUE, convert = TRUE) %>%
-        tidyr::as_tibble()
-    )
+  bases <- parallel::mclapply(df[cols], function(x) {
+    x <- lapply(strsplit(x, ","), as.numeric) %>% 
+      do.call(rbind, .) %>% 
+      as.data.frame() %>%
+      tidyr::as_tibble()
+    colnames(x) <- .BASES
+    return(x)
   }, mc.cores = cores, mc.preschedule = FALSE)
   names(bases) <- matches$col
-  
+
   # remove expanded cols and convert
   df <- dplyr::select(df, !cols) %>% tidyr::as_tibble()
   
@@ -267,15 +286,3 @@ read_results <- function(files, meta_conditions, cores=1) {
 
   results
 }
-
-# TODO
-# coverate
-# total for 
-# arrest and through reads
-
-# 
-# calculate cov: total, per condition, and replicate
-#covs <- parallel::mclapply(bases, function(b) {
-#  return(rowSums(b))
-#}, mc.cores = cores)
-#names(covs) <- matches$col
