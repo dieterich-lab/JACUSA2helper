@@ -1,36 +1,36 @@
 #' Add arrest rate.
 #' 
-#' Adds arrest rate calculated from \code{arrest[_suffix]} and \code{through[_suffix]} columns.
+#' Calculates and adds arrest rate from \code{arrest} and \code{through} columns.
 #' 
 #' @param result object created by \code{read_result()} or \code{read_results()}.
-#' @param suffix string added to specifiy base columns to calculate arrest rate. Default: NULL
-#' @return result object with arrest rate field \code{arrest_rate[_suffix]} added.
+#' @param cores Integer defines how many cores to use.
+#' @return result object with arrest rate field \code{arrest_rate} added.
+#'
 #' @export
-add_arrest_rate <- function(result, suffix = NULL) {
-  check_column_exists(result, arrest_col(suffix))
-  check_column_exists(result, through_col(suffix))
+add_arrest_rate <- function(result, cores = 1) {
+  arrest_cov <- .cov(result[[.ARREST_HELPER_COL]])
+  through_cov <- .cov(result[[.THROUGH_HELPER_COL]])
   
-  result[[arrest_rate_col(suffix)]] <- arrest_rate(
-    get_cov(result, arrest_col(suffix)),
-    get_cov(result, through_col(suffix))
-  )
   
-  result
-}
+  result[[.ARREST_RATE_COL]] <- lapply(result[[.ARREST_HELPER_COL]], function(x) {
+    tidyr::as_tibble(lapply(x, function(y) {
+      rowSums(y)
+    }))
+  }) %>% c() %>% tidyr::as_tibble()
 
-#' Retrieve arrest rate.
-#' 
-#' Retrieves arrest rate from \code{arrest[_suffix]} and \code{through[_suffix]} columns.
-#' 
-#' @param result object created by \code{read_result()} or \code{read_results()}.
-#' @param suffix string added to specifiy base columns to retrieve arrest rate. Default: NULL
-#' @return numeric vector with arrest rates for base counts with \code{suffix}.
-#' @examples
-#' data(HIVRT)
-#' str(get_arrest_rate(HIVRT))
-#' @export
-get_arrest_rate <- function(result, suffix = NULL) {
-  result[[arrest_rate_col(suffix)]]
+  # FIXME make it more robust
+  cond_count <- names(result[[.THROUGH_HELPER_COL]]) %>% length()
+  for (cond in paste0("cond", 1:cond_count)) {
+    cond_through <- result[[.THROUGH_HELPER_COL]][[cond]]
+    for (repl in names(cond_through)) {
+      arrest_cov <- result[[.ARREST_RATE_COL]][[cond]][[repl]]
+      through_cov <- rowSums(cond_through[[repl]])
+      
+      result[[.ARREST_RATE_COL]][[cond]][[repl]] <- arrest_rate(arrest_cov, through_cov)
+    }
+  }
+
+  result
 }
 
 #' Calculate arrest rate.
@@ -47,43 +47,4 @@ get_arrest_rate <- function(result, suffix = NULL) {
 #' @export
 arrest_rate <- function(arrest_cov, through_cov) {
   arrest_cov / (arrest_cov + through_cov)
-}
-
-#' Column name for arrest rate for \code{suffix}.
-#' 
-#' Column name for arrest ratio for \code{suffix}. 
-#' \code{suffix} will be used to create the column name:
-#' \code{arrest_rate[_suffix]}.
-#' 
-#' @param suffix string to specifiy base columns to retrieve arrest rate. Default: NULL
-#' @return string the represents the column name for arrest rate with  marked \code{suffix}.
-#' @export
-arrest_rate_col <- function(suffix = NULL) {
-  process_col(ARREST_RATE, suffix)
-}
-
-#' Column name for arrest base counts for \code{suffix}.
-#' 
-#' Column name for arrest base counts for \code{suffix}. 
-#' \code{suffix} will be used to create the column name:
-#' \code{arrest[_suffix]}".
-#' 
-#' @param suffix string to specifiy base columns to retrieve arrest bases Default: NULL
-#' @return string the represents the column name for arrest bases marked with \code{suffix}.
-#' @export
-arrest_col <- function(suffix = NULL) {
-  process_col(ARREST_COLUMN, suffix)
-}
-
-#' Column name for through base counts for \code{suffix}.
-#' 
-#' Column name for through base counts for \code{suffix}. 
-#' \code{suffix} will be used to create the column name:
-#' \code{through[_suffix]}".
-#' 
-#' @param suffix string to specifiy base columns to retrieve through bases Default: NULL
-#' @return string the represents the column name for through bases marked with \code{suffix}.
-#' @export
-through_col <- function(suffix = NULL) {
-  process_col(THROUGH_COLUMN, suffix)
 }

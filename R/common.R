@@ -4,12 +4,9 @@
 #' A package that provides the following categories of functions to post-process result files of JACUSA2:
 #' \describe{
 #'  \item{read/write}{Read and write JACUSA2 result files, e.g.: \code{read_result()}.}
-#'  \item{add...}{Adds some field to an existing JACUSA2 result object and return the modified object, e.g.: \code{add_sub()}.}
-#'  \item{get...}{Retrieves some field from an existing JACUSA2 result object, e.g.: \code{get_sub()}}
-#'  \item{...col(s)}{Helper function, to specify a column based of \code{base_type} or \code{suffix}, e.g.: \code{bc_col(base_type = "arrest")}}
-#'  \item{TODO check}{Performs some checks on a result object, e.g.: \code{check_max_alleles()}.}
-#'  \item{TODO filter}{Will remove sites from a result object with some filtering criteria, e.g.: \code{filter_by_coverage()}}
-#'  \item{TODOplot}{Plots certain characteristics of a JACUSA2 result object.}
+#'  \item{add}{Adds some field to an existing JACUSA2 result object and return the modified object, e.g.: \code{base_sub()}.}
+#'  \item{filter}{Will remove sites from a result object with some filtering criteria, e.g.: \code{filter_by_coverage()}}
+#'  \item{plot}{Plots certain characteristics of a JACUSA2 result object.}
 #'  \item{other}{TODO}
 #' }
 #' 
@@ -37,36 +34,23 @@
 #' 
 #' Check \code{vignette(TODO)} for a general introduction and \code{vignette(TODO meta conditions)} for details about meta conditions.
 #' 
-#' @section site:
-#' A site is defined as a location using: contig, start, end, and strand information.
-#' See:
-#' \describe{
-#'   \item{group_by_site}{Groups JACUSA2 result object by coordinates and optional columns.}
-#' }
-#' 
 #' @section read/write functions:
 #' See:
 #' \describe{
 #'   \item{read_result}{Reads and unpacks a JACUSA2 result file and creates a result object.}
 #'   \item{read_results}{Allows to combine multiple result files and distinguish them with meta conditions.}
-#'   \item{write_result}{This will pack result object and write its contents back to a file.}
+#   \item{write_result}{This will pack result object and write its contents back to a file.}
 #'   \item{write_bedGraph}{Writes a vector of values as bedGraph file.}
 #' }
 #'
-#' @section add functions:
+#' @section Helper functions:
 #' See:
 #' \describe{
-#'   \item{add_arrest_rate}{Adds arrest rate to JACUSA2 result object.}
-#'   \item{add_sub}{Adds base substitution column to JACUSA2 result object.}
-#'   \item{add_sub_ratio}{Adds base substitution ratio for all bases to a JACUSA2 result object.}
-#'   \item{add_TODOnon_ref2bc_ratio}{Adds non reference base ratio to JACUSA2 result object.}
-#'   \item{add_summary}{Adds a summary of a column in a JACUSA2 result object.}
-#' }
-#'
-#' @section check function:
-#' See:
-#' \describe{
-#'   \item{check_max_alleles}{Checks if site contains less or equal number of allowed alleles.}
+#'   \item{arrest_rate}{Adds arrest rate to JACUSA2 result object.}
+#'   \item{base_count}{TODO}
+#'   \item{base_sub}{Adds base substitution column to JACUSA2 result object.}
+#'   \item{non_ref2bc_ratio}{Adds non reference base ratio to JACUSA2 result object.}
+#'   \item{sub_ratio}{Adds base substitution ratio for all bases to a JACUSA2 result object.}
 #' }
 #'
 #' @section filter functions:
@@ -75,20 +59,15 @@
 #'
 #' See:
 #' \describe{
-#'	 \item{filter_by_allele_count}{Filters sites by the number of alleles per site.}
-#'   \item{filter_by_coverage}{Filters sites by read coverage (total, per replicates, etc.)}
-#'   \item{filter_by_filter}{Filters sites by artefacts.}
-#'   \item{filter_by_max_score}{Retains sites by maximal score.}
-#'   \item{filter_by_min_score}{Retains sites by minimal score.}
-#'   \item{filter_by_robust_arrest_events}{Retains sites that contain an arrest event in all replicates in at least one condition.}
-#'   \item{filter_by_robust_variants}{Retains sites that contain a variant base in all replicates in at least one condition.}
+#'   \item{robust}{Retains sites that contain an arrest event in all replicates in at least one condition.}
+#'	 \item{All}{TODO}
+#'	 \item{Any}{TODO}
 #' }
+#'
+#' # TODO
+#' read_sub
 #'
 #' @docType package
 #' @name JACUSA2helper
 NULL
 
-# TODO
-# read_sub
-# plots
-# write_result

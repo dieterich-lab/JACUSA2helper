@@ -28,11 +28,11 @@ test_that("merge_sub works as expected", {
     c("A->GT")
   )
   expect_equal(
-    merge_sub(c("A->T", BC_CHANGE_NO_CHANGE)),
+    merge_sub(c("A->T", .SUB_NO_CHANGE)),
     c("A->T")
   )
   expect_equal(
-    merge_sub(c(BC_CHANGE_OTHER, BC_CHANGE_NO_CHANGE)),
-    c(BC_CHANGE_OTHER)
+    merge_sub(c(.SUB_OTHER, .SUB_NO_CHANGE)),
+    c(.SUB_OTHER)
   )
 })

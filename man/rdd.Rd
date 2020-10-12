@@ -4,7 +4,8 @@
 \name{rdd}
 \alias{rdd}
 \title{Subset of RDDs detected by JACUSA2 in HEK-293 untreated cells}
-\format{a tibble with 19 elements:
+\format{
+a tibble with 19 elements:
 \itemize{
 	\item contig: Character string representing the contig of the variant
 	\item start: Numeric position of variant (>=0)
@@ -20,7 +21,8 @@
 	\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
 	\item bc: Observed base calls for this site. Combination of: "A", "C", "G", and "T"
    \item cov: Numeric value indicating the read coverage for this site
-}}
+}
+}
 \usage{
 data(rdd)
 }

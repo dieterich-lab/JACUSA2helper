@@ -9,9 +9,7 @@
 #' \code{result} object.
 #' \code{data_desc} is used to provide a descriptive name for each observation.
 #' 
-#' @importFrom tibble add_column
 #' @importFrom magrittr %>%
-#' @importFrom rlang syms
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param column character string to be used for plotting.
 #' @param data_desc vector of characters strings providing details about the sample.
@@ -27,7 +25,7 @@ plot_ecdf_column <- function(result, column, data_desc, main_group, sub_group = 
   }
 
   result[["data_desc"]] <- NULL
-  result <- tibble::add_column(result, data_desc)
+  result <- tidyr::add_column(result, data_desc)
 
   groups <- c(main_group)
   if (! is.null(sub_group)) {
@@ -46,6 +44,7 @@ plot_ecdf_column <- function(result, column, data_desc, main_group, sub_group = 
   limits <- as.vector(meta_desc[["group"]])
   labels <- meta_desc[["data_desc"]]
 
+  column <- group <- NULL
   p <- NULL
   if (is.null(sub_group)) {
     p <- ggplot2::ggplot(

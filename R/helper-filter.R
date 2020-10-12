@@ -1,24 +1,3 @@
-#' Filter and preserve attributes of result object.
-#' 
-#' Filters and preserves attributes of result object. 
-#' Use this instead of \code{dplyr::filter}, otherwise JACUSA2 header and type information 
-#' will be lost from result object.
-#' 
-#' @param result object created by \code{read_result()} or \code{read_results()}.
-#' @param ... forwarded to internal \code{dplyr::filter()} statement.
-#' @return result object after filtering with JACUSA2 specific attributes data preserved.
-#' @examples
-#' data(rdd)
-#' # remove sites that are marked by artefact filter "D"
-#' grouped <- group_by_site(rdd)
-#' filtered <- filter_by(grouped, filter_artefact(filter, c("D")))
-#' str(filtered)
-#' @export
-filter_by <- function(result, ...) {
-  dplyr::filter(result, ...) %>%
-    copy_attr(result, .)
-}
-
 #' Filters sites by artefacts.
 #' 
 #' Removes sites that sites that have been marked by feature/artefact filter. 
@@ -29,8 +8,7 @@ filter_by <- function(result, ...) {
 #' @examples
 #' data(rdd)
 #' # remove sites that are marked by artefact filter "D"
-#' grouped <- group_by_site(rdd)
-#' filtered <- filter_by(grouped, filter_artefact(filter, c("D")))
+#' filtered <- filter_by(rdd, filter_artefact(filter, c("D")))
 #' str(filtered)
 #' @export
 filter_artefact <- function(filter, artefacts) {
@@ -43,16 +21,37 @@ filter_artefact <- function(filter, artefacts) {
 
 #' Filters all sites with an artefact
 #'
-#' Removes sites that sites that have been marked by any feature/artefact filter. 
+#' Removes sites have been marked by any feature/artefact filter. 
+#' 
 #' @param filter vector of strings that contains artefact filter information. 
 #' @return vector of logical.
 #' @examples
 #' data(rdd)
 #' # remove sites that are marked by artefact filter "D"
-#' grouped <- group_by_site(rdd)
-#' filtered <- filter_by(grouped, filter_all_artefacts(filter))
+#' filtered <- filter_by(rdd, filter_all_artefacts(filter))
 #' str(filtered)
 #' @export
 filter_all_artefacts <- function(filter) {
-  filter_artefact(filter, c(paste0('\\', EMPTY)))
+  filter_artefact(filter, c(paste0('\\', .EMPTY)))
+}
+
+#' Merge tibbles with columns holding logical values with AND to a vector.
+#' 
+#' Each column holding values of logicals will be merged row-wise with AND.
+#' @param d tibble with logical values
+#' @return logical tibble with columns merged with AND.
+#' @export
+All <- function(d) {
+  Reduce("&", tidyr::as_tibble(d))
+}
+
+
+#' Merge tibbles with columns holding logical values with OR to a vector.
+#' 
+#' Each column holding values of logicals will be merged row-wise with OR.
+#' @param d tibble with logical values
+#' @return logical tibble with columns merged with OR.
+#' @export
+Any <- function(d) {
+  Reduce("|", tidyr::as_tibble(d))
 }

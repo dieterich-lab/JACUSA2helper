@@ -4,7 +4,8 @@
 \name{Zhou2018}
 \alias{Zhou2018}
 \title{Combined JACUSA2 output for rt-arrest on all conditions in Zhou et. al 2018 data}
-\format{a tibble with 20 elements:
+\format{
+a tibble with 20 elements:
 \itemize{
 	\item contig: Character string representing the contig of the variant
 	\item start: Numeric position of variant (>=0)
@@ -27,7 +28,8 @@
    \item cov_arrest: Numeric value indicating the read coverage for this site for arrest reads.
    \item cov_through: Numeric value indicating the read coverage for this site for through reads.
    \item meta: Character string indicating the dataset. Here: "HIVRT", "SIIIRTMn", or "SIIIRTMn".
-}}
+}
+}
 \usage{
 data(Zhou2018)
 }

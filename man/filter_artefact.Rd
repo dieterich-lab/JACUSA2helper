@@ -20,7 +20,6 @@ Removes sites that sites that have been marked by feature/artefact filter.
 \examples{
 data(rdd)
 # remove sites that are marked by artefact filter "D"
-grouped <- group_by_site(rdd)
-filtered <- filter_by(grouped, filter_artefact(filter, c("D")))
+filtered <- filter_by(rdd, filter_artefact(filter, c("D")))
 str(filtered)
 }

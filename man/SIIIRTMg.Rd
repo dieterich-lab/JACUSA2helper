@@ -4,7 +4,8 @@
 \name{SIIIRTMg}
 \alias{SIIIRTMg}
 \title{JACUSA2 output for rt-arrest on SIIIRTMg condition in Zhou et. al 2018 data}
-\format{a tibble with 19 elements:
+\format{
+a tibble with 19 elements:
 \itemize{
 	\item contig: Character string representing the contig of the variant
 	\item start: Numeric position of variant (>=0)
@@ -26,7 +27,8 @@
    \item cov: Numeric value indicating the read coverage for this site for all reads.
    \item cov_arrest: Numeric value indicating the read coverage for this site for arrest reads.
    \item cov_through: Numeric value indicating the read coverage for this site for through reads.
-}}
+}
+}
 \usage{
 data(SIIIRTMg)
 }

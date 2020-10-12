@@ -4,16 +4,16 @@
 \alias{add_arrest_rate}
 \title{Add arrest rate.}
 \usage{
-add_arrest_rate(result, suffix = NULL)
+add_arrest_rate(result, cores = 1)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
 
-\item{suffix}{string added to specifiy base columns to calculate arrest rate. Default: NULL}
+\item{cores}{Integer defines how many cores to use.}
 }
 \value{
-result object with arrest rate field \code{arrest_rate[_suffix]} added.
+result object with arrest rate field \code{arrest_rate} added.
 }
 \description{
-Adds arrest rate calculated from \code{arrest[_suffix]} and \code{through[_suffix]} columns.
+Calculates and adds arrest rate from \code{arrest} and \code{through} columns.
 }

@@ -1,5 +1,6 @@
 #TODO:
 # update rdd rrd with JACUSA2
+# update rdd rrd with JACUSA2helper
 # standard for JACUSA2 R helper file format
 
 #' Subset of RDDs detected by JACUSA2 in HEK-293 untreated cells

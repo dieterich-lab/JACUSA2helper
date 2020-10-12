@@ -4,12 +4,14 @@
 \name{modmap}
 \alias{modmap}
 \title{rRNA modification map of rRNAs according to Piekna-Przybylska2007}
-\format{a data.frame with 3 elements:
+\format{
+a data.frame with 3 elements:
 \itemize{
   \item rrna: String, either "NR_003286_RNA18SN5" or "NR_003287_RNA28SN5".
   \item pos: Numeric 1-index position.
   \item base: String, reference base(A, C, G, T) or modification(Am, Cm, Gm, m1A, m3U, m5C, m62A, m6A, m7G, PseudoU, PseudoUm, or Um)
-}}
+}
+}
 \usage{
 data(modmap)
 }

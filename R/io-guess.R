@@ -1,78 +1,63 @@
-# Guess paritioning of conditions and replicates from labels
-.guess_conditions <- function(type, header_names) {
-  if (type == .UNKNOWN_METHOD_TYPE) {
+# Guess conditions and replicates from labels
+.guess_cond_count <- function(type, header_names) {
+  if (type == .UNKNOWN_METHOD) {
     stop("Unknown type: ", type)
   }
   
-  conditions <- 0
-  if (type == .CALL_PILEUP_METHOD_TYPE) {
-    prefix <- .CALL_PILEUP_COLUMN
-    cond_rep <- .extract_condition_replicate(header_names, prefix)
-    conditions <- .find_conditions(cond_rep)
-  } else if (type == .LRT_ARREST_METHOD_TYPE) {
-    prefix1 <- .LRT_ARREST_COLUMN
-    cond_rep1 <- .extract_condition_replicate(header_names, prefix1)
-    conditions1 <- .find_conditions(cond_rep1)
-    prefix2 <- .LRT_THROUGH_COLUMN
-    cond_rep2 <- .extract_condition_replicate(header_names, prefix2)
-    conditions2 <- .find_conditions(cond_rep2)
-    if (conditions1 != conditions2) {
-      stop("Error guessing conditions for lrt-arrest: cond1, cond2 = ", 
-           conditions1, conditions2)
+  cond_count <- 0
+  if (type == .CALL_PILEUP) {
+    prefix <- .CALL_PILEUP_COL
+    cond_repl <- .extract_cond_repl(header_names, prefix)
+    cond_count <- .find_cond_count(cond_repl)
+  } else if (type %in% c(.RT_ARREST, .LRT_ARREST)) {
+    cond_counts <- lapply(c(.ARREST_DATA_COL, .THROUGH_DATA_COL), function(x) {
+      cond_repl <- .extract_cond_repl(header_names, x)
+      return(.find_cond_count(cond_repl))
+    })
+    cond_count <- unique(unlist(cond_counts))
+    if (length(cond_count) != 1) {
+      stop("Error guessing conditions for lrt-arrest: cond1, cond2 = ", cond_count)
     }
-    conditions <- conditions1
-  } else if (type == .RT_ARREST_METHOD_TYPE) {
-    prefix1 <- .RT_ARREST_COLUMN
-    cond_rep1 <- .extract_condition_replicate(header_names, prefix1)
-    conditions1 <- .find_conditions(cond_rep1)
-    prefix2 <- .RT_THROUGH_COLUMN
-    cond_rep2 <- .extract_condition_replicate(header_names, prefix2)
-    conditions2 <- .find_conditions(cond_rep2)
-    if (conditions1 != conditions2) {
-      stop("Error guessing conditions for rt-arrest: cond1, cond2 = ", 
-           conditions1, conditions2)
-    }
-    conditions <- conditions1
   } else {
     stop("Unknown type: ", type)
   }
   
-  if (conditions < 1) {
+  if (cond_count < 1) {
     stop("Conditions could not be guessed from: ", header_names)
   }
   
-  conditions
+  cond_count
 }
 
 # find number of conditions 
-.find_conditions <- function(cond_rep) {
-  conditions <- 1
-  max_conditions <- length(cond_rep)
+.find_cond_count <- function(cond_repl) {
+  cond_count <- 1
+  max_conds <- length(cond_repl)
 
-  while (conditions <= max_conditions) {
-    condition_nchar <- nchar(conditions)
-    condition <- substring(cond_rep, first = 1, last = condition_nchar)
-    replicate <- substring(cond_rep, first = condition_nchar + 1)
-    if (all(nchar(condition) > 0 & nchar(replicate) > 0) && 
-        length(unique(condition)) == conditions) {
-      return(conditions)
+  while (cond_count <= max_conds) {
+    cond_count_nchar <- nchar(cond_count)
+    cond <- substring(cond_repl, first = 1, last = cond_count_nchar)
+    repl <- substring(cond_repl, first = cond_count_nchar + 1)
+    if (all(nchar(cond) > 0 & nchar(repl) > 0) && 
+        length(unique(cond)) == cond_count) {
+      return(cond_count)
     }
-    conditions <- conditions + 1
+    cond_count <- cond_count + 1
   }
   stop("Number of conditions could not be guessed")
 }
 
 # Extract condition-replicate part from header names
-.extract_condition_replicate <- function(header_names, prefix) {
-  prefix <- paste0("^", prefix)
-  i <- grep(prefix, header_names)
+.extract_cond_repl <- function(header_names, prefix) {
+  prefix_regex <- paste0("^", prefix, "[0-9]+")
+  i <- grep(prefix_regex, header_names)
   if (length(i) == 0) {
     stop("Condition replicate part could not be extracted.")
   }
-  cond_rep <- header_names[i]
-  cond_rep <- gsub(prefix, "", cond_rep)
+  cond_repl <- header_names[i]
+  cond_repl <- gsub(prefix, "", cond_repl)
   
-  cond_rep
+  cond_repl
 }
 
 # Determine file type base on header line
@@ -82,13 +67,13 @@
     stop("Invalid header line: ", line)
   }
   
-  type <- .UNKNOWN_METHOD_TYPE
-  if (length(grep(.LRT_ARREST_POS_COLUMN, line)) > 0) { # lrt-arrest
-    type <- .LRT_ARREST_METHOD_TYPE
-  } else if(length(grep(paste0("\t", .RT_ARREST_COLUMN), line)) > 0) { # rt-arrest
-    type <- .RT_ARREST_METHOD_TYPE
-  } else if (length(grep(paste0("\t", .CALL_PILEUP_COLUMN), line)) > 0) { # call-pileup
-    type <- .CALL_PILEUP_METHOD_TYPE
+  type <- .UNKNOWN_METHOD
+  if (length(grep(.LRT_ARREST_POS_COL, line)) > 0) { # lrt-arrest
+    type <- .LRT_ARREST
+  } else if(length(grep(paste0("\t", .ARREST_DATA_COL), line)) > 0) { # rt-arrest
+    type <- .RT_ARREST
+  } else if (length(grep(paste0("\t", .CALL_PILEUP_COL), line)) > 0) { # call-pileup
+    type <- .CALL_PILEUP
   } else { 
     stop("Result type could not be guessed from header: ", line)
   }

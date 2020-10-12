@@ -37,5 +37,5 @@ test_that("read_result fails on unknown method type", {
 
 test_that("read_result fails on missing header", {
   file <- "call-2-missing-header.out"
-  expect_error(read_result(file), "No data header line for file: ")
+  expect_error(read_result(file), paste0("No header line for file: ", file))
 })

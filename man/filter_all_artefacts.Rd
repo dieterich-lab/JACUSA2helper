@@ -13,12 +13,11 @@ filter_all_artefacts(filter)
 vector of logical.
 }
 \description{
-Removes sites that sites that have been marked by any feature/artefact filter.
+Removes sites have been marked by any feature/artefact filter.
 }
 \examples{
 data(rdd)
 # remove sites that are marked by artefact filter "D"
-grouped <- group_by_site(rdd)
-filtered <- filter_by(grouped, filter_all_artefacts(filter))
+filtered <- filter_by(rdd, filter_all_artefacts(filter))
 str(filtered)
 }

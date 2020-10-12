@@ -4,8 +4,14 @@
 \alias{plot_ecdf_column}
 \title{Generic plot for cumulative data (EXPERIMENTAL)}
 \usage{
-plot_ecdf_column(result, column, data_desc, main_group, sub_group = NULL,
-  name = "Data description")
+plot_ecdf_column(
+  result,
+  column,
+  data_desc,
+  main_group,
+  sub_group = NULL,
+  name = "Data description"
+)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}

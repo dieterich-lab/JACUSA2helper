@@ -12,14 +12,14 @@ non_ref_ratio(ref, bases)
 \item{bases}{nx4 matrix or data frame of base call counts.}
 }
 \value{
-numeric vector of non reference substitution ratios for \code{base_type}.
+numeric vector of non reference substitution ratios for \code{bases}.
 }
 \description{
-Retrives non reference ratio based on \code{ref} and base calls specified by \code{base_type}.
+Retrieves non reference ratio based on \code{ref} and base calls given by \code{bases}.
 }
 \examples{
 ref <- c("A", "A", "A")
-bases <- tibble::tribble(
+bases <- tidyr::tribble(
   ~A, ~C, ~G, ~T,
   10,  0,  5,  5,
    0,  1,  1,  1,

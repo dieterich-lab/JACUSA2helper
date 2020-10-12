@@ -4,8 +4,12 @@
 \alias{plot_ecdf_allele_count}
 \title{Plot cumulative allele count.}
 \usage{
-plot_ecdf_allele_count(result, data_desc,
-  allele_count_column = "allele_count", ...)
+plot_ecdf_allele_count(
+  result,
+  data_desc,
+  allele_count_column = "allele_count",
+  ...
+)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}

@@ -18,9 +18,9 @@
 #' @export
 merge_sub <- function(subs) {
   # remove duplicates and no change information
-  subs <- unique(subs[subs != BC_CHANGE_NO_CHANGE])
+  subs <- unique(subs[subs != .SUB_NO_CHANGE])
   if (length(subs) == 0) {
-    return(BC_CHANGE_NO_CHANGE)
+    return(.SUB_NO_CHANGE)
   }
 
   # important decision!!!
@@ -28,19 +28,19 @@ merge_sub <- function(subs) {
   # 1. A->G
   # 2. other
   # 3. error (currently)
-  if (any(subs %in% BC_CHANGE_OTHER)) {
-    if (all((subs %in% BC_CHANGE_OTHER))) {
-      return(BC_CHANGE_OTHER)
+  if (any(subs %in% .SUB_OTHER)) {
+    if (all((subs %in% .SUB_OTHER))) {
+      return(.SUB_OTHER)
     }
     stop(
       "Cannot merge: ", 
-      paste(subs[! subs %in% BC_CHANGE_OTHER], collapse = ","),
-      " and ", BC_CHANGE_OTHER
+      paste(subs[! subs %in% .SUB_OTHER], collapse = ","),
+      " and ", .SUB_OTHER
     )
   }
 
   # format of m: 1. column ref. base, 2. column observed non-ref. base
-  m <- do.call(rbind, strsplit(subs, BC_CHANGE_SEP))
+  m <- do.call(rbind, strsplit(subs, .SUB_SEP))
   ref <- unique(m[, 1])
   bc <- strsplit(m[, 2], "") %>%
     unlist() %>% 
@@ -75,10 +75,10 @@ merge_sub <- function(subs) {
 #' mask_sub(subs, c("A->T"))
 #' @export
 mask_sub <- function(subs, keep) {
-  keep <- c(keep, BC_CHANGE_NO_CHANGE)
+  keep <- c(keep, .SUB_NO_CHANGE)
   i <- subs %in% keep
   if (any(i)) {
-    subs[! i] <- BC_CHANGE_OTHER
+    subs[! i] <- .SUB_OTHER
   }
 
   subs
@@ -96,5 +96,5 @@ mask_sub <- function(subs, keep) {
 #' clean_read_sub(subs)
 #' @export
 clean_read_sub <- function(subs) {
-  i <- gsub("2", BC_CHANGE_SEP, subs)
+  i <- gsub("2", .SUB_SEP, subs)
 }

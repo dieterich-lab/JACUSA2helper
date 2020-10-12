@@ -1,55 +1,68 @@
-context("mask")
+context("robust")
 
-test_that("mask fails on expected op", {
-  expect_error(
-    mask(matrix(rep(0, 4), ncol = 4, byrow = TRUE), op = "unknown"),
-    "Unknown op: *"
-  ) 
+
+test_that(".mask_any works as expected on any 1 condition", {
+  input1 <- tidyr::tribble(
+    ~A, ~C, ~G, ~T,
+     1,  0,  0,  0,
+     0,  1,  0,  0, 
+     0,  0,  1,  0, 
+     0,  0,  0,  1
+  )
+  input2 <- tidyr::tribble(
+    ~A, ~C, ~G, ~T,
+     1,  0,  0,  1,
+     0,  1,  0,  0, 
+     0,  0,  1,  0, 
+     1,  0,  0,  1
+  )
+  input <- tidyr::tibble(
+    "cond1" = tidyr::tibble(
+      "rep1" = input1,
+      "rep2" = input2,
+    )
+  )
+  expected <- tidyr::tribble(
+    ~A, ~C, ~G, ~T,
+     1,  0,  0,  1,
+     0,  1,  0,  0, 
+     0,  0,  1,  0, 
+     1,  0,  0,  1
+  ) %>% apply(c(1, 2), as.logical) %>% 
+    tidyr::as_tibble()
+  
+  expect_equal(.mask_any(input), expected)
 })
 
-test_that("mask works as expected on all", {
-  input <- matrix(
-    c(
-      1, 0, 0, 0,
-      0, 1, 0, 0, 
-      0, 0, 1, 0, 
-      0, 0, 0, 1
-    ), ncol = 4, byrow = TRUE
+test_that(".mask_all works as expected on any 1 condition", {
+  input1 <- tidyr::tribble(
+    ~A, ~C, ~G, ~T,
+    1,  0,  0,  0,
+    0,  1,  0,  0, 
+    0,  0,  1,  0, 
+    0,  0,  0,  1
   )
-  expected <- matrix(
-    c(FALSE, FALSE, FALSE, FALSE),
-    ncol = 4, byrow = TRUE
+  input2 <- tidyr::tribble(
+    ~A, ~C, ~G, ~T,
+    1,  0,  0,  1,
+    0,  1,  0,  0, 
+    0,  0,  1,  0, 
+    1,  0,  0,  1
   )
-  expect_equal(mask(input, op = all), expected)
+  input <- tidyr::tibble(
+    "cond1" = tidyr::tibble(
+      "rep1" = input1,
+      "rep2" = input2,
+    )
+  )
+  expected <- tidyr::tribble(
+    ~A, ~C, ~G, ~T,
+    1,  0,  0,  0,
+    0,  1,  0,  0, 
+    0,  0,  1,  0, 
+    0,  0,  0,  1
+  ) %>% apply(c(1, 2), as.logical) %>% 
+    tidyr::as_tibble()
   
-  input <- matrix(
-    c(
-      1, 0, 0, 0,
-      1, 0, 0, 0, 
-      1, 0, 0, 0, 
-      1, 0, 0, 0
-    ), ncol = 4, byrow = TRUE
-  )
-  expected <- matrix(
-    c(TRUE, FALSE, FALSE, FALSE),
-    ncol = 4, byrow = TRUE
-  )
-  expect_equal(mask(input, op = all), expected)
-  
-})
-
-test_that("mask works as expected on any", {
-  input <- matrix(
-    c(
-      1, 0, 0, 0,
-      0, 1, 0, 0, 
-      0, 0, 1, 0, 
-      0, 0, 0, 1
-    ), ncol = 4, byrow = TRUE
-  )
-  expected <- matrix(
-    c(TRUE, TRUE, TRUE, TRUE),
-    ncol = 4, byrow = TRUE
-  )
-  expect_equal(mask(input, op = any), expected)
+  expect_equal(.mask_all(input), expected)
 })

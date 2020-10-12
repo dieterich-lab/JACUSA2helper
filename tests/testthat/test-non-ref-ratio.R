@@ -2,7 +2,7 @@ context("non_ref_ratio")
 
 test_that("non_ref_ratio works as expected", {
   ref <- c("A", "A", "G", "C", "T")
-  bases <- tibble::tribble(
+  bases <- tidyr::tribble(
     ~A, ~C, ~G, ~T,
      1,  0,  0,  0,
      0,  1,  0,  0,

@@ -4,7 +4,8 @@
 \name{rrd}
 \alias{rrd}
 \title{Subset of RRDs detected by JACUSA2 in HEK-293 ADAR KD and untreated cells}
-\format{a tibble with 19 elements:
+\format{
+a tibble with 19 elements:
 \itemize{
 	\item contig: Character string representing the contig of the variant
 	\item start: Numeric position of variant (>=0)
@@ -20,7 +21,8 @@
 	\item repl Numeric value: "1" or "2" for all conditions
 	\item bc: Observed base calls for this site. Combination of: "A", "C", "G", and "T"
    \item cov: Numeric value indicating the read coverage for this site
-}}
+}
+}
 \usage{
 data(rrd)
 }

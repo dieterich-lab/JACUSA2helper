@@ -2,30 +2,50 @@
 .BASES <- c("A", "C", "G", "T")
 .EMPTY <- "*"
 # convenience: DNA "->" RNA 
-.BC_CHANGE_SEP <- "->"
-.BC_CHANGE_NO_CHANGE <- "no change"
-
-.DATA_DESC <- "data_desc"
+.SUB_SEP <- "->"
+# no change between DNA and RNA: "A -> A" transformed to "no change"
+.SUB_NO_CHANGE <- "no change"
+# when interested only in specific base change, e.g.: A->G, the remaining are termed:
+.SUB_OTHER <- "other"
 
 # Helpers defining supported types by JACUSA2.x
-.UNKNOWN_METHOD_TYPE <- "unknown"
-# call and pileup cannot be distiguished by output
-.CALL_PILEUP_METHOD_TYPE <- "call-pileup"
-.RT_ARREST_METHOD_TYPE <- "rt-arrest"
-.LRT_ARREST_METHOD_TYPE <- "lrt-arrest"
+.UNKNOWN_METHOD <- "unknown"
+# call and pileup cannot be distinguished by output
+.CALL_PILEUP <- "call-pileup"
+.RT_ARREST <- "rt-arrest"
+.LRT_ARREST <- "lrt-arrest"
+
+.ATTR_TYPE <- "JACUSA2.type"
+.ATTR_HEADER <-"JACUSA2.header"
+.ATTR_COND_DESC <- "JACUSA2.cond_desc"
+
 
 # convenience: description data fields
-.CALL_PILEUP_COLUMN <- "bases"
-.RT_ARREST_COLUMN <- "arrest_bases"
-.RT_THROUGH_COLUMN <- "through_bases"
-.LRT_ARREST_COLUMN <- "arrest_bases"
-.LRT_THROUGH_COLUMN <- "through_bases"
-.LRT_ARREST_POS_COLUMN <- "arrest_pos"
+.CALL_PILEUP_COL <- "bases"
+
+.ARREST_DATA_COL <- "arrest"
+.ARREST_HELPER_COL <- "arrest"
+.THROUGH_DATA_COL <- "through"
+.THROUGH_HELPER_COL <- "through"
+
+.LRT_ARREST_POS_COL <- "arrest_pos"
 
 # convenience: description info fields
-.INFO_COLUMN <- "info"
-.FILTER_INFO_COLUMN <- "filter_info"
-.REF_BASE_COLUMN <- "ref_base"
+.INFO_COL <- "info"
+.FILTER_INFO_COL <- "filter"
+.REF_BASE_COL <- "ref"
+
+# JACUSA2 CLI option -B
+.SUB_TAG_COL <- "sub_tag"
+
+.ARREST_RATE_COL <- "arrest_rate"
+.META_COND_COL <- "meta_cond"
+
+.COV <- "cov"
+.BC <- "bc"
+.SUB <- "sub"
+.SUB_RATIO <- "sub_ratio"
+.NON_REF_RATIO <- "non_ref_ratio"
 
 # get unique base calls from a vector of base calls
 .get_unique_base_calls <- function(bcs) {
@@ -59,26 +79,5 @@
   allele_count
 }
 
-# FIXME change this 
-#' Adds data description to JACUSA2 result object.
-#' 
-#' This adds more description name to the data, extending condition, replicate information.
-#' 
-#' @param result object created by \code{read_result()}.
-#' @param desc Vector mapping condition to description
-#' @return JACUSA2 result object with sample description added
-#' 
-#' @export
-add_data_desc <- function(result, desc) {
-  conditions <- length(unique(result$condition))
-  if (length(desc) != conditions) {
-    stop("Description does not match data: ", desc)
-  }
-  
-  result <- result %>% 
-    mutate(!! .DATA_DESC := paste0(desc[condition], " (", replicate, ")")) %>% 
-    as.data.frame()
-  result[[.DATA_DESC]] <- as.factor(result[[.DATA_DESC]])
-  
-  result
-}
+
+
