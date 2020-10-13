@@ -12,6 +12,7 @@
 # @param file character string naming a file for writing 
 # @param txt character string to be added to the JACUSA2 header.
 # @export
+#' @noRd
 write_result <- function(result, file, txt = "") {
   if (.META_COND_COL %in% names(result)) {
     stop("result contains meta condition column: ", .META_COND_COL, 

@@ -4,10 +4,10 @@
 \alias{robust}
 \title{Check if data is robust}
 \usage{
-robust(data)
+robust(x)
 }
 \arguments{
-\item{data}{tibble of numeric.}
+\item{x}{tibble of numeric.}
 }
 \value{
 logical vector indicating robust rows.

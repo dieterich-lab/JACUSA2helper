@@ -23,101 +23,186 @@ output file(s) with [JACUSA2helper](https://github.com/dieterich-lab/JACUSA2help
 consists of:
 
 * Read JACUSA2 output file(s) into result object.
-* Add optional data, depending on the result file, e.g.: `base_sub()` for base substitutions.
-* Filter result object by some criteria, e.g.: `dplyr::filter(All(cov >= 10))` and 
-  use `All()` or `Any` on combined data (conditions and replicates).
+* Add optional data, e.g.: `base_sub()` - add base substitution.
+* Filter result object by some criteria, e.g.: `dplyr::filter(All(cov$cond1 >= 10))` - 
+  retain sites with read coverage >= 10, and use `All()` or `Any` on structured 
+  columns (conditions and replicates).
 * Plot filtered result object.
 
-JACUSA2helper supports the analysis of the following methods from JACUSA2: *call-{1,2}*, *pileup*, *rt-arrest*, and *lrt-arrest*(experimental).
-Check the [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf) for more details.
+JACUSA2helper supports the analysis of the following methods from JACUSA2: 
+*call-{1,2}*, *pileup*, *rt-arrest*, and *lrt-arrest*(experimental).
+Check the [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf) 
+for more details.
 
-The main data structure is the result object that is implemented by following the tidy data approach from @Wickham2014 to feature easy interaction with [dplyr](https://github.com/tidyverse/dplyr) and [ggplot2](https://github.com/tidyverse/ggplot2).
+The main data structure is the result object that is implemented by following 
+the tidy data approach from @Wickham2014 to feature easy interaction with 
+[dplyr](https://github.com/tidyverse/dplyr) and [ggplot2](https://github.com/tidyverse/ggplot2).
 
-In the following, we will focus on single pairwise comparisons of two conditions of one output file.
-If you want to analyze multiple files with similar pairwise comparisons, read `vignette("JACUSA2helper-meta-conditions")`. 
+In the following, we will focus on single pairwise comparisons of two conditions 
+of one output file. If you want to analyze multiple files with similar pairwise 
+comparisons, read `vignette("JACUSA2helper-meta-conditions")`. 
 
-## Multi line site
-
-While previously in JACUSA*1*, a site could be uniquely identified as one line in the output by the coordinate columns: 'contig', 'start', 'end', and 'strand', JACUSA2 features more complex data structures to store new features such as arrest positions of arrest events, read/base stratification and INDEL counts. Therefore, sites can now cover multiple lines of output - check Section "Introduction" of [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf) for details.
+## Multi site and new features
+While previously in JACUSA*1*, a site could be uniquely identified as one line 
+in the output by the coordinate columns: 'contig', 'start', 'end', and 'strand', 
+JACUSA*2* features more complex data structures to store new features such as 
+arrest positions of arrest events, variant tagging, and INDEL counts. 
+Therefore, sites can now cover multiple lines of output - check Section 
+"Introduction" of [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf) 
+for details.
 
 ## Variant calling - Data: rdd (RNA-DNA-differences)
-
-To introduce the basic verbs for manipulating JAUCSA2 output, we'll use `JACUSA2helper:rdd`. This data set contains a subset from @Piechotta2017 and is documented in `?rdd`. In brief, the sample data set consists of 10.000 sites of 1x DNA and 2x stranded RNA sequencing libraries that allow to define RNA-DNA-differences (RDDs).
-
+To introduce the basic verbs for manipulating JAUCSA2 output, we'll use 
+`JACUSA2helper:rdd`. This data set contains a subset from @Piechotta2017 and is 
+documented in `?rdd`. In brief, the sample data set consists of 10.000 sites of 
+1x DNA and 2x stranded RNA sequencing libraries that allow to define 
+RNA-DNA-differences (RDDs).
 
 ```{r}
 library(JACUSA2helper)
-dplyr::arrange(rdd, contig, start, strand)
+data(rdd)
 ```
 
-Note that `rdd` is a tibble - check [tibble](http://tibble.tidyverse.org) for more details. 
+Note that `rdd` is a tibble - check [tibble](http://tibble.tidyverse.org) for 
+more details. 
 
-Use dplyr to manipulate the result object `rdd`. Check details on [dplyr](https://github.com/tidyverse/dplyr) and read `vignette("dplyr")`.
+Use dplyr to manipulate the result object `rdd`. Check details on 
+[dplyr](https://github.com/tidyverse/dplyr) and read `vignette("dplyr")`.
 
-Once the result object is available, you can start to manipulate it. In a first step, we will retain sites with score >= 2.
+### Structured column
+JACUSA2 features structured columns (nested tibbles) where condition and replicate 
+specific data is stored, e.g.: bases, cov, etc.
+```{r}
+rdd[c("id", "bases", "cov")]
+```
+
+Check structure of column with:
+```{r}
+names(rdd$cov)
+```
+To access specific coverage information for condition 2 use:
+```{r}
+rdd$cov$cond2
+```
+In summary, all structured/nested columns hold:
+* data of a condition "cond*I*" on the first level, and
+* data of a replicate "rep*J*" on the second level.
+
+Coverage information for condition 2 and replicate 1 can be accessed with:
+```{r}
+rdd$cov$cond2$rep1
+```
+
+#### Wrapper for `lapply()` and `mapply()`
+For accessing and manipulating structured columns there are JACUSA2 specific 
+wrappers for `lapply()` and `mapply()`:
+* `lapply_cond(x, f)` operates on condition data (list of replicate data),
+* `lapply_repl(x, f)` operates on replicate data of each condition, and
+* `mapply_repl(f, ...)` operates on replicate data, takes multiple inputs.
+
+To get the total coverage for each condition use:
+```{r}
+lapply_cond(rdd$cov, rowSums)
+```
+
+The following gives you the observed base calls:
+```{r}
+base_calls <- lapply_repl(rdd$bases, base_call)
+base_calls$cond2
+```
+
+### Filtering with `dplyr::filter()`
+dplyr and `%>%` from magrittr allow to formulate compact analysis pipelines. 
+
+In a first step, we will retain sites with score >= 2.
 
 ```{r}
 # before filtering
 dim(rdd)
 result <- dplyr::filter(rdd, score >= 2)
+print("After filtering")
 # after filtering
 dim(result)
 ```
 
-dplyr and `%>%` from magrittr allow to formulate compact analysis pipelines. In the following, we will:
+In order to formulate complicate statements with `dplyr::filter()` featuring 
+arbitrary combinations of conditions and/or replicates use the following 
+convenience functions:
+* `All()` and
+* `Any()`.
+
+The following statement retains sites where all replicates of condition 1 have 
+coverage >= 50 and at least one replicate of condition 2 has 10 reads:
+```{r}
+rdd %>% 
+  dplyr::filter(All(cov$cond1 >= 50) & Any(cov$cond2 >= 10)) %>%
+  dplyr::select(id, cov)
+```
+
+In the following, we will:
 
 * remove sites with score < 2,
 * retain sites with coverage >= 10 for all replicates,
-* remove sites with > 2 observed bases (including reference base),
-* apply a filter that retains only robust sites,
-* use the observed base calls from one condition to redefine the reference (useful in DNA vs. RND comparisons), 
-* add a field that shows base substitution (here RNA editing sites ) per data sample.
+* remove sites with > 2 observed bases (excluding reference base),
+* apply a filter that retains only robust sites (RNA editing must be present in 
+  all/both replicates - see TODO),
+* Finally, we compute the base substitution (here RNA editing sites against FASTA 
+  reference) per replicate.
 
 ```{r}
-# filter data
 filtered <- rdd %>% 
     dplyr::filter(score >= 2) %>%
-    dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 > 10))
-    dplyr::filter(base_count(bc, ref) <= 2) %>%
-    dplyr::filter(robust(bases)) %>%
-    dplyr::mutate(base_sub = base_sub(bc$cond1, bc$cond2)) # add base substitutions
+    dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 > 10)) %>%
+    dplyr::filter(base_count(bc) <= 2) %>%
+    dplyr::filter(robust(bases))
+
+# sum base call counts of condition / RNA replicates
+rna_bases <- Reduce("+", filtered$bases$cond2)
+
+# we don't need lapply_repl, because we don't operate on all replicate from all
+# conditions - only condition 2 / RNA
+ref2rna <- base_sub(filtered$ref, rna_bases)
+table(ref2rna)
+
 ```
 
-Finally, we will add a summary of base substitutions for a site by using `merge_sub()`:
+Instead of using DNA information from the reference FASTA sequence via column "ref",
+we could use the actual data from condition 1 / DNA.
+
+TODO Robust requires observations (here base calls) to be present in all replicates of at least condition.
 
 ```{r}
-# summarise data
-#summary_site_sub <- filtered %>%  
-#    group_by_site() %>% # following function will be applied on rows group by site(s)
-#    dplyr::summarise(site_sub = merge_sub(sub)) # adds new column site_sub
-#summary_site_sub
+cond1_ref <- base_call(filtered$bases$cond1$rep1)
+dna2rna <- base_sub(filtered$ref, rna_bases)
+table(dna2rna)
 ```
 
-There is more than one way to arrive at this summary of the data. In another approach `dplry::summarise(site_sub = merge_sub(sub))` could be replaced with `dplyr::mutate(site_sub = merge_sub(sub)) %>% dplyr::distinct(contig, start, end, strand, site_sub)`. 
+Using different sources of DNA to describe RRDs via `ref2rna` and `dna2rna` 
+we can conclude that there are no polymorphic positions in `filtered` because 
+`ref2rna` and `dna2rna` are identical.
 
 ### Plot base substitutions
-
 We can now plot the site specific distribution of base substitutions using [ggplot2](https://github.com/tidyverse/ggplot2) with:
 
 ```{r}
-#summary_site_sub %>%
-#  ggplot2::ggplot(ggplot2::aes(x = site_sub, fill = site_sub)) +
-#    ggplot2::geom_bar() +
-#    ggplot2::xlab("Base substitution")  +
-#    ggplot2::scale_fill_discrete(name = "Base substitution") +
-#    ggplot2::theme(
-#     legend.position = "bottom", 
-#     axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)
-#    )
+tidyr::tibble(base_sub = dna2rna) %>% # ggplot requires a data frame
+  ggplot2::ggplot(ggplot2::aes(x = base_sub, fill = base_sub)) +
+  ggplot2::geom_bar() +
+  ggplot2::xlab("Base substitution")  +
+  ggplot2::scale_fill_discrete(name = "Base substitution") +
+  ggplot2::theme(
+   legend.position = "bottom", 
+   axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)
+  )
 ```
 
 ### Plot coverage distribution
 
-To compare the coverage distribution of each data sample, we create a simple plot of the empirical coverage distribution, where we map cond(ition) to `colour` and repl(icate) to `linetype`.
+To compare the coverage distribution of each data sample, we create a simple plot of the empirical coverage distribution, where we map cond(ition) to `colour` and rep(licate) to `linetype`.
 
 ```{r}
-result %>%
-  ggplot2::ggplot(ggplot2::aes(x = cov, colour = cond, linetype = repl)) + 
+gather_repl(result$id, result$cov) %>%
+  ggplot2::ggplot(ggplot2::aes(x = value, colour = cond, linetype = repl)) + 
     ggplot2::stat_ecdf(geom = "step")
 ```
 
@@ -131,15 +216,17 @@ In order to improve the preliminary plot, we need to modify the following aspect
 
 First, a data description is added to the result object:
 
-# TODO
 ```{r}
-data(rdd)
-result <- rdd
-# create nice data description
-# DNA RNA
-# data_desc for cond and repl in result:
-dplyr::distinct(result, cond, repl, data_desc)
+result <- gather_repl(rdd$id, rdd$cov) %>%
+  dplyr::mutate(
+    data_desc = dplyr::case_when(
+      cond == "cond1" ~ "DNA",
+      cond == "cond2" & repl == "rep1" ~ "RNA 1",
+      cond == "cond2" & repl == "rep2" ~ "RNA 2"
+    )
+  )
 ```
+
 
 Supplementary data `limits` and `labels` are created to enable sleek legend by relating cond(ition) and repl(icate) to data description.
 They will be mapped to `colour` and `linetype`.
@@ -159,7 +246,7 @@ Finally, we combine the previous snippets and arrive at the final plot:
 ```{r}
 name <- "Data description"
 result %>% 
-  ggplot2::ggplot(ggplot2::aes(x = cov, colour = group, linetype = group)) +
+  ggplot2::ggplot(ggplot2::aes(x = value, colour = group, linetype = group)) +
   # map values for cond to colour and use nice labels
   ggplot2::scale_colour_manual(
     name = name,
@@ -183,26 +270,35 @@ result %>%
     labels = scales::trans_format("log10", scales::math_format(10^.x))
   ) +
   ggplot2::xlab("Read Coverage") +
-  ggplot2::theme(legend.position = "bottom") 
+  ggplot2::theme(legend.position = "bottom")  
 ```
 
-From the plot, we can deduce that RNA samples have similar coverage distribution and are higher covered than the DNA data sample. This code serves as a blueprint for other plots, e.g.: 
+From the plot, we can deduce that RNA samples have similar coverage distribution 
+and are higher covered than the DNA data sample. This code serves as a blueprint 
+for other plots, e.g.: 
 
 * empirical cumulative distribution of arrest rate or
 * number of observed bases.
 
 ## Arrest events
 
-@Zhou2018 map RNA modification of pseudouridine ($\Psi$) by chemically modifying
-pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse
-transcription stops in high-throughput sequencing under 3 different conditions: HIVRT, SIIIRTMn, and
-SIIIRTMg. The result of JACUSA2 are available by using `data()`. Read [JACUSA2 manual] for details on how data has been processed from the original publication by @Zhou2018. In brief, the data has been filtered to contain the following rRNAs: RNA18SN5 and RNA28SN5.
+In @Zhou2018 the authors map RNA modification of pseudouridine ($\Psi$) by 
+chemically modifying pseudouridines with carbodiimide (+CMC) and detecting 
+arrest events that are induced by reverse transcription stops in high-throughput 
+sequencing under 3 different conditions: HIVRT, SIIIRTMn, and SIIIRTMg. 
+The result of JACUSA2 are available by using `data()`. 
+Read [JACUSA2 manual] for details on how data has been processed from the 
+original publication by @Zhou2018. In brief, the data has been filtered to 
+contain the following rRNAs: RNA18SN5 and RNA28SN5.
 
-In the following, we will be looking at the results for `data(HIVRT)`. By default JACUSA2 output from *rt-arrest* will contain the following columns:
+In the following, we will be looking at the results for `data(HIVRT)`. 
+By default JACUSA2 output from *rt-arrest* will contain the following 
+structured/nested columns:
 
-* `arrest` and `through` base count columns.
-* `bases` = `arrest` + `through`. Total base counts.
-* TODO Columns prefixed with `bc_`, `cov_` will hold observed bases and coverage for the respective base counts, respectively.
+* `arrest` and `through`
+* `bases` = `arrest` + `through`: total base counts.
+* `arrest_rate`
+* `cov` holds coverage for total base counts.
 
 ```{r}
 data(HIVRT)
@@ -214,87 +310,55 @@ We investigate the strand specific coverage distribution of reads and discover t
 The other mappings are probably artefacts. But this discussion is beyond the scope of this vignette.
 
 ```{r}
-HIVRT %>%
-  ggplot2::ggplot(ggplot2::aes(x = cov, colour = strand)) + 
-    ggplot2::geom_density() + ggplot2::scale_x_log10(
-      breaks = scales::trans_breaks("log10", function(x) 10^x),
-      labels = scales::trans_format("log10", scales::math_format(10^.x))
-    ) +
-  ggplot2::xlab("Read Coverage") +
-  ggplot2::theme(legend.position = "bottom") + 
-  ggplot2::facet_grid(contig ~ .)
+gather_repl(HIVRT$id, HIVRT$cov) %>% # extract coverages
+dplyr::inner_join(dplyr::select(HIVRT, id, contig, strand), by = "id") %>% # add contig and strand
+ggplot2::ggplot(ggplot2::aes(x = value, colour = strand)) + 
+  ggplot2::geom_density() + ggplot2::scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+ggplot2::xlab("Read Coverage") +
+ggplot2::theme(legend.position = "bottom") + 
+ggplot2::facet_grid(contig ~ .)
 ```
 
 We filter by pvalue, coverage, strand, and only retain robust arrest events:
 
 ```{r}
-result <- HIVRT
-# result$cond_desc <- ""
-# TODO
-#result$cond_desc[result$cond == 1] <- "+CMC"
-#result$cond_desc[result$cond == 2] <- "-CMC"
-# TODO
-filtered <- result %>%
+dim(HIVRT)
+filtered <- HIVRT %>% 
   dplyr::filter(strand == "+") %>%
-  rt-arrest has pvalue instead of score
-  dplyr::filter(pvalue = 0.00001) %>% 
-  dplyr::filter(All(cov$cond1 >= 100) & All(cov$cond21 >= 100)) %>%
-  dplyr::filter(robust(arrest)) %>%
+  dplyr::filter(pvalue <= 0.00001) %>% 
+  dplyr::filter(All(cov$cond1 >= 100) & All(cov$cond2 >= 100)) %>%
+  dplyr::filter(robust(arrest))
 dim(filtered)
 ```
-
-We use the `peak()` function to transform the filtered result object and plot the arrest rate from each condition in a scatter plot.
+We use `gather_repl()` function to transform the filtered result object and 
+plot the arrest rate from each condition in a scatter plot.
 
 ```{r}
-# TODO
-#peak(filtered, peak_cols = c("arrest_rate")) %>% 
-#  ggplot2::ggplot(ggplot2::aes(x = arrest_rate11, y = arrest_rate21)) +  
-#  ggplot2::geom_point() + 
-#  ggplot2::facet_grid(. ~ contig) + 
-#  ggplot2::geom_abline(colour = "red") +
-#  ggplot2::xlab("+CMC arrest rate") + 
-#  ggplot2::ylab("-CMC arrest rate")
+filtered %>%
+  ggplot2::ggplot(ggplot2::aes(x = arrest_rate$cond1$rep1, y = arrest_rate$cond2$rep1)) +  
+  ggplot2::geom_point() + 
+  ggplot2::facet_grid(. ~ contig) + 
+  ggplot2::geom_abline(colour = "red") +
+  ggplot2::xlab("+CMC arrest rate") + 
+  ggplot2::ylab("-CMC arrest rate")
 ```
 
 From the above plot, we can deduce that the arrest rate is higher in the +CMC condition for both rRNAs when compared against -CMC.
 
 If you want to look simultaneously at all conditions (HIVRT, SIIIRTMn, and SIIIRTMg), checkout `vignette("JACUSA2helper-meta-conditions")`.
 
-### Plot base substitutions
-
-# TODO
-```{r}
-#filtered %>% 
-#  add_bc_ratio() %>%
-#  add_non_ref_ratio() %>%
-#  dplyr::select(contig, start, end, strand, cond_desc, cond, repl, bc_ratio, ref, non_ref_ratio) %>% 
-#  group_by_site() %>%
-#  filter_by(any(non_ref_ratio >= 0.05)) %>%
-#  dplyr::ungroup() %>%
-#  dplyr::mutate(bc_max = base_call_non_ref(ref, bc_ratio), sub = base_sub(ref, bc_max)) %>%
-#  ggplot2::ggplot(ggplot2::aes(x = sub, fill = sub)) +
-#    ggplot2::geom_bar() + 
-#    ggplot2::xlab("Base substitution")  +
-#    ggplot2::scale_fill_discrete(name = "Base substitution") +
-#    ggplot2::theme(
-#      legend.position = "bottom", 
-#      axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)
-#    ) + 
-#    ggplot2::facet_grid(cond_desc ~ .)
-```
-
 
 ## Stranded data
-
 When working with stranded RNA-Seq data, inverting base calls is not necessary because JACUSA2 will automatically invert Single End (SE) and Paired End (PE) depending on the provided library type option "-P" UNSTRANDED|FR_FIRSTSTRAND|RF_SECONDSTRAND".
 
 # Input/Output
-
-There are two functions to read JACUSA2 output `read_result(file)` and `read_results(files, meta_conditions)` which is explained in  `vignette("JACUSA2helper-meta-conditions")`.
+There are two functions to read JACUSA2 output `read_result(file)` and `read_results(files, meta_conds)` which is explained in  `vignette("JACUSA2helper-meta-conditions")`.
 
 Use `result <- read_result("JACUSA2.out")` to read and create a JACUSA2 result object from a JACUSA2 output file `JACUSA2.out`.
 By default, variables stored in the **info** column will be processed and unpacked making them available for further manipulation.  
-<!-- Use `read_result(..., unpack = FALSE)` to prevent processing of the **info*** column. This will make reading output much faster.-->
 
 Summary of input/output methods:
 
@@ -303,52 +367,24 @@ Summary of input/output methods:
 * `write_bedGraph()` Writes a vector of values as bedGraph file.
 
 # General function layout
-
 In the following the core functions of JACUSA2helper are presented. Check the respective help page, e.g.: `?bc_ratio` to get more details.
 
 `arrest_rate` Calculate arrest rate from arrest and through reads.
-`bc` Calculates observed bases from base counts. In most cases this will be called automatically in `read_result()`
-`bc_ratio` Calculates a ratio matrix from a base count matrix.
+`base_call` Calculates observed bases from base counts. 
+`base_ratio` Calculates a ratio matrix from a base count matrix.
 `coverage` Calculates coverage from base counts. In most cases this will be called automatically in `read_result()`
 `non_ref_ratio` Calculates non reference base ratio for base counts of some base type.
 `base_sub` Calculates base substitution from reference and base counts, e.g.: A->G.
 `sub_ratio` Calculates base substitution ratio from reference and observed bases, e.g.: 25% A->G.
 
-All of the core functions mentioned above have wrappers and additional function with the following naming name scheme.
-For the core function `bc()` which calculates observed base, there exist the following functions:
-
-* `add_bc(result, ...)` Calls `bc()` and adds the outcome to the `result` object to the column specified by `bc_col()`.
-* `bc_col(base_type = "bases")` Defines the field to be used for the provided `base_type`. Supported values for `base_type` are:
-*bases*, *arrest*, or *through*. *bases* is the default value.
-* `get_bc(result, ...)` Retrieves the value stored under `bc_col()` in the `result` object.
-
-For all core function *F*, there exist the following functions: `add_F()`, `get_F()`, and `F_col()`. The exceptions to this rule are: `coverage()` and `base_sub()`. In order to maintain short columns names and prevent from overwriting R functions, core JACUSA2 function have the long form and `add_()`, `get_()`, `_col()` the short form (cov, and sub).
-
 # Filter result object
+* `robust()`
+* `filter_artefact()`
+* `All(), Any()`
 
-This function set enables filtering of sites. Make sure to use the correct parameters in `group_by_site()`.
-
-* `filter_by_robust_arrest_events()` Arrest event specific filter that will remove non robust results. Uses `filter_by()` internally.
-* `filter_by_robust_variants()` Variant specific filter that will remove non robust results. Uses `filter_by()` internally.
-
-# Peak - change data layout
-
-Sometimes it is useful and desired to have observations of some variable(s) in columns. This enables a direct comparison.
-Use `peak(result, peak_cols)` to transform a result object and transform variables defined in `peak_cols` to show them side-by-side.
-In the following, we will transform `rdd` result object to show coverage information.
-
-```{r}
-# TODO
-#data(rdd)
-#peak(rdd, peak_cols = "cov")
-```
-
-`peak()` uses "contig", "start", "end", "strand" columns to identify each site. Change parameter `id_cols` to change this.
-
+# Variant tagging (Base Stratification)
 <!--- # Experimental features
-
 * *lrt-arrest*
-* Read/Base Stratification
 --->
 
 ## References

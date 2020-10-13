@@ -40,7 +40,7 @@ test_that(".fill_empty works as expected", {
 })
 
 
-test_that(".base_call works as expected", {
+test_that("base_call works as expected", {
   bases <- tidyr::tribble(
     ~A, ~C, ~G, ~T,
     1,  0,  0,  0,
@@ -59,7 +59,7 @@ test_that(".base_call works as expected", {
   )
   
   expect_equal(
-    .base_call(bases),
+    base_call(bases),
     expected  
   )
 })

@@ -8,27 +8,10 @@
 #'
 #' @export
 add_arrest_rate <- function(result, cores = 1) {
-  arrest_cov <- .cov(result[[.ARREST_HELPER_COL]])
-  through_cov <- .cov(result[[.THROUGH_HELPER_COL]])
-  
-  
-  result[[.ARREST_RATE_COL]] <- lapply(result[[.ARREST_HELPER_COL]], function(x) {
-    tidyr::as_tibble(lapply(x, function(y) {
-      rowSums(y)
-    }))
-  }) %>% c() %>% tidyr::as_tibble()
+  arrest_cov <- coverage(result[[.ARREST_COL]])
+  through_cov <- coverage(result[[.THROUGH_COL]])
 
-  # FIXME make it more robust
-  cond_count <- names(result[[.THROUGH_HELPER_COL]]) %>% length()
-  for (cond in paste0("cond", 1:cond_count)) {
-    cond_through <- result[[.THROUGH_HELPER_COL]][[cond]]
-    for (repl in names(cond_through)) {
-      arrest_cov <- result[[.ARREST_RATE_COL]][[cond]][[repl]]
-      through_cov <- rowSums(cond_through[[repl]])
-      
-      result[[.ARREST_RATE_COL]][[cond]][[repl]] <- arrest_rate(arrest_cov, through_cov)
-    }
-  }
+  result[[.ARREST_RATE_COL]] <- mapply_repl(arrest_rate, arrest_cov, through_cov)
 
   result
 }

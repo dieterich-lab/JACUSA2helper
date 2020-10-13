@@ -23,10 +23,8 @@
 # convenience: description data fields
 .CALL_PILEUP_COL <- "bases"
 
-.ARREST_DATA_COL <- "arrest"
-.ARREST_HELPER_COL <- "arrest"
-.THROUGH_DATA_COL <- "through"
-.THROUGH_HELPER_COL <- "through"
+.ARREST_COL <- "arrest"
+.THROUGH_COL <- "through"
 
 .LRT_ARREST_POS_COL <- "arrest_pos"
 
@@ -42,42 +40,42 @@
 .META_COND_COL <- "meta_cond"
 
 .COV <- "cov"
-.BC <- "bc"
-.SUB <- "sub"
-.SUB_RATIO <- "sub_ratio"
-.NON_REF_RATIO <- "non_ref_ratio"
 
-# get unique base calls from a vector of base calls
-.get_unique_base_calls <- function(bcs) {
-  base_calls <- bcs %>% 
-    paste0() %>% 
-    strsplit("") %>% 
-    unlist() %>% 
-    unique()
-    
-  base_calls
+#' Calculate coverage for structured column.
+#' 
+#' Calculate coverage for structured column.
+#' 
+#' @param bases structured column of bases
+#' @param cores number of cores to use
+#' @return structure column with coverages
+#' 
+#' @export
+coverage <- function(bases, cores = 1) {
+  lapply_repl(bases, rowSums, cores)
 }
 
-# apply boolean operator "&","|" on all columns 
-.get_mask <- function(mat, op) {
-  mat <- t(apply(mat, 1, function(x) { x > 0 }))
-  if (op == "all") {
-    mat <- t(apply(mat, 2, all))
-  } else if (op == "any") {
-    mat <- t(apply(mat, 2, any))
-  } else {
-    stop("Unknown op: ", op)
+#' Extract values from a structured column.
+#' 
+#' Extract values from a structured column.
+#' 
+#' @param id vector that unique identifies each row
+#' @param x structured column
+#' @param meta_cond vector of meta conditions
+#' @return extracted column
+#' 
+#' @export
+gather_repl <- function(id, x, meta_cond = NULL) {
+  r <- list()
+  for (cond in names(x)) {
+    for (repl in names(x[[cond]])) {
+      df <- tidyr::tibble(id = id, value = x[[cond]][[repl]])
+      if (! is.null(meta_cond)) {
+        df[["meta_cond"]] <- meta_cond
+      }
+      df[["cond"]] <- cond
+      df[["repl"]] <- repl
+      r[[length(r) + 1]] <- df
+    }
   }
-  
-  mat
+  dplyr::bind_rows(r)
 }
-
-# get number of alleles from a vector of base calls
-.get_alleles <- function(bcs) {
-  allele_count <- length(.get_unique_base_calls(bcs))
-  
-  allele_count
-}
-
-
-

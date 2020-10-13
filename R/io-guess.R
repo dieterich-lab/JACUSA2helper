@@ -10,7 +10,7 @@
     cond_repl <- .extract_cond_repl(header_names, prefix)
     cond_count <- .find_cond_count(cond_repl)
   } else if (type %in% c(.RT_ARREST, .LRT_ARREST)) {
-    cond_counts <- lapply(c(.ARREST_DATA_COL, .THROUGH_DATA_COL), function(x) {
+    cond_counts <- lapply(c(.ARREST_COL, .THROUGH_COL), function(x) {
       cond_repl <- .extract_cond_repl(header_names, x)
       return(.find_cond_count(cond_repl))
     })
@@ -70,7 +70,7 @@
   type <- .UNKNOWN_METHOD
   if (length(grep(.LRT_ARREST_POS_COL, line)) > 0) { # lrt-arrest
     type <- .LRT_ARREST
-  } else if(length(grep(paste0("\t", .ARREST_DATA_COL), line)) > 0) { # rt-arrest
+  } else if(length(grep(paste0("\t", .ARREST_COL), line)) > 0) { # rt-arrest
     type <- .RT_ARREST
   } else if (length(grep(paste0("\t", .CALL_PILEUP_COL), line)) > 0) { # call-pileup
     type <- .CALL_PILEUP

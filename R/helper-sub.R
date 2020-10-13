@@ -96,5 +96,5 @@ mask_sub <- function(subs, keep) {
 #' clean_read_sub(subs)
 #' @export
 clean_read_sub <- function(subs) {
-  i <- gsub("2", .SUB_SEP, subs)
+  gsub("2", .SUB_SEP, subs)
 }

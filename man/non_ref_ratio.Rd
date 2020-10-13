@@ -25,5 +25,5 @@ bases <- tidyr::tribble(
    0,  1,  1,  1,
    1,  1,  1,  1
 )
-str(non_ref_ratio(ref, bases))
+non_ref_ratio(ref, bases)
 }

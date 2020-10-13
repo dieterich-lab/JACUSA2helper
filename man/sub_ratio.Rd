@@ -11,7 +11,7 @@ sub_ratio(ref, bases, bc = NULL)
 
 \item{bases}{matrix of observed base call counts.}
 
-\item{bc}{vector strings that represents observed base calls. Default: "bases".}
+\item{bc}{vector strings that represent observed base calls. Default: "bases".}
 }
 \value{
 vector of base callsubstitution ratios.

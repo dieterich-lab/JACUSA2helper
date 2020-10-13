@@ -1,12 +1,5 @@
 context("helper_filter")
 
-test_that("filter_artefact fails on missing option", {
-  expect_error(
-    filter_artefact(c(.EMPTY, .EMPTY, .EMPTY), ""),
-    "artefacts cannot be 0"
-  )
-})
-
 test_that("filter_artefact works as expected", {
   expect_equal(
     filter_artefact(c(.EMPTY, .EMPTY, .EMPTY), "D"),

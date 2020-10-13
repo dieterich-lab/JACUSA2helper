@@ -13,7 +13,7 @@
 #'    0,  1,  1,  1,
 #'    1,  1,  1,  1
 #' )
-#' str(non_ref_ratio(ref, bases))
+#' non_ref_ratio(ref, bases)
 #' @export
 non_ref_ratio <- function(ref, bases) {
   stopifnot(length(ref) ==  nrow(bases))

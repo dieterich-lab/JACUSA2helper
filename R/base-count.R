@@ -10,7 +10,7 @@
 #' }
 #'
 #' @importFrom magrittr %>%
-#' @param bc vector of strings with observed base calls.
+#' @param bases vector of base calls or tibble of base call counts.
 #' @param ref vector of strings with reference bases 
 #' @return numeric vector of total number of bases.
 #' @examples
@@ -21,12 +21,15 @@
 #' ref <- c("A", "A", "T")
 #' str(base_count(bc, ref))
 #' @export
-base_count <- function(bc, ref = NULL) {
+base_count <- function(bases, ref = NULL) {
+  if (! is.vector(bases)) {
+    bases <- base_call(bases)
+  }
   if (! is.null(ref)) {
-    bc <- paste0(bc, ref)
+    bases <- paste0(bases, ref)
   }
   
-  strsplit(bc, "") %>% 
+  strsplit(bases, "") %>% 
     lapply(unique) %>% # remove duplicates
     lapply(length) %>% # how many bases?
     unlist()

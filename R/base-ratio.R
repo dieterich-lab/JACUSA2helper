@@ -7,9 +7,9 @@
 #' @return data frame of base call rations \code{bases}.
 #' @examples
 #' bases <- matrix(c(5, 0, 5, 0,  1, 1, 1, 1), byrow = TRUE, ncol = 4)
-#' ratio <- bc_ratio(bases)
+#' ratio <- base_ratio(bases)
 #' @export
-bc_ratio <- function(bases) {
+base_ratio <- function(bases) {
   total <- rowSums(bases)
   
   m <- matrix(

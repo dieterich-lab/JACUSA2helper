@@ -87,10 +87,13 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
   }
   attr(result, .ATTR_HEADER) <- jacusa_header
   result <- sticky::sticky(result)
+  id <- info <- filter <- ref <- NULL
+  result <- result %>%
+    dplyr::select(id, dplyr::everything()) %>%
+    dplyr::select(-c(info, filter, ref), c(info, filter, ref))
+    
 
-  rownames(result) <- .id(result)
-
-  result
+    result
 }
 
 
@@ -109,6 +112,7 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
   regex <- paste0("(", .SUB_TAG_COL, "|read_sub)=([^;]+)")
   if (any(stringr::str_detect(data[[.INFO_COL]], regex))) {
     sub_tag <- stringr::str_match(data[[.INFO_COL]], regex)[, 3]
+    sub_tag <- clean_read_sub(sub_tag)
     return(paste0(coord, ":", sub_tag))
   }
   
@@ -125,45 +129,24 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
   if(type == .CALL_PILEUP) {
     cols <- c(.CALL_PILEUP_COL)
   } else if (type %in% c(.RT_ARREST, .LRT_ARREST)) {
-    cols <- c(.ARREST_DATA_COL, .THROUGH_DATA_COL)
+    cols <- c(.ARREST_COL, .THROUGH_COL)
   } else {
     stop("Unknown type: ", type)
   }
   result <- .unpack_cols(data, cols, cond_count, .BASES, cores)
   # process arrest and through columns
   if (type %in% c(.RT_ARREST, .LRT_ARREST)) {
-    if (.ARREST_HELPER_COL != .ARREST_DATA_COL) {
-        result[[.ARREST_HELPER_COL]] <- result[[.ARREST_DATA_COL]]
-        result[[.ARREST_DATA_COL]] <- NULL
-    }
-    if (.THROUGH_HELPER_COL != .THROUGH_DATA_COL) {
-      result[[.THROUGH_HELPER_COL]] <- result[[.THROUGH_DATA_COL]]
-      result[[.THROUGH_DATA_COL]] <- NULL
-    }
-
-    result[[.CALL_PILEUP_COL]] <- result[[.ARREST_HELPER_COL]]
-    for (cond in paste0("cond", 1:cond_count)) {
-      cond_through <- result[[.THROUGH_HELPER_COL]][[cond]]
-      for (repl in names(cond_through)) {
-        result[[.CALL_PILEUP_COL]][[cond]][[repl]] <- 
-          result[[.CALL_PILEUP_COL]][[cond]][[repl]] + cond_through[[repl]]
-      }
-    }
+    result[[.CALL_PILEUP_COL]] <- mapply_repl(
+      Reduce, 
+      result[[.ARREST_COL]], result[[.THROUGH_COL]], 
+      MoreArgs=list(f="+"), cores = cores
+    )
     result <- add_arrest_rate(result)
   }
 
-  # FIXME make faster
-  cond_bases <- parallel::mclapply(result[[.CALL_PILEUP_COL]], function(x) {
-    return(Reduce('+', x))
-  }, mc.cores = min(cond_count, cores), mc.preschedule = FALSE)
-  total_bases <- Reduce('+', cond_bases)
-
   # add coverage
-  result[[.COV]] <- .cov(result[[.CALL_PILEUP_COL]])
-  
-  # add base call
-  result[[.BC]] <- .base_call(total_bases)
-  
+  result[[.COV]] <- coverage(result[[.CALL_PILEUP_COL]])
+
   # unpack info field
   if (unpack) {
     result <- .unpack_info(result, cond_count, cores)
@@ -172,8 +155,14 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
   result
 }
 
-#
-.base_call <-function(bases) {
+#' Observed base calls.
+#' 
+#' Observed base calls.
+#' 
+#' @param bases tibble of base call counts
+#' @return vector of observed base calls
+#' @export
+base_call <-function(bases) {
   apply(bases > 0, 1, function(x) {
     paste0(names(which(x)), collapse= "") 
     }
@@ -302,17 +291,17 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
 #' 
 #' @param files Vector of files.
 #' @param meta_conds Vector of string vectors that explain files.
-# FIXME @param cond_descs Vector of strings that represent names/descriptions for conditions.
+#' @param cond_descs Vector of strings that represent names/descriptions for conditions.
 #' @param unpack Boolean indicates if info column should be processed.
 #' @param cores Integer defines how many cores to use.
 #'
 #' @export
-read_results <- function(files, meta_conds, unpack = FALSE, cores = 1) {
+read_results <- function(files, meta_conds, cond_descs, unpack = FALSE, cores = 1) {
   stopifnot(length(files) == length(meta_conds))
   
   # read all files  
-  l <- parallel::mcmapply(function(file, meta_cond) {
-    result <- read_result(file, unpack)
+  l <- parallel::mcmapply(function(file, meta_cond, cond_desc) {
+    result <- read_result(file, cond_desc, unpack)
     
     type <- attr(result, .ATTR_TYPE)
     attr(result, .ATTR_TYPE) <- NULL
@@ -320,7 +309,7 @@ read_results <- function(files, meta_conds, unpack = FALSE, cores = 1) {
 
     result[[.META_COND_COL]] <- meta_cond
     return(list(result, type))
-  }, files, meta_conds, mc.cores = min(length(files), cores), SIMPLIFY = FALSE)
+  }, files, meta_conds, cond_descs, mc.cores = min(length(files), cores), SIMPLIFY = FALSE)
 
   types <- lapply(l, "[[", 2) %>% unlist(use.names = FALSE)
 
@@ -330,7 +319,7 @@ read_results <- function(files, meta_conds, unpack = FALSE, cores = 1) {
   results$meta_cond <- as.factor(results$meta_cond)
 
   attr(results, .ATTR_TYPE) <- types
-  # FIXME attr(results, .ATTR_COND_DESC) <- cond_descs
+  attr(results, .ATTR_COND_DESC) <- cond_descs
 
   results
 }

@@ -4,12 +4,14 @@
 \alias{read_results}
 \title{Read multiple related JACUSA2 results}
 \usage{
-read_results(files, meta_conds, unpack = FALSE, cores = 1)
+read_results(files, meta_conds, cond_descs, unpack = FALSE, cores = 1)
 }
 \arguments{
 \item{files}{Vector of files.}
 
 \item{meta_conds}{Vector of string vectors that explain files.}
+
+\item{cond_descs}{Vector of strings that represent names/descriptions for conditions.}
 
 \item{unpack}{Boolean indicates if info column should be processed.}
 

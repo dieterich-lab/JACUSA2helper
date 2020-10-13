@@ -37,10 +37,10 @@ test_that(".guess_cond_count works as expected on rt-arrest", {
     .guess_cond_count(
       .RT_ARREST, 
       c(
-        create_header_names(.ARREST_DATA_COL, 1, 3),
-        create_header_names(.THROUGH_DATA_COL, 1, 3),
-        create_header_names(.ARREST_DATA_COL, 2, 3),
-        create_header_names(.THROUGH_DATA_COL, 2, 3)
+        create_header_names(.ARREST_COL, 1, 3),
+        create_header_names(.THROUGH_COL, 1, 3),
+        create_header_names(.ARREST_COL, 2, 3),
+        create_header_names(.THROUGH_COL, 2, 3)
       )
     ),
     2
@@ -52,10 +52,10 @@ test_that(".guess_cond_count works as expected on lrt-arrest", {
     .guess_cond_count(
       .LRT_ARREST, 
       c(
-        create_header_names(.ARREST_DATA_COL, 1, 3),
-        create_header_names(.THROUGH_DATA_COL, 1, 3),
-        create_header_names(.ARREST_DATA_COL, 2, 3),
-        create_header_names(.THROUGH_DATA_COL, 2, 3)
+        create_header_names(.ARREST_COL, 1, 3),
+        create_header_names(.THROUGH_COL, 1, 3),
+        create_header_names(.ARREST_COL, 2, 3),
+        create_header_names(.THROUGH_COL, 2, 3)
       )
     ),
     2

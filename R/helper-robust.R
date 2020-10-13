@@ -1,70 +1,115 @@
-
-
-
 #' Check if data is robust
 #' 
 #' Tests if all values that have been observed (>0) in all conditions (op = |)
 #  can observed in one of the conditions (op = &)
 #' Supports 1 or 2 conditions.
 #' 
-#' @param data tibble of numeric.
+#' @param x tibble of numeric.
 #' @return logical vector indicating robust rows.
 #' @export
-robust <- function(data) {
-  not_null <- apply_repl(df, function(x) {x > 0})
+robust <- function(x) {
+  not_null <- lapply_repl(x, function(x) {x > 0})
 
   mask_any <- .mask_any(not_null)
   mask_all <- .mask_all(not_null)
   
   mask <- mask_any & mask_all | ! mask_any
-  n <- length(names(mask))
-  
+  n <- dim(mask)[2]
+
   rowSums(mask) == n
 }
 
 #' @noRd
-.mask_any <- function(df) {
-  apply_cond(df, function(cond) { 
-    Reduce("|", cond)
-  }) %>% Reduce("|", .) %>% tidyr::as_tibble()
+.mask_any <- function(x) {
+  lapply_cond(x, function(cond) { 
+    Any(cond)
+  }) %>% Any() %>% tidyr::as_tibble()
 }
 
 #' @noRd
-.mask_all <- function(df) {
-  apply_cond(df, function(cond) { 
-    Reduce("&", cond)
-  }) %>% Reduce("|", .) %>% tidyr::as_tibble()
+.mask_all <- function(x) {
+  lapply_cond(x, function(cond) { 
+    All(cond)
+  }) %>% Any() %>% tidyr::as_tibble()
 }
 
 
-#' Apply FUN to all tibbles of conditions
+#' Apply f to all conditions
 #' 
-#' TODO
-#' @param X TODO
-#' @param FUN TODO
-#' @param cores TODO
-#' @param ... TODO
+#' Wrapper for lapply
+#' @param x tibble of data per condition
+#' @param f function to apply to each condition data
+#' @param ... parameters for f
+#' @param cores numer of cores to use
+#' @return tibble
 #' @export
-apply_cond <- function(X, FUN, cores = 1, ...) {
+lapply_cond <- function(x, f, ..., cores = 1) {
   parallel::mclapply(
-    X, FUN, ..., 
-    mc.cores = min(names(X), cores), mc.preschedule = FALSE
-  ) %>% lapply(., tidyr::as_tibble) %>% tidyr::as_tibble()
+    x, f, ..., 
+    mc.cores = min(names(x), cores),
+    mc.preschedule = FALSE,
+    mc.allow.recursive = FALSE
+  ) %>% 
+    .as() %>% 
+    tidyr::as_tibble()
 }
 
-#' Apply FUN to all replicates
+#' Apply f to all replicates
 #' 
-#' TODO
-#' @param X TODO
-#' @param FUN TODO
-#' @param cores TODO
-#' @param ... TODO
+#' Wrapper for lapply
+#' @param x tibble of data per condition
+#' @param f function to apply to each replicate data
+#' @param ... parameters for f
+#' @param cores numer of cores to use
+#' @return tibble
 #' @export
-apply_repl <- function(X, FUN, cores = 1, ...) {
-  # lapply(., tidyr::as_tibble) %>% 
+lapply_repl <- function(x, f, ..., cores = 1) {
+  .helper <- function(y) {
+    lapply(y, f, ...) %>% 
+      lapply(.as) %>% 
+      tidyr::as_tibble()
+  }
+
+  # TODO use lapply_cond
   parallel::mclapply(
-    X, function(cond) {
-      lapply(cond, FUN, ...) %>% tidyr::as_tibble()
-    }, mc.cores = min(names(X), cores), mc.preschedule = FALSE
+    x, .helper,
+    mc.cores = min(names(x), cores),
+    mc.preschedule = FALSE,
+    mc.allow.recursive = FALSE
+  ) %>% tidyr::as_tibble()
+}
+
+# make everything a tibble if it has a 2nd dimension
+#' @noRd
+.as <- function(y) {
+  if (is.vector(y)) {
+    return(y)
+  }
+  return(tidyr::as_tibble(y))
+}
+
+#' Apply f to all replicates
+#' 
+#' Wrapper for mapply.
+#' @param f function to apply to each replicate data
+#' @param ... see mapply
+#' @param MoreArgs see mapply
+#' @param cores numer of cores to use
+#' @return tibble
+#' @export
+mapply_repl <- function(f, ..., MoreArgs = NULL, cores = 1) {
+  .helper <- function(...) {
+    dots <- list(...)
+    mapply(f, ..., MoreArgs = MoreArgs, SIMPLIFY = FALSE) %>% 
+      lapply(.as) %>% 
+      tidyr::as_tibble()
+  }
+  
+  parallel::mcmapply(
+    .helper,
+    ...,
+    SIMPLIFY = FALSE,
+    mc.cores = cores,
+    mc.preschedule = FALSE
   ) %>% tidyr::as_tibble()
 }

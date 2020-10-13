@@ -4,12 +4,12 @@
 \alias{filter_artefact}
 \title{Filters sites by artefacts.}
 \usage{
-filter_artefact(filter, artefacts)
+filter_artefact(filter, artefacts = NULL)
 }
 \arguments{
 \item{filter}{vector of strings that contains artefact filter information.}
 
-\item{artefacts}{vector of characters that correspond to feature/artefact filters to be filtered.}
+\item{artefacts}{vector of characters that correspond to feature/artefact filters to be filtered, default: NULL - Filter all.}
 }
 \value{
 vector of logical.
@@ -20,6 +20,8 @@ Removes sites that sites that have been marked by feature/artefact filter.
 \examples{
 data(rdd)
 # remove sites that are marked by artefact filter "D"
-filtered <- filter_by(rdd, filter_artefact(filter, c("D")))
-str(filtered)
+dim(rdd)
+dim(dplyr::filter(rdd, filter_artefact(filter, c("D"))))
+# remove all sites that are marked by some artefact filter
+dim(dplyr::filter(rdd, filter_artefact(filter)))
 }

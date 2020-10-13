@@ -45,7 +45,7 @@ unique(Zhou2018$meta_cond)
 When manipulating a multi `results` object created by `read_results()`, it is crucial to distinguish the following files in an analysis pipeline:
 
 * `results %>% ... other functions()`
-* `results %>% dplyr:group_by(results, meta_condition) %>% ... other functions()`
+* `results %>% dplyr:group_by(results, meta_cond) %>% ... other functions()`
 
 The first statement will apply any subsequent functions to ALL sites regardless of the meta condition while the
 last statement will apply to sites of EACH meta condition!
@@ -74,7 +74,7 @@ Filter by coverage regardless of the meta condition.
 
 ```{r}
 filtered_all <- Zhou2018 %>% 
-  dplyr::filter(All(cov >= 20000)) %>% 
+  dplyr::filter(All(cov$cond1 >= 20000) & All(cov$cond2 >= 20000)) %>% 
   dplyr::group_by(contig, meta_cond) %>% 
   dplyr::count() # count in a group
 filtered_all
@@ -85,96 +85,107 @@ Filter by coverage of each meta condition.
 ```{r}
 filtered_meta <- Zhou2018 %>% 
   dplyr::group_by(meta_cond) %>%
-  dplyr::filter(All(cov >= 20000)) %>% 
+  dplyr::filter(All(cov$cond1 >= 20000) & All(cov$cond2 >= 20000)) %>% 
   dplyr::group_by(contig, meta_cond) %>% 
   dplyr::count() # count in a group
 filtered_meta
 ```
 
 # Plot
-
-First, we add a description `cond_desc` of the conditions to the result object. The data sets of `Zhou2018` have been layout out in such a way that condition 1 and 2 correspond to carbodiimide (+CMC) treatment and control (-CMC), respectively.
+First, we add a description `data_desc` of the conditions to the result object. 
+The data sets of `Zhou2018` have been layout out in such a way that condition 1 
+and 2 correspond to carbodiimide (+CMC) treatment and control (-CMC), respectively.
 
 ```{r}
 data(Zhou2018)
-result <- Zhou2018 %>% 
-  dplyr::filter(strand == "+")
 
-# create nice label
-#result$cond_desc <- ""
-#result$cond_desc[result$cond == 1] <- "+CMC"
-#result$cond_desc[result$cond == 2] <- "-CMC"
+result <- gather_repl(Zhou2018$id, Zhou2018$arrest_rate) %>%
+  dplyr::inner_join(Zhou2018 %>% dplyr::select(id, pvalue, meta_cond), by = "id") %>%
+  dplyr::mutate(
+    data_desc = dplyr::case_when(
+      cond == "cond1" ~ "+CMC",
+      cond == "cond2" ~ "-CMC",
+    )
+  )
 
-#result$group <- do.call(interaction, result[c("cond", "repl")])
+# grouping enables nice legends in plot
+group <- do.call(interaction, result[c("cond", "repl")])
+result$group <- group
 # relate group={cond(ition), repl(icat)}, and nice label
-#meta_desc <- dplyr::distinct(result, cond, repl, group, cond_desc)
-# map group values to nice labels (cond_desc)
-#limits <- as.vector(meta_desc[["group"]])
-#labels <- meta_desc[["cond_desc"]]
+meta_desc <- dplyr::distinct(result, cond, repl, group, data_desc)
+# map group values to nice labels (data_desc)
+limits <- as.vector(meta_desc[["group"]])
+labels <- meta_desc[["data_desc"]]
 ```
 
-Next, we define a ggplot2 object that allows to merge legend for different scales. Check [combine legends]{https://ozh2014.wordpress.com/2017/06/26/combine-related-legends-into-one-in-ggplot2/} for details.
-In brief, we use `colour` to represent cond(ition) and `linetype` to represent repl(icate) an relate their possible combinations to descriptive `labels`.
+Next, we define a ggplot2 object that allows to merge legend for different scales. 
+Check [combine legends]{https://ozh2014.wordpress.com/2017/06/26/combine-related-legends-into-one-in-ggplot2/} for details.
+In brief, we use `colour` to represent cond(ition) and `linetype` to represent 
+repl(icate) an relate their possible combinations to descriptive `labels`.
 
 ```{r}
-#colour_scale <- ggplot2::scale_colour_manual(
-#    name = "Treatment",
-#    labels = labels,
-#    limits = limits,
-#    values = factor(meta_desc[["cond"]]) %>% as.integer()
-#  )
-#linetype_scale <- ggplot2::scale_linetype_manual(
-#    name = "Treatment",
-#    labels = labels,
-#    limits = limits,
-#    values = factor(meta_desc[["repl"]]) %>% as.integer()
-#  )
+colour_scale <- ggplot2::scale_colour_manual(
+  name = "Treatment",
+  labels = labels,
+  limits = limits,
+  values = factor(meta_desc[["cond"]]) %>% as.integer()
+)
+linetype_scale <- ggplot2::scale_linetype_manual(
+  name = "Treatment",
+  labels = labels,
+  limits = limits,
+  values = factor(meta_desc[["repl"]]) %>% as.integer()
+)
 ```
 
 ## Pvalue distribution 
-
 Plot of the empirical cumulative distributions of pvalues for all meta conditions.
 
 ```{r}
-#result %>% 
-#  dplyr::distinct(contig, start, end, strand, meta_cond, pvalue) %>%
-#  ggplot2::ggplot(ggplot2::aes(x = pvalue, colour = meta_cond)) +
-#  ggplot2::labs(colour = "Meta condition") +
-#  ggplot2::ylab("Density") +
-#  ggplot2::stat_ecdf(geom = "step") +
-#  ggplot2::xlab("pvalue") +
-#  ggplot2::theme(legend.position = "bottom") 
+result %>% 
+  ggplot2::ggplot(ggplot2::aes(x = pvalue, colour = meta_cond)) +
+  ggplot2::labs(colour = "Meta condition") +
+  ggplot2::ylab("Density") +
+  ggplot2::stat_ecdf(geom = "step") +
+  ggplot2::xlab("pvalue") +
+  ggplot2::theme(legend.position = "bottom") 
 ```
 
-## Empirical cumulative arrest rate distribution
 
+## Empirical cumulative arrest rate distribution
 ```{r}
-#result %>% 
-#  ggplot2::ggplot(ggplot2::aes(x = arrest_rate, colour = group, linetype = group)) +
-#  ggplot2::stat_ecdf(geom = "step") +
-#  colour_scale +
-#  linetype_scale +
-#  ggplot2::xlab("Density") +
-#  ggplot2::xlab("Arrest rate") +
-#  ggplot2::theme(legend.position = "bottom") + 
-#  ggplot2::facet_grid(meta_cond ~ .)
+result %>% 
+  ggplot2::ggplot(ggplot2::aes(x = value, colour = group, linetype = group)) +
+  ggplot2::stat_ecdf(geom = "step") +
+  colour_scale +
+  linetype_scale +
+  ggplot2::xlab("Density") +
+  ggplot2::xlab("Arrest rate") +
+  ggplot2::theme(legend.position = "bottom") + 
+  ggplot2::facet_grid(meta_cond ~ .)
 ```
 
 ## Compare coverage
-
 ```{r}
-#result %>% 
-#  ggplot2::ggplot(ggplot2::aes(x = cov, colour = group, linetype = group)) +
-#  ggplot2::stat_ecdf(geom = "step") +
-#  colour_scale +
-#  linetype_scale +
-#  ggplot2::scale_x_log10(
-#    breaks = scales::trans_breaks("log10", function(x) 10^x),
-#    labels = scales::trans_format("log10", scales::math_format(10^.x))
-#  ) + 
-#  ggplot2::xlab("Read Coverage") +
-#  ggplot2::theme(legend.position = "bottom") + 
-#  ggplot2::facet_grid(meta_cond ~ .)
+gather_repl(Zhou2018$id, Zhou2018$cov) %>%
+  dplyr::inner_join(dplyr::select(Zhou2018, id, meta_cond), by = "id") %>%
+  dplyr::mutate(
+    data_desc = dplyr::case_when(
+      cond == "cond1" ~ "+CMC",
+      cond == "cond2" ~ "-CMC",
+    )
+  ) %>%
+  ggplot2::ggplot(ggplot2::aes(x = value, colour = group, linetype = group)) +
+  ggplot2::stat_ecdf(geom = "step") +
+  colour_scale +
+  linetype_scale +
+  ggplot2::scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) + 
+  ggplot2::xlab("Read Coverage") +
+  ggplot2::theme(legend.position = "bottom") + 
+  ggplot2::facet_grid(meta_cond ~ .)
 ```
 
 
@@ -183,35 +194,34 @@ Plot of the empirical cumulative distributions of pvalues for all meta condition
 We plot the arrest rate for all three meta conditions and +CMC and -CMC treatment.
 
 ```{r}
-result %>% 
+Zhou2018 %>% 
   dplyr::filter(pvalue <= 0.00001) %>%
   dplyr::group_by(meta_cond) %>%
-  dplyr::filter_by(All(cov >= 20000)) %>%
-  dplyr::ungroup() %>%
-  dplyr::select(contig, start, end, strand, meta_cond, arrest_rate) %>%
-#  tidyr::spread(cond, arrest_rate) %>%
-#  ggplot2::ggplot(ggplot2::aes(x = arrest_rate1, y = arrest_rate2, colour = meta_cond)) +
-#    ggplot2::geom_point() + 
-#    ggplot2::ylab("arrest rate -CMC") + 
-#    ggplot2::xlab("arrest rate +CMC") + 
-#    ggplot2::facet_grid(. ~ meta_cond) +
-#    ggplot2::geom_abline(linetype = "dashed", colour = "gray") +
-#    ggplot2::labs(colour = "Meta condition") +
-#    ggplot2::theme(legend.position = "bottom")
+  dplyr::filter(All(cov$cond1 >= 20000) & All(cov$cond2 >= 20000)) %>%
+  ggplot2::ggplot(ggplot2::aes(x = arrest_rate$cond1$rep1, y = arrest_rate$cond2$rep1, colour = meta_cond)) +
+    ggplot2::geom_point() + 
+    ggplot2::ylab("arrest rate -CMC") + 
+    ggplot2::xlab("arrest rate +CMC") + 
+    ggplot2::facet_grid(. ~ meta_cond) +
+    ggplot2::geom_abline(linetype = "dashed", colour = "gray") +
+    ggplot2::labs(colour = "Meta condition") +
+    ggplot2::theme(legend.position = "bottom")
 ```
 
-We plot the arrest rate delta of +CMC and -CMC treatment for all three meta conditions and add  Pseudouridine sites (black points) from [3Dmodmap]{https://people.biochem.umass.edu/fournierlab/3dmodmap/main.php}.
+We plot the arrest rate delta of +CMC and -CMC treatment for all three meta 
+conditions and add  Pseudouridine sites (black points) from 
+[3Dmodmap]{https://people.biochem.umass.edu/fournierlab/3dmodmap/main.php}.
 
 ```{r}
 data(modmap)
 mod <- modmap %>% 
   dplyr::filter(rrna == "NR_003286_RNA18SN5", base == "PseudoU")
 
-result %>%
+Zhou2018 %>%
   dplyr::filter(contig == "NR_003286_RNA18SN5") %>%
   dplyr::filter(pvalue <= 0.00001) %>%
   dplyr::group_by(meta_cond) %>%
-  dplyr::filter(All(cov >= 20000)) %>%
+  dplyr::filter(All(cov$cond1 >= 20000) & All(cov$cond1 >= 20000)) %>%
   dplyr::mutate(arrest_rate_delta = arrest_rate$cond1$rep1 - arrest_rate$cond2$rep1) %>%
   ggplot2::ggplot(ggplot2::aes(x = end, y = arrest_rate_delta, fill = meta_cond)) +
     ggplot2::geom_bar(stat = "identity") +

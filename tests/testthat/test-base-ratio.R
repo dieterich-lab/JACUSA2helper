@@ -1,6 +1,6 @@
-context("bc_ratio")
+context("base_ratio")
 
-test_that("bc_ratio works as expected", {
+test_that("base_ratio works as expected", {
   bases <- tidyr::tribble(
     ~A, ~C, ~G, ~T,
     1,  0,  0,  0,
@@ -20,7 +20,7 @@ test_that("bc_ratio works as expected", {
   )
 
     expect_equal(
-    bc_ratio(bases),
+    base_ratio(bases),
     expected  
   )
 })

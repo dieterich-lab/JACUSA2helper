@@ -7,7 +7,7 @@
 #'
 #' @param ref vector of reference bases.
 #' @param bases matrix of observed base call counts.
-#' @param bc vector strings that represents observed base calls. Default: "bases".
+#' @param bc vector strings that represent observed base calls. Default: "bases".
 #' @return vector of base callsubstitution ratios.
 #' @examples
 #' ref <- c("A", "A", "T")

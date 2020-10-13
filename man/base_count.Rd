@@ -4,10 +4,10 @@
 \alias{base_count}
 \title{Retrieves the total number of observed unique bases.}
 \usage{
-base_count(bc, ref = NULL)
+base_count(bases, ref = NULL)
 }
 \arguments{
-\item{bc}{vector of strings with observed base calls.}
+\item{bases}{vector of base calls or tibble of base call counts.}
 
 \item{ref}{vector of strings with reference bases}
 }

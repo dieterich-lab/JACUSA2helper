@@ -3,36 +3,22 @@
 #' Removes sites that sites that have been marked by feature/artefact filter. 
 #' 
 #' @param filter vector of strings that contains artefact filter information. 
-#' @param artefacts vector of characters that correspond to feature/artefact filters to be filtered.
+#' @param artefacts vector of characters that correspond to feature/artefact filters to be filtered, default: NULL - Filter all.
 #' @return vector of logical.
 #' @examples
 #' data(rdd)
 #' # remove sites that are marked by artefact filter "D"
-#' filtered <- filter_by(rdd, filter_artefact(filter, c("D")))
-#' str(filtered)
+#' dim(rdd)
+#' dim(dplyr::filter(rdd, filter_artefact(filter, c("D"))))
+#' # remove all sites that are marked by some artefact filter
+#' dim(dplyr::filter(rdd, filter_artefact(filter)))
 #' @export
-filter_artefact <- function(filter, artefacts) {
-  if (nchar(artefacts) == 0) {
-    stop("artefacts cannot be 0")
+filter_artefact <- function(filter, artefacts = NULL) {
+  if (is.null(artefacts)) {
+    artefacts <- c(paste0('\\', .EMPTY))
   }
   
   grepl(paste0(artefacts, collapse = "|"), filter)
-}
-
-#' Filters all sites with an artefact
-#'
-#' Removes sites have been marked by any feature/artefact filter. 
-#' 
-#' @param filter vector of strings that contains artefact filter information. 
-#' @return vector of logical.
-#' @examples
-#' data(rdd)
-#' # remove sites that are marked by artefact filter "D"
-#' filtered <- filter_by(rdd, filter_all_artefacts(filter))
-#' str(filtered)
-#' @export
-filter_all_artefacts <- function(filter) {
-  filter_artefact(filter, c(paste0('\\', .EMPTY)))
 }
 
 #' Merge tibbles with columns holding logical values with AND to a vector.
@@ -42,7 +28,7 @@ filter_all_artefacts <- function(filter) {
 #' @return logical tibble with columns merged with AND.
 #' @export
 All <- function(d) {
-  Reduce("&", tidyr::as_tibble(d))
+  Reduce("&", tidyr::as_tibble(d)) %>%tidyr::as_tibble()
 }
 
 
@@ -53,5 +39,5 @@ All <- function(d) {
 #' @return logical tibble with columns merged with OR.
 #' @export
 Any <- function(d) {
-  Reduce("|", tidyr::as_tibble(d))
+  Reduce("|", tidyr::as_tibble(d)) %>% tidyr::as_tibble()
 }

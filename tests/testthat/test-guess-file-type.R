@@ -50,8 +50,8 @@ create_condition <-function(condition, replicates, arrest, through) {
 test_that(".guess_file_type recognizes rt-arrest", {
   line <- paste(
     TEST_HEADER_COORD,
-    create_condition(1, 3, .ARREST_DATA_COL, .THROUGH_DATA_COL),
-    create_condition(2, 3, .ARREST_DATA_COL, .THROUGH_DATA_COL),
+    create_condition(1, 3, .ARREST_COL, .THROUGH_COL),
+    create_condition(2, 3, .ARREST_COL, .THROUGH_COL),
     TEST_HEADER_INFO,
     sep = "\t", collapse = ""
   )
@@ -62,8 +62,8 @@ test_that(".guess_file_type recognizes lrt-arrest", {
   line <- paste(
     TEST_HEADER_COORD,
     .LRT_ARREST_POS_COL,
-    create_condition(1, 3, .ARREST_DATA_COL, .THROUGH_DATA_COL),
-    create_condition(2, 3, .ARREST_DATA_COL, .THROUGH_DATA_COL),
+    create_condition(1, 3, .ARREST_COL, .THROUGH_COL),
+    create_condition(2, 3, .ARREST_COL, .THROUGH_COL),
     TEST_HEADER_INFO,
     sep = "\t", collapse = ""
   )
