@@ -34,7 +34,7 @@
 .REF_BASE_COL <- "ref"
 
 # JACUSA2 CLI option -B
-.SUB_TAG_COL <- "sub_tag"
+.SUB_TAG_COL <- "tag"
 
 .ARREST_RATE_COL <- "arrest_rate"
 .META_COND_COL <- "meta_cond"
@@ -78,4 +78,40 @@ gather_repl <- function(id, x, meta_cond = NULL) {
     }
   }
   dplyr::bind_rows(r)
+}
+
+
+#' Expand tagged reads
+#' 
+#' TODO
+#' 
+#' @param result object created by \code{read_result()} or \code{read_results()}.
+#' @param cores Integer defines how many cores to use.
+#' @param result object tagged and not tagged structured base columns.
+#' @export
+expand_tag <- function(result, cores = 1) {
+  # extract data from tagged and not tagged reads
+  total <- result %>% dplyr::filter(tag == .EMPTY)
+  # set dummy column - not all sites have tagged reads
+  total$tagged_bases <- lapply_repl(total$bases, function(x) { x - x})
+  
+  # extract data from tagged
+  tagged <- result %>% dplyr::filter(tag != .EMPTY)
+  matching <- match(tagged$coord, total$coord)
+  
+  if (any(! is.na(matching))) {
+    tagged_bases <- tagged$bases[which(! is.na(matching)), ]
+    total$tagged_bases[matching[! is.na(matching)], ] <- tagged_bases
+  }
+  # untagged = total - tagged
+  total$not_tagged_bases <- mapply_repl(
+    function(total, tagged) {
+      total - tagged
+    }, 
+    total$bases,
+    total$tagged_bases,
+    cores = cores
+  )
+  
+  total
 }

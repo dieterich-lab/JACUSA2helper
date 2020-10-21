@@ -86,7 +86,7 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
     attr(result, .ATTR_COND_DESC) <- cond_desc
   }
   attr(result, .ATTR_HEADER) <- jacusa_header
-  result <- sticky::sticky(result)
+  #result <- sticky::sticky(result)
   id <- info <- filter <- ref <- NULL
   result <- result %>%
     dplyr::select(id, dplyr::everything()) %>%
@@ -96,9 +96,15 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
     result
 }
 
-
-# create contig:start|start-end:strand
-.coord <- function(data) {
+#' Merged coordinate information
+#'
+#' Merge contig:start|start-end:strand from JACUSA2 result object
+#'
+#' @param result object created by \code{read_result()} or \code{read_results()}.
+#' @return merged coorindates information
+#' 
+#' @export
+coord <- function(data) {
   paste0(
     data$contig,
     ":", ifelse(data$end - data$start == 1, data$start, paste0(data$start, "-", data$end)),
@@ -108,7 +114,7 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
 
 # FIXME remove |read_sub
 .id <- function(data) {
-  coord <- .coord(data)
+  coord <- coord(data)
   regex <- paste0("(", .SUB_TAG_COL, "|read_sub)=([^;]+)")
   if (any(stringr::str_detect(data[[.INFO_COL]], regex))) {
     sub_tag <- stringr::str_match(data[[.INFO_COL]], regex)[, 3]
@@ -203,6 +209,12 @@ base_call <-function(bases) {
   x <- strsplit(info[[.INFO_COL]], "=") %>% do.call(rbind, .) %>% as.data.frame() %>% tidyr::as_tibble()
   colnames(x) <- c("key", "value")
   
+  # FIXME remove
+  i <- x$key == "read_sub"
+  if (any(i)) {
+    x[i, "key"] <- .SUB_TAG_COL
+  }
+
   info <- info[, "id"]
   info <- dplyr::bind_cols(info, x) %>% tidyr::pivot_wider(names_from = key, values_from=value)
   

@@ -161,7 +161,7 @@ rna_bases <- Reduce("+", filtered$bases$cond2)
 
 # we don't need lapply_repl, because we don't operate on all replicate from all
 # conditions - only condition 2 / RNA
-ref2rna <- base_sub(filtered$ref, rna_bases)
+ref2rna <- base_sub(rna_bases, filtered$ref)
 table(ref2rna)
 
 ```
@@ -173,7 +173,7 @@ TODO Robust requires observations (here base calls) to be present in all replica
 
 ```{r}
 cond1_ref <- base_call(filtered$bases$cond1$rep1)
-dna2rna <- base_sub(filtered$ref, rna_bases)
+dna2rna <- base_sub(rna_bases, filtered$ref)
 table(dna2rna)
 ```
 

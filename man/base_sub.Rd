@@ -4,12 +4,12 @@
 \alias{base_sub}
 \title{Calculates reference base to base call (base substitution).}
 \usage{
-base_sub(ref, bases)
+base_sub(bases, ref)
 }
 \arguments{
-\item{ref}{vector of reference bases.}
-
 \item{bases}{vector of base calls or tibble of base call counts.}
+
+\item{ref}{vector of reference bases.}
 }
 \value{
 vector of formatted base call substitutions.
@@ -19,7 +19,7 @@ Calculates and formats base changes for \code{ref} and \code{bc}.
 All elements in \code{ref} must be all length 1.
 }
 \examples{
-ref <- c("A", "A", "C", "A")
 bases <- c("AG", "G", "C", "G")
+ref <- c("A", "A", "C", "A")
 base_sub(ref, bases)
 }

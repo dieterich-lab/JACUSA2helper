@@ -7,11 +7,11 @@
 #' @param bases vector of base calls or tibble of base call counts.
 #' @return vector of formatted base call substitutions.
 #' @examples
-#' ref <- c("A", "A", "C", "A")
 #' bases <- c("AG", "G", "C", "G")
+#' ref <- c("A", "A", "C", "A")
 #' base_sub(ref, bases)
 #' @export
-base_sub <- function(ref, bases) {
+base_sub <- function(bases, ref) {
   if (all(nchar(ref) != 1)) {
     stop("All ref elements must be nchar() == 1")
   }

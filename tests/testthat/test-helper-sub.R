@@ -51,10 +51,10 @@ test_that("mask_sub work as expected", {
   
 })
 
-# clean_read_sub
-test_that("clean_read_sub work as expected", {
+# clean_tag
+test_that("clean_tag work as expected", {
   subs <- c("A2G", "*")
   expected <- c("A->G", "*")
   
-  expect_equal(clean_read_sub(subs), expected)
+  expect_equal(clean_tag(subs), expected)
 })

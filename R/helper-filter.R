@@ -28,7 +28,7 @@ filter_artefact <- function(filter, artefacts = NULL) {
 #' @return logical tibble with columns merged with AND.
 #' @export
 All <- function(d) {
-  Reduce("&", tidyr::as_tibble(d)) %>%tidyr::as_tibble()
+  Reduce("&", tidyr::as_tibble(d)) %>% tidyr::as_tibble()
 }
 
 

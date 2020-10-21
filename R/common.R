@@ -70,8 +70,6 @@
 #'	 \item{mapply_repl}{mapply wrapper - applies function to all replicates.}
 #' }
 #'
-# # TODO
-# read_sub
 #'
 #' @docType package
 #' @name JACUSA2helper
