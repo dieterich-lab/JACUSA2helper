@@ -90,7 +90,9 @@ gather_repl <- function(id, x, meta_cond = NULL) {
 #' @param result object tagged and not tagged structured base columns.
 #' @export
 expand_tag <- function(result, cores = 1) {
+  result$coord <- coord(result)
   # extract data from tagged and not tagged reads
+  tag <- NULL
   total <- result %>% dplyr::filter(tag == .EMPTY)
   # set dummy column - not all sites have tagged reads
   total$tagged_bases <- lapply_repl(total$bases, function(x) { x - x})

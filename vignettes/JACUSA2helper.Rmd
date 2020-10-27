@@ -150,11 +150,13 @@ In the following, we will:
   reference) per replicate.
 
 ```{r}
-filtered <- rdd %>% 
-    dplyr::filter(score >= 2) %>%
-    dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 > 10)) %>%
-    dplyr::filter(base_count(bc) <= 2) %>%
-    dplyr::filter(robust(bases))
+filtered <- rdd
+filtered[["bc"]] <- lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ) %>% Reduce("+", .) %>% base_count()
+filtered %>%
+  dplyr::filter(score >= 2) %>%
+  dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 > 10)) %>%
+  dplyr::filter(bc <= 2) %>%
+  dplyr::filter(robust(bases))
 
 # sum base call counts of condition / RNA replicates
 rna_bases <- Reduce("+", filtered$bases$cond2)
@@ -382,7 +384,72 @@ In the following the core functions of JACUSA2helper are presented. Check the re
 * `filter_artefact()`
 * `All(), Any()`
 
-# Variant tagging (Base Stratification)
+# Variant tagging
+Variant tagging allows to group data based on base substitutions on reads, called tags.
+Running JACUSA2 with `-B "A2G"` will tag all reads that have a "A->G" base substitution.
+Where available, each observations for each site (=contig, start, stop, strand) from tagged and all reads will be provided and
+distinguished by "tag=A2G" or "tag=*" in the info column, respectively.
+Use `result$tag <- clean_tag(result$tag)` to convert base substitutions such as "A2G" to "A->G".
+
+```{r}
+# load data
+data(APOBEC1)
+result <- APOBEC1
+barplot(table(result$tag), ylab="# of sites", main="Distribution of tagged sites")
+```
+We calculate the total base call count with `lapply_cond` and `Reduce("+")`.
+
+```{r}
+# sum base call counts of conditions and replicates
+result$total_bases <- lapply_cond(
+  result$bases, function(bases) { Reduce("+", bases) } 
+) %>% Reduce("+", .)
+```
+
+
+```{r}
+# mark "valid" sites 
+result <- result %>%
+  dplyr::mutate(
+    keep = (
+      # restrict to total reads
+      tag == "*" & 
+      # require less than 2 different base calls
+      base_count(total_bases, ref) <= 2 & 
+      # require 10 reads for each replicate of each condition
+      All(cov$cond1 >= 10) & All(cov$cond2 >= 10) &
+      score >= 2 &
+      robust(bases)
+    )
+  )
+# raw data
+# add structured columns: tagged_bases and not_tagged_bases
+expanded <- expand_tag(result)
+filtered <- dplyr::filter(expanded, keep == TRUE)
+```
+
+```{r}
+# plot
+count <- c(nrow(result), nrow(expanded), nrow(filtered))
+b <- barplot(count, names.arg = c("raw", "expaded", "filtered"), ylim=c(0, max(count) + max(count) * 15 / 100))
+text(b, count + count * 10 / 100, count)
+```
+
+```{r} 
+# add observed non reference base substitution, e.g.: A->G
+filtered[["base_sub"]] <- base_sub(filtered$total_bases, filtered$ref)
+# ratio of non reference base calls
+filtered[["non_ref_ratio"]] <- lapply_repl(filtered$bases, function(cond) non_ref_ratio(cond, filtered$ref))
+
+# tag specific base substitution for each condition
+filtered[["tagged_base_sub"]] <- lapply_cond(filtered$tagged_bases, function(bases) { Reduce("+", bases) %>% base_sub(filtered$ref)} )
+filtered[["tagged_non_ref_ratio"]] <- lapply_repl(filtered$tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
+
+filtered[["not_tagged_base_sub"]] <- lapply_cond(filtered$not_tagged_bases, function(bases) { Reduce("+", bases) %>% base_sub(filtered$ref)} )
+filtered[["not_tagged_non_ref_ratio"]] <- lapply_repl(filtered$not_tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
+```
+
+
 <!--- # Experimental features
 * *lrt-arrest*
 --->

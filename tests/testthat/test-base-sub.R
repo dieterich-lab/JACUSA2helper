@@ -8,7 +8,7 @@ test_that("base_sub works as expected", {
 
 
   expect_equal(
-    base_sub(ref, bc),
+    base_sub(bc, ref),
     expected
   )
 })

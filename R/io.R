@@ -46,10 +46,10 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
       # guess number of conditions  
       guessed_cond_count <- .guess_cond_count(type, header_names)
       if (cond_count > 0) {
-        if (length(guessed_cond_count) != cond_count) {
-          stop("Length of description", 
-               length(cond_desc), 
-               " and conditions(", cond_count, ") don't match.")
+        if (guessed_cond_count != cond_count) {
+          stop("Length of description(", 
+               cond_count, 
+               ") and conditions(", guessed_cond_count, ") don't match.")
         }
       }
       cond_count <- guessed_cond_count
@@ -78,6 +78,12 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
                             header = FALSE, 
                             showProgress = progress)  
   colnames(data) <- header_names
+  # convert to numeric
+  i <- data[, 5] == .EMPTY
+  if (any(i)) {
+    data[i, 5] <- NA
+    data[, 5] <- as.numeric(data[, 5])
+  }
   
   # create result depending on determined method type 
   result <- .create_result(type, cond_count, data, unpack, cores)
@@ -104,11 +110,11 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
 #' @return merged coorindates information
 #' 
 #' @export
-coord <- function(data) {
+coord <- function(result) {
   paste0(
-    data$contig,
-    ":", ifelse(data$end - data$start == 1, data$start, paste0(data$start, "-", data$end)),
-    ":", data$strand
+    result$contig,
+    ":", ifelse(result$end - result$start == 1, result$start, paste0(result$start, "-", result$end)),
+    ":", result$strand
   )
 }
 
@@ -118,10 +124,9 @@ coord <- function(data) {
   regex <- paste0("(", .SUB_TAG_COL, "|read_sub)=([^;]+)")
   if (any(stringr::str_detect(data[[.INFO_COL]], regex))) {
     sub_tag <- stringr::str_match(data[[.INFO_COL]], regex)[, 3]
-    sub_tag <- clean_read_sub(sub_tag)
+    sub_tag <- clean_tag(sub_tag)
     return(paste0(coord, ":", sub_tag))
   }
-  
   coord
 }
 
@@ -216,7 +221,9 @@ base_call <-function(bases) {
   }
 
   info <- info[, "id"]
-  info <- dplyr::bind_cols(info, x) %>% tidyr::pivot_wider(names_from = key, values_from=value)
+  info <- dplyr::bind_cols(info, x) %>% 
+    dplyr::filter(key != .EMPTY) %>%
+    tidyr::pivot_wider(names_from = key, values_from=value)
   
   result <- dplyr::inner_join(result, info, by = "id")
   

@@ -4,6 +4,9 @@
 \name{JACUSA2helper}
 \alias{JACUSA2helper}
 \title{JACUSA2helper: A package for post-processing JACUSA2 result files.}
+\description{
+TODO
+}
 \section{Description}{
 
 A package that provides functions to post-process result files of JACUSA2.

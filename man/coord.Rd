@@ -4,7 +4,7 @@
 \alias{coord}
 \title{Merged coordinate information}
 \usage{
-coord(data)
+coord(result)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}

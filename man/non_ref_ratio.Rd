@@ -4,12 +4,12 @@
 \alias{non_ref_ratio}
 \title{Calculate non reference ratio from base counts and reference base.}
 \usage{
-non_ref_ratio(ref, bases)
+non_ref_ratio(bases, ref)
 }
 \arguments{
-\item{ref}{string vector of reference bases.}
-
 \item{bases}{nx4 matrix or data frame of base call counts.}
+
+\item{ref}{string vector of reference bases.}
 }
 \value{
 numeric vector of non reference substitution ratios for \code{bases}.
@@ -25,5 +25,5 @@ bases <- tidyr::tribble(
    0,  1,  1,  1,
    1,  1,  1,  1
 )
-non_ref_ratio(ref, bases)
+non_ref_ratio(bases, ref)
 }

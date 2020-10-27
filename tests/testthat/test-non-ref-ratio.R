@@ -20,7 +20,7 @@ test_that("non_ref_ratio works as expected", {
   )
 
   expect_equal(
-    non_ref_ratio(ref, bases),
+    non_ref_ratio(bases, ref),
     expected  
   )
 })

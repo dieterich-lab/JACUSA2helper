@@ -55,7 +55,7 @@ merge_sub <- function(subs) {
   }
   bc <- paste0(sort(bc), collapse = "")
 
-  base_sub(ref, bc)
+  base_sub(bc, ref)
 }
 
 #' Mask a set of base substitutions.

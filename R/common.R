@@ -1,5 +1,7 @@
 #' JACUSA2helper: A package for post-processing JACUSA2 result files.
 #'
+#' TODO
+#'
 #' @section Description:
 #' A package that provides functions to post-process result files of JACUSA2.
 #' 
@@ -69,7 +71,6 @@
 #'	 \item{lapply_repl}{lapply wrapper - applies function to all replicates.}
 #'	 \item{mapply_repl}{mapply wrapper - applies function to all replicates.}
 #' }
-#'
 #'
 #' @docType package
 #' @name JACUSA2helper
