@@ -32,6 +32,17 @@ All <- function(d) {
 }
 
 
+#' Merge tibbles with columns holding the sum of numeric values of a vector.
+#' 
+#' Each column holding values of numbers will be summed row-wise.
+#' @param d tibble with numeric values
+#' @return numeric tibble with summed columns.
+#' @export
+Allnum <- function(d) {
+  Reduce("+", tidyr::as_tibble(d)) %>% tidyr::as_tibble()
+}
+
+
 #' Merge tibbles with columns holding logical values with OR to a vector.
 #' 
 #' Each column holding values of logicals will be merged row-wise with OR.
