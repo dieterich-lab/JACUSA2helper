@@ -32,6 +32,10 @@
 sub_ratio <- function(ref, bases, bc = NULL) {
   colnames(bases) <- .BASES
   
+  if (length(ref) != nrow(bases) | ! is.null(bc) & length(bc) != nrow(bases)) {
+    stop("Wrong dim for ref, bases, and/or bc - length(ref) != nrow(bases) | length(ref) != nrow(bc)")
+  }
+  
   bc <- bc
   if (is.null(bc)) {
     bc <- apply(bases > 0, 1, function(m) { 
@@ -58,9 +62,10 @@ sub_ratio <- function(ref, bases, bc = NULL) {
   # cols(match(variant_bc, BASES))
   # simultaneously in a matrix
   i <- cbind(1:length(variant_bc), match(variant_bc, .BASES))
+  browser()
   # ratio := #variant BC / sum(BC)
   sub_ratio <- as.matrix(bases)[i] / rowSums(bases)
-  # provide nice defaut value if ratio not defined
+  # provide nice default value if ratio not defined
   sub_ratio[is.na(sub_ratio) | ref == variant_bc] <- 0.0
   
   sub_ratio
