@@ -3,7 +3,7 @@
 #' Calculates base substitution ratio (e.g.: editing frequency) for \code{ref} and base counts stored
 #' in nx4 matrix \code{bases}.
 #' \code{ref} must have only one reference base. A->G is okay, but AG->G is NOT allowed!
-#' If \code{bc} is not provided, only one non-reference base in \code{bases} is allowed!
+#' If \code{bc} is not provided, count the substitution ratio of the largest non-reference base
 #'
 #' @param ref vector of reference bases.
 #' @param bases matrix of observed base call counts.
@@ -34,8 +34,9 @@ sub_ratio <- function(ref, bases, bc = NULL) {
   
   bc <- bc
   if (is.null(bc)) {
-    bc <- apply(bases > 0, 1, function(m) { 
-      return(paste0(.BASES[m], collapse = "")) 
+    d <- t(apply(bases, 1, sort.int, decreasing=TRUE, method = "quick"))
+    bc <- apply(bases==d[,2], 1, function(m) { 
+      return(paste0(.BASES[m][1], collapse = "")) 
     })
   }
   
