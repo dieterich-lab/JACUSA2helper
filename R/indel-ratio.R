@@ -6,7 +6,7 @@
 #' @export
 extract_info <- function(s,f){ 
 f = match.arg(f, c("del1", "del2", "ins1", "ins2"))
-d = str_extract(s, paste0(f,'\\d+=[\\d\\,]+'))
+d = stringr::str_extract(s, paste0(f,'\\d+=[\\d\\,]+'))
 d[!is.na(d)] = .eend(d[!is.na(d)], 7)
 d[is.na(d)]  = '0,0'
 .sp_mat(d)
