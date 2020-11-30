@@ -261,7 +261,7 @@ base_call <-function(bases) {
     mc.cores = min(cols, cores), mc.preschedule = FALSE
   )
 
-  df <- dplyr::select(df, !cols) %>% tidyr::as_tibble()
+  df <- dplyr::select(df, -dplyr::one_of(cols)) %>% tidyr::as_tibble()
 
   for (prefix in prefixes) {
     i <- matches$prefix == prefix
