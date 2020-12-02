@@ -14,7 +14,7 @@
 read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, cores = 1) {
   # pre process file
   # parse comments ^(#|##) to determine result/method type and number of conditions
-  con <- file(file, "r")
+  con <- ifelse(grepl('\\.gz$', file), gzfile(file, "r"), file(file, "r"))
   cond_count <- 0
   if (length(cond_desc) > 0) {
     cond_count <- length(cond_desc)
