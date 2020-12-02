@@ -35,7 +35,7 @@ sub_ratio <- function(ref, bases, bc = NULL) {
     stop("Wrong dim for ref, bases, and/or bc - length(ref) != nrow(bases) | length(ref) != nrow(bc)")
   }
   
-  tmp <- .helper(bases, bc)
+  tmp <- .helper(ref, bases, bc)
   bc <- tmp$bc
   variant_bc <- tmp$variant_bc
   
@@ -84,7 +84,7 @@ sub_ratio <- function(ref, bases, bc = NULL) {
 #' @export
 sub_counts <- function(ref, bases, bc = NULL) {
   colnames(bases) <- .BASES
-  tmp <- .helper(bases, bc)
+  tmp <- .helper(ref, bases, bc)
   bc <- tmp$bc
   variant_bc <- tmp$variant_bc
 
@@ -97,7 +97,7 @@ sub_counts <- function(ref, bases, bc = NULL) {
   data.frame(mis=bases[i], ref=bases[j])
 }
 
-.helper <- function(bases, bc = NULL) {
+.helper <- function(ref, bases, bc = NULL) {
   bc <- bc
   if (is.null(bc)) {
     d <- t(apply(bases, 1, sort.int, decreasing=TRUE, method = "quick"))
