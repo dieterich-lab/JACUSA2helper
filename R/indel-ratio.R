@@ -1,4 +1,4 @@
-#' Extracted indel counts from the JACUSA2 info.
+#' Extract indel counts from the JACUSA2 info.
 #' 
 #' @param s character vector of the JACUSA2 info.
 #' @param f character of one of the following fields: "del1", "del2", "ins1", "ins2".
@@ -11,7 +11,7 @@ d[!is.na(d)] = .eend(d[!is.na(d)], nchar(f)+3)
 d[is.na(d)]  = '0,0'
 .sp_mat(d)
 }
-#' Extracted indel scores from the JACUSA2 info.
+#' Extract indel scores from the JACUSA2 info.
 #' 
 #' @param s character vector of the JACUSA2 info.
 #' @param f character of one of the following fields: "insertion_score", "deletion_score".
