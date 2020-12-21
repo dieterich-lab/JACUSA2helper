@@ -3,20 +3,32 @@
 \docType{data}
 \name{TEST}
 \alias{TEST}
-\title{head -n 10000 call2_APOBEC1_APOBEC1YTHmut_RC14_C2T_call2_result.out}
+\title{call2_APOBEC1_APOBEC1YTHmut_RC14_C2T_call2_result.out}
 \format{
+TODO:
+\itemize{
+  \item TODO
+}
+head -n 10000 call2_APOBEC1_APOBEC1YTHmut_RC14_C2T_call2_result.out
+
+TODO
+
 TODO:
 \itemize{
   \item TODO
 }
 }
 \usage{
+data(APOBEC1)
+
 data(TEST)
 }
 \description{
 TODO
 }
 \references{
+TODO
+
 TODO
 }
 \keyword{datasets}

@@ -294,20 +294,20 @@
 #' \itemize{
 #'   \item TODO
 #' }
-"APOBEC1"
+#"APOBEC1"
 
-#' head -n 10000 call2_APOBEC1_APOBEC1YTHmut_RC14_C2T_call2_result.out
-#' 
-#' TODO
-#'
-#' @docType data
-#' 
-#' @usage data(TEST)
-#' 
-#' @references TODO
-#' 
-#' @format TODO:
-#' \itemize{
-#'   \item TODO
-#' }
+##' head -n 10000 call2_APOBEC1_APOBEC1YTHmut_RC14_C2T_call2_result.out
+##' 
+##' TODO
+##'
+##' @docType data
+##' 
+##' @usage data(TEST)
+##' 
+##' @references TODO
+##' 
+##' @format TODO:
+##' \itemize{
+##'   \item TODO
+##' }
 "TEST"

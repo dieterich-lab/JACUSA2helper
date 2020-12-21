@@ -7,7 +7,7 @@
 read_result(file, cond_desc = c(), unpack = FALSE, progress = TRUE, cores = 1)
 }
 \arguments{
-\item{file}{String that represents the filename of the JACUSA2 output.}
+\item{file}{String that represents the file name of the JACUSA2 output.}
 
 \item{cond_desc}{Vector of strings that represent names/descriptions for conditions.}
 
