@@ -6,7 +6,7 @@ output: rmarkdown::html_vignette
 bibliography: JACUSA2helper-meta-conditions.bib
 link-citations: yes
 vignette: >
-  %\VignetteIndexEntry{JACUSA2helper-meta-conditions}
+  %\VignetteIndexEntry{JACUSA2helper meta conditions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -22,8 +22,8 @@ library(magrittr)
 set.seed(777)
 ```
 
-See `vignette("JACUSA2helper-meta-conditions")` for general description of analysis with JACUSA2helper.
-For details on JACUSA2, check the [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf).
+See `vignette("JACUSA2helper")` for general description of analysis with JACUSA2helper.
+For details on JACUSA2, check the [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf).
 
 In the following, the use of meta conditions to combine multiple pairwise comparisons will be shown.
 
@@ -119,7 +119,7 @@ labels <- meta_desc[["data_desc"]]
 ```
 
 Next, we define a ggplot2 object that allows to merge legend for different scales. 
-Check [combine legends]{https://ozh2014.wordpress.com/2017/06/26/combine-related-legends-into-one-in-ggplot2/} for details.
+Check [combine legends](https://ozh2014.wordpress.com/2017/06/26/combine-related-legends-into-one-in-ggplot2/) for details.
 In brief, we use `colour` to represent cond(ition) and `linetype` to represent 
 repl(icate) an relate their possible combinations to descriptive `labels`.
 
@@ -200,8 +200,8 @@ Zhou2018 %>%
   dplyr::filter(All(cov$cond1 >= 20000) & All(cov$cond2 >= 20000)) %>%
   ggplot2::ggplot(ggplot2::aes(x = arrest_rate$cond1$rep1, y = arrest_rate$cond2$rep1, colour = meta_cond)) +
     ggplot2::geom_point() + 
-    ggplot2::ylab("arrest rate -CMC") + 
-    ggplot2::xlab("arrest rate +CMC") + 
+    ggplot2::ylab("Arrest rate -CMC") + 
+    ggplot2::xlab("Arrest rate +CMC") + 
     ggplot2::facet_grid(. ~ meta_cond) +
     ggplot2::geom_abline(linetype = "dashed", colour = "gray") +
     ggplot2::labs(colour = "Meta condition") +
@@ -210,7 +210,7 @@ Zhou2018 %>%
 
 We plot the arrest rate delta of +CMC and -CMC treatment for all three meta 
 conditions and add  Pseudouridine sites (black points) from 
-[3Dmodmap]{https://people.biochem.umass.edu/fournierlab/3dmodmap/main.php}.
+[3Dmodmap](https://people.biochem.umass.edu/fournierlab/3dmodmap/main.php).
 
 ```{r}
 data(modmap)
@@ -227,7 +227,7 @@ Zhou2018 %>%
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::geom_point(data = mod, ggplot2::aes(x = pos, y = 0), fill = "black") +
     ggplot2::xlab("Position on RNA18SN5") +
-    ggplot2::ylab("arrest rate (+CMC - -CMC)") +
+    ggplot2::ylab("Arrest rate (+CMC - -CMC)") +
     ggplot2::theme(legend.position = "bottom") +
     ggplot2::labs(fill = "Meta condition")
 ```

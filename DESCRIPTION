@@ -1,16 +1,17 @@
 Package: JACUSA2helper
 Type: Package
 Title: Post-processing for JACUSA2 output
-Version: 1.99-6
+Version: 1.99-7
 Depends: R (>= 3.5)
-Date: 2020-10-26
+Date: 2021-05-19
 Author: Michael Piechotta
 Maintainer: <michael.piechotta@gmail.com>
 Description: This package enables post-processing of JACUSA2 output: read, filter, plot, write.
-License: MIT + file LICENSE
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 LazyData: true
+LazyDataCompression: bzip2
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
@@ -26,5 +27,5 @@ Imports:
   scales,
   sticky,
   methods, 
-  stringr 
+  stringr
 VignetteBuilder: knitr

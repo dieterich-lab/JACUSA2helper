@@ -240,7 +240,7 @@
 #'		\item name: Character string. Currently, name of used method (\emph{call-\{1,2\}}, \emph{pileup}, \emph{rt-arrest}, or \emph{lrt-arrest})
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
-#'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
+#'		\item info: Character string separated with ";" providing additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 #'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
@@ -283,7 +283,7 @@
 #' call2_APOBEC1_APOBEC1YTHmut_RC14_C2T_call2_result.out
 #' 
 #' TODO
-#'
+#' 
 #' @docType data
 #' 
 #' @usage data(APOBEC1)
@@ -295,19 +295,3 @@
 #'   \item TODO
 #' }
 #"APOBEC1"
-
-##' head -n 10000 call2_APOBEC1_APOBEC1YTHmut_RC14_C2T_call2_result.out
-##' 
-##' TODO
-##'
-##' @docType data
-##' 
-##' @usage data(TEST)
-##' 
-##' @references TODO
-##' 
-##' @format TODO:
-##' \itemize{
-##'   \item TODO
-##' }
-"TEST"

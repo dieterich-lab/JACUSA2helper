@@ -11,7 +11,7 @@ sub_ratio(ref, bases, bc = NULL)
 
 \item{bases}{matrix of observed base call counts.}
 
-\item{bc}{vector strings that represent observed base calls. Default: "bases".}
+\item{bc}{vector strings that represent observed base calls. Default: NULL.}
 }
 \value{
 vector of base call substitution ratios.
@@ -21,6 +21,8 @@ Calculates base substitution ratio (e.g.: editing frequency) for \code{ref} and 
 in nx4 matrix \code{bases}.
 \code{ref} must have only one reference base. A->G is okay, but AG->G is NOT allowed!
 If \code{bc} is not provided, count the substitution ratio of the largest non-reference base
+(@seealso \code{max_observed_bc}). Make sure that number of alleles in ref(erence) and bases
+is 2 at maximum.
 }
 \examples{
 ref <- c("A", "A", "T")
@@ -29,7 +31,7 @@ bases <- matrix(c( 1,  0, 9, 0,
                    5,  0, 5, 0,
                    0, 10, 0, 0),
                 ncol = 4, byrow = TRUE)
-# show base substiTution ratios for observed base calls
+# show base substitution ratios for observed base calls
 sub_ratio(ref, bases)
 
 # > one non-ref. base

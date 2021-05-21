@@ -5,7 +5,7 @@
 \alias{JACUSA2helper}
 \title{JACUSA2helper: A package for post-processing JACUSA2 result files.}
 \description{
-TODO
+Auxiliary R package for the assessment of JACUSA1.x and JACUSA2.x results.
 }
 \section{Description}{
 
@@ -24,7 +24,7 @@ In this method, the vector of base call is partitioned into read arrest and read
 
 When working with stranded RNA-Seq data, inverting base calls is not necessary because
 JACUSA2 will automatically invert Single End (SE) and Paired End (PE) depending on the
-provided library type option "-P" UNSTRANDED|FR_FIRSTSTRAND|RF_SECOND_STRAND".
+provided library type option "-P" UNSTRANDED|FR_FIRSTSTRAND|RF_SECONDSTRAND".
 
 The central data structure in JACUSA2helper is the JACUSA2 result object that follows the 
 tidy data approach to feature easy interaction with dplyr and ggplot2.

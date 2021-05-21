@@ -3,6 +3,7 @@ title: "JACUSA2helper"
 author: "Michael Piechotta"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+bibliography: JACUSA2helper.bib
 link-citations: yes
 vignette: >
   %\VignetteIndexEntry{JACUSA2helper}
@@ -31,7 +32,7 @@ consists of:
 
 JACUSA2helper supports the analysis of the following methods from JACUSA2: 
 *call-{1,2}*, *pileup*, *rt-arrest*, and *lrt-arrest*(experimental).
-Check the [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf) 
+Check the [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf)
 for more details.
 
 The main data structure is the result object that is implemented by following 
@@ -40,7 +41,7 @@ the tidy data approach from @Wickham2014 to feature easy interaction with
 
 In the following, we will focus on single pairwise comparisons of two conditions 
 of one output file. If you want to analyze multiple files with similar pairwise 
-comparisons, read `vignette("JACUSA2helper-meta-conditions")`. 
+comparisons, read `vignette("JACUSA2helper meta conditions")`. 
 
 ## Multi site and new features
 While previously in JACUSA*1*, a site could be uniquely identified as one line 
@@ -48,7 +49,7 @@ in the output by the coordinate columns: 'contig', 'start', 'end', and 'strand',
 JACUSA*2* features more complex data structures to store new features such as 
 arrest positions of arrest events, variant tagging, and INDEL counts. 
 Therefore, sites can now cover multiple lines of output - check Section 
-"Introduction" of [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf) 
+"Introduction" of [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf) 
 for details.
 
 ## Variant calling - Data: rdd (RNA-DNA-differences)
@@ -73,7 +74,7 @@ Use dplyr to manipulate the result object `rdd`. Check details on
 JACUSA2 features structured columns (nested tibbles) where condition and replicate 
 specific data is stored, e.g.: bases, cov, etc.
 ```{r}
-rdd[c("id", "bases", "cov")]
+str(rdd[c("id", "bases", "cov")])
 ```
 
 Check structure of column with:
@@ -82,7 +83,7 @@ names(rdd$cov)
 ```
 To access specific coverage information for condition 2 use:
 ```{r}
-rdd$cov$cond2
+str(rdd$cov$cond2)
 ```
 In summary, all structured/nested columns hold:
 * data of a condition "cond*I*" on the first level, and
@@ -90,7 +91,7 @@ In summary, all structured/nested columns hold:
 
 Coverage information for condition 2 and replicate 1 can be accessed with:
 ```{r}
-rdd$cov$cond2$rep1
+str(rdd$cov$cond2$rep1)
 ```
 
 #### Wrapper for `lapply()` and `mapply()`
@@ -191,9 +192,8 @@ tidyr::tibble(base_sub = dna2rna) %>% # ggplot requires a data frame
   ggplot2::ggplot(ggplot2::aes(x = base_sub, fill = base_sub)) +
   ggplot2::geom_bar() +
   ggplot2::xlab("Base substitution")  +
-  ggplot2::scale_fill_discrete(name = "Base substitution") +
   ggplot2::theme(
-   legend.position = "bottom", 
+   legend.position = "none", 
    axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)
   )
 ```
@@ -205,7 +205,8 @@ To compare the coverage distribution of each data sample, we create a simple plo
 ```{r}
 gather_repl(result$id, result$cov) %>%
   ggplot2::ggplot(ggplot2::aes(x = value, colour = cond, linetype = repl)) + 
-    ggplot2::stat_ecdf(geom = "step")
+    ggplot2::stat_ecdf(geom = "step") +
+    ggplot2::xlab("Coverage")
 ```
 
 
@@ -271,7 +272,7 @@ result %>%
     breaks = scales::trans_breaks("log10", function(x) 10^x),
     labels = scales::trans_format("log10", scales::math_format(10^.x))
   ) +
-  ggplot2::xlab("Read Coverage") +
+  ggplot2::xlab("Coverage") +
   ggplot2::theme(legend.position = "bottom")  
 ```
 
@@ -289,9 +290,9 @@ chemically modifying pseudouridines with carbodiimide (+CMC) and detecting
 arrest events that are induced by reverse transcription stops in high-throughput 
 sequencing under 3 different conditions: HIVRT, SIIIRTMn, and SIIIRTMg. 
 The result of JACUSA2 are available by using `data()`. 
-Read [JACUSA2 manual] for details on how data has been processed from the 
-original publication by @Zhou2018. In brief, the data has been filtered to 
-contain the following rRNAs: RNA18SN5 and RNA28SN5.
+Read [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf)
+for details on how data has been processed from the original publication by @Zhou2018. 
+In brief, the data has been filtered to contain the following rRNAs: RNA18SN5 and RNA28SN5.
 
 In the following, we will be looking at the results for `data(HIVRT)`. 
 By default JACUSA2 output from *rt-arrest* will contain the following 
@@ -319,7 +320,7 @@ ggplot2::ggplot(ggplot2::aes(x = value, colour = strand)) +
     breaks = scales::trans_breaks("log10", function(x) 10^x),
     labels = scales::trans_format("log10", scales::math_format(10^.x))
   ) +
-ggplot2::xlab("Read Coverage") +
+ggplot2::xlab("Coverage") +
 ggplot2::theme(legend.position = "bottom") + 
 ggplot2::facet_grid(contig ~ .)
 ```
@@ -391,6 +392,7 @@ Where available, each observations for each site (=contig, start, stop, strand) 
 distinguished by "tag=A2G" or "tag=*" in the info column, respectively.
 Use `result$tag <- clean_tag(result$tag)` to convert base substitutions such as "A2G" to "A->G".
 
+<!--
 #```{r}
 ## load data
 #data(APOBEC1)
@@ -448,10 +450,11 @@ Use `result$tag <- clean_tag(result$tag)` to convert base substitutions such as 
 #filtered[["not_tagged_base_sub"]] <- lapply_cond(filtered$not_tagged_bases, function(bases) { Reduce("+", bases) %>% #base_sub(filtered$ref)} )
 #filtered[["not_tagged_non_ref_ratio"]] <- lapply_repl(filtered$not_tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
 #```
+-->
 
-
-<!--- # Experimental features
+<!--
+# Experimental features
 * *lrt-arrest*
---->
+-->
 
 ## References

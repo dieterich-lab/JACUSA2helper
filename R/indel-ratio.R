@@ -6,10 +6,10 @@
 #' @export
 extract_info <- function (s, f) 
 {
-    d = stringr::str_extract(s, paste0(f, "=[\\d\\,]+"))
-    d[!is.na(d)] = .eend(d[!is.na(d)], nchar(f) + 2)
-    d[is.na(d)] = "0,0"
-    .sp_mat(d)
+  d = stringr::str_extract(s, paste0(f, "=[\\d\\,]+"))
+  d[!is.na(d)] = .eend(d[!is.na(d)], nchar(f) + 2)
+  d[is.na(d)] = "0,0"
+  .sp_mat(d)
 }
 #' Extract indel scores from the JACUSA2 info.
 #' 
@@ -18,12 +18,16 @@ extract_info <- function (s, f)
 #' @return vector of the extracted scores
 #' @export
 extract_score <- function(s,f){ 
-f = match.arg(f, c("insertion_score", "deletion_score"))
-d = stringr::str_extract(s, paste0(f,'=[\\w-\\.]+'))
-d[!is.na(d)] = .eend(d[!is.na(d)], nchar(f)+2)
-d[is.na(d)]  = '0'
-as.numeric(d)
+  f = match.arg(f, c("insertion_score", "deletion_score"))
+  d = stringr::str_extract(s, paste0(f,'=[\\w-\\.]+'))
+  d[!is.na(d)] = .eend(d[!is.na(d)], nchar(f)+2)
+  d[is.na(d)]  = '0'
+  as.numeric(d)
 }
 
-.eend <- function(s,i) substr(s,i,nchar(s))
-.sp_mat <- function(d)read.table(textConnection(d), sep=',')
+.eend <- function(s,i){
+  substr(s,i,nchar(s))
+} 
+.sp_mat <- function(d){
+  utils::read.table(textConnection(d), sep=',')
+}

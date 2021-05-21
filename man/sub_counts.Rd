@@ -11,16 +11,18 @@ sub_counts(ref, bases, bc = NULL)
 
 \item{bases}{matrix of observed base call counts.}
 
-\item{bc}{vector strings that represent observed base calls. Default: "bases".}
+\item{bc}{vector strings that represent observed base calls. Default: NULL.}
 }
 \value{
-vector of base call substitution counts
+vector of base call substitution counts.
 }
 \description{
 Calculates base substitution counts for \code{ref} and base counts stored
 in nx4 matrix \code{bases}.
 \code{ref} must have only one reference base. A->G is okay, but AG->G is NOT allowed!
-If \code{bc} is not provided, count the substitutions of the largest non-reference base
+If \code{bc} is not provided, count the substitutions of the largest non-reference base 
+(@seealso \code{max_observed_bc}). Make sure that number of alleles in ref(erence) and bases
+is 2 at maximum.
 }
 \examples{
 ref <- c("A", "A", "T")

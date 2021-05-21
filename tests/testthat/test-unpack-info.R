@@ -1,6 +1,6 @@
 context("unpack_info")
 
-test_that(".unpack_info works as expected", {
+test_that("unpack_info works as expected", {
   data <- tidyr::tribble(
     ~contig, ~start, ~end, ~strand, ~info,
      "chr1",      1,    2,     ".", "var;varx1;vary11;vary21",
@@ -21,9 +21,10 @@ test_that(".unpack_info works as expected", {
   for (col in c("varz1", "varz2")) {
     expected[[col]] <- as.character(expected[[col]])
   }
+  expected <- expected[c("contig", "start", "end", "strand", "info", "id", "var", "varx1", "vary11", "vary21", "varz1", "varz2")]
 
   expect_equal(
-    .unpack_info(data, 2, 1),
+    unpack_info(data, 2, 1),
     expected
   )
 })
