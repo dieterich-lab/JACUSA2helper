@@ -1,0 +1,71 @@
+---
+title: "JACUSA2helper Figure 1E"
+author: "Christoph Dieterich, Michael Piechotta"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+# TODO bibliography: JACUSA2helper-figure1e.bib
+link-citations: yes
+vignette: >
+  %\VignetteIndexEntry{JACUSA2helper Figure 1E}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+library(JACUSA2helper)
+library(dplyr);
+library(reshape2)
+library(ggplot2)
+
+set.seed(777)
+```
+
+```{r}
+# MazF results
+data(MazF)
+filtered <- MazF %>% 
+  dplyr::filter(pvalue <= 0.05) %>% 
+  dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 >= 10)) %>% 
+  dplyr::filter(robust(arrest))
+```
+
+
+
+```{r}
+data(ACA)
+vecACA <- ACA$motif
+names(vecACA) <- ACA$coord
+vecACA <- ifelse(vecACA == "ACA", "yes", "no")
+filtered$ACA <- vecACA[filtered$id]
+filtered <- filtered %>% 
+  dplyr::filter(ACA %in% c("yes","no"))
+```
+
+
+
+```{r}
+filtered %>%
+  ggplot2::ggplot(ggplot2::aes(x = arrest_rate$cond1$rep1, y = arrest_rate$cond2$rep1, color = ACA)) +  
+  ggplot2::geom_point() + 
+  ggplot2::geom_abline(colour = "red") +
+  ggplot2::xlab("MazF+ and FTO- read arrest") + 
+  ggplot2::ylab("MazF+ and FTO+ read arrest")
+```
+
+
+```{r}
+toplot <- melt(as.matrix(filtered$arrest_rate))
+toplot$ACA <- rep(filtered$ACA, 6)
+colnames(toplot) <- c("Id", "sample", "arrest_rate", "ACA")
+
+toplot$sample <- gsub("cond1", "MazF_mock", toplot$sample)
+toplot$sample <- gsub("cond2", "MazF_FTO", toplot$sample)
+
+ggplot2::ggplot(toplot, ggplot2::aes(x = sample, y = arrest_rate, color=ACA)) +
+  ggplot2::geom_boxplot() 
+```

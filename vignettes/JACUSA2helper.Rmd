@@ -304,17 +304,17 @@ structured/nested columns:
 * `cov` holds coverage for total base counts.
 
 ```{r}
-data(HIVRT)
+data("HIVRT_rt_arrest")
 # column names of arrest data
-names(HIVRT)
+names(HIVRT_rt_arrest)
 ```
 
 We investigate the strand specific coverage distribution of reads and discover that more reads are mapped to the "+" strand.
 The other mappings are probably artefacts. But this discussion is beyond the scope of this vignette.
 
 ```{r}
-gather_repl(HIVRT$id, HIVRT$cov) %>% # extract coverages
-dplyr::inner_join(dplyr::select(HIVRT, id, contig, strand), by = "id") %>% # add contig and strand
+gather_repl(HIVRT_rt_arrest$id, HIVRT_rt_arrest$cov) %>% # extract coverages
+dplyr::inner_join(dplyr::select(HIVRT_rt_arrest, id, contig, strand), by = "id") %>% # add contig and strand
 ggplot2::ggplot(ggplot2::aes(x = value, colour = strand)) + 
   ggplot2::geom_density() + ggplot2::scale_x_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
@@ -328,11 +328,11 @@ ggplot2::facet_grid(contig ~ .)
 We filter by pvalue, coverage, strand, and only retain robust arrest events:
 
 ```{r}
-dim(HIVRT)
-filtered <- HIVRT %>% 
+dim(HIVRT_rt_arrest)
+filtered <- HIVRT_rt_arrest %>% 
   dplyr::filter(strand == "+") %>%
-  dplyr::filter(pvalue <= 0.00001) %>% 
-  dplyr::filter(All(cov$cond1 >= 100) & All(cov$cond2 >= 100)) %>%
+  dplyr::filter(pvalue <= 0.1) %>% 
+  dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 >= 10)) %>%
   dplyr::filter(robust(arrest))
 dim(filtered)
 ```

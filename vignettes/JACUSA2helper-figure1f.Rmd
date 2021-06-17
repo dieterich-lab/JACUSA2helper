@@ -1,0 +1,119 @@
+---
+title: "JACUSA2helper Figure 1F"
+author: "Christoph Dieterich, Michael Piechotta"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+# bibliography: JACUSA2helper-dartseq.bib
+link-citations: yes
+vignette: >
+  %\VignetteIndexEntry{JACUSA2helper Figure 1F}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+library(JACUSA2helper)
+library(magrittr)
+library(dplyr);
+library(ggplot2);
+set.seed(777)
+```
+
+
+```{r}
+# MazF results
+data(MazF)
+filteredMazF <- MazF %>% 
+  dplyr::filter(pvalue <= 0.05) %>% 
+  dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 >= 10)) %>% 
+  dplyr::filter(robust(arrest))
+```
+
+```{r}
+data(ACA)
+vecACA <- ACA[, "motif"]
+names(vecACA) <- ACA$coord
+vecACA <- ifelse(vecACA == "ACA", "yes", "no")
+filteredMazF$ACA  <- vecACA[filteredMazF$id]
+filteredMazF <- filteredMazF %>% 
+  dplyr::filter(ACA %in% c("yes","no"))
+```
+
+```{r}
+data("DARTseq")
+filtered <- DARTseq
+
+filtered[["bc"]] <- lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ) %>% 
+  Reduce("+", .) %>% base_count()
+
+filtered <- filtered %>%
+  dplyr::filter(score >= 2) %>%
+  dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 >= 10)) %>%
+  dplyr::filter(bc <= 2) %>%
+  dplyr::filter(robust(bases))
+```
+
+```{r}
+# sum base call counts of condition / RNA replicates
+rna_bases <- Reduce("+", filtered$bases$cond2)
+
+# we don't need lapply_repl, because we don't operate on all replicate from all
+# conditions - only condition 2 / RNA
+ref2YTHmut <- base_sub(rna_bases, filtered$ref)
+table(ref2YTHmut)
+```
+
+```{r}
+rnaref <- Reduce("+", filtered$bases$cond1)
+ref2YTH <- base_sub(rnaref, filtered$ref)
+table(ref2YTH, ref2YTHmut)
+```
+
+```{r}
+tidyr::tibble(
+  base_sub = c(ref2YTH,ref2YTHmut), 
+  Source = c(
+    rep("YTH",length(ref2YTH)),
+    rep("YTHmut",length(ref2YTHmut)))
+  ) %>% # ggplot requires a data frame
+  ggplot2::ggplot(ggplot2::aes(x = base_sub, fill = Source)) +
+  ggplot2::geom_bar(position = "dodge") + 
+  ggplot2::xlab("Base substitution")  +
+  ggplot2::scale_fill_discrete(name = "Base substitution") +
+  ggplot2::theme(
+   legend.position = "bottom", 
+   axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)
+  )
+```
+
+#nice
+```{r}
+tempo <- lapply_cond(
+  lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ),
+  base_ratio
+)
+filtered[["YTH.t.ratio"]] <- tempo$cond1$T
+filtered[["YTHmut.t.ratio"]] <- tempo$cond2$T
+filtered[["pred"]] <- ifelse(
+  tempo$cond1$T > tempo$cond2$T, 
+  "Positives", 
+  "Negatives"
+)
+filtered$coord <- JACUSA2helper::coord(filtered)
+```
+
+```{r}
+ggplot(filtered, aes(x=YTHmut.t.ratio, y=YTH.t.ratio,color=pred)) + 
+  geom_point() + 
+  ggplot2::xlab("Mutated YTH binding domain (T/(C+T))") + 
+  ggplot2::ylab("Active YTH binding domain (T/(C+T))") + theme_classic() +
+  scale_color_manual(values=c('#999999', '#E69F00'))
+```
+
+# References
+

@@ -21,7 +21,7 @@
 #'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Currently, name of used method (\emph{call-\{1,2\}}, \emph{pileup}, \emph{rt-arrest}, or \emph{lrt-arrest})
+#'		\item name: Character string. Name of used method \emph{call-2}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
@@ -58,7 +58,7 @@
 #'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Currently, name of used method (\emph{call-\{1,2\}}, \emph{pileup}, \emph{rt-arrest}, or \emph{lrt-arrest})
+#'		\item name: Character string. Name of used method \emph{call-2}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
@@ -80,12 +80,13 @@
 #' SIIIMg). 
 #' Result are for running JACUSA2 rt-arrest on processed pairwise +CMC and -CMC(control) data in HIVRT condition are presented.
 #'
-#' Check Section "Reverse transcriptase arrest events" in https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf
+#' Check Section "Reverse transcriptase arrest events" in 
+#' https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf
 #' for details on pre-processing and mapping primary sequencing data.
 #' 
 #' @docType data
 #' 
-#' @usage data(HIVRT)
+#' @usage data(HIVRT_rt_arrest)
 #' 
 #' @references Zhou, K. I.; Clark, W. C.; Pan, D. W.; Eckwahl, M. J.; Dai, Q. & Pan, T.
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
@@ -96,7 +97,7 @@
 ##'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Currently, name of used method (\emph{call-\{1,2\}}, \emph{pileup}, \emph{rt-arrest}, or \emph{lrt-arrest})
+#'		\item name: Character string. Name of used method \emph{rt-arrest}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
@@ -114,7 +115,7 @@
 #'    \item cov_arrest: Numeric value indicating the read coverage for this site for arrest reads.
 #'    \item cov_through: Numeric value indicating the read coverage for this site for through reads.
 #' }
-"HIVRT"
+"HIVRT_rt_arrest"
 
 #' JACUSA2 output for rt-arrest on SIIIRTMg condition in Zhou et. al 2018 data
 #' 
@@ -124,12 +125,13 @@
 #' SIIIMg). 
 #' Result are for running JACUSA2 rt-arrest on processed pairwise +CMC and -CMC(control) data in SIIIRTMg condition are presented.
 #'
-#' Check Section "Reverse transcriptase arrest events" in https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf
+#' Check Section "Reverse transcriptase arrest events" in 
+#' https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf
 #' for details on pre-processing and mapping primary sequencing data.
 #' 
 #' @docType data
 #' 
-#' @usage data(SIIIRTMg)
+#' @usage data(SIIIRTMg_rt_arrest)
 #' 
 #' @references Zhou, K. I.; Clark, W. C.; Pan, D. W.; Eckwahl, M. J.; Dai, Q. & Pan, T.
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
@@ -140,7 +142,7 @@
 ##'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Currently, name of used method (\emph{call-\{1,2\}}, \emph{pileup}, \emph{rt-arrest}, or \emph{lrt-arrest})
+#'		\item name: Character string. Name of used method \emph{rt-arrest}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
@@ -158,7 +160,7 @@
 #'    \item cov_arrest: Numeric value indicating the read coverage for this site for arrest reads.
 #'    \item cov_through: Numeric value indicating the read coverage for this site for through reads.
 #' }
-"SIIIRTMg"
+"SIIIRTMg_rt_arrest"
 
 #' JACUSA2 output for rt-arrest on SIIIRTMn condition in Zhou et. al 2018 data
 #' 
@@ -168,12 +170,13 @@
 #' SIIIMg). 
 #' Result are for running JACUSA2 rt-arrest on processed pairwise +CMC and -CMC(control) data in SIIIRTMn condition are presented.
 #'
-#' Check Section "Reverse transcriptase arrest events" in https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf
+#' Check Section "Reverse transcriptase arrest events" 
+#' https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf
 #' for details on pre-processing and mapping primary sequencing data.
 #' 
 #' @docType data
 #'
-#' @usage data(SIIIRTMn)
+#' @usage data(SIIIRTMn_rt_arrest)
 #' 
 #' @references Zhou, K. I.; Clark, W. C.; Pan, D. W.; Eckwahl, M. J.; Dai, Q. & Pan, T.
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
@@ -184,7 +187,7 @@
 ##'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Currently, name of used method (\emph{call-\{1,2\}}, \emph{pileup}, \emph{rt-arrest}, or \emph{lrt-arrest})
+#'		\item name: Character string. Name of used method \emph{rt-arrest}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
@@ -202,7 +205,7 @@
 #'    \item cov_arrest: Numeric value indicating the read coverage for this site for arrest reads.
 #'    \item cov_through: Numeric value indicating the read coverage for this site for through reads.
 #' }
-"SIIIRTMn"
+"SIIIRTMn_rt_arrest"
 
 #' Combined JACUSA2 output for rt-arrest on all conditions in Zhou et. al 2018 data
 #' 
@@ -218,15 +221,16 @@
 #'   \item SIIIMn, and
 #'   \item SIIIMg.
 #' }
-#' This dataset exemplifies the usefullness of combinding multiple pairwise comparisons and make them distinguishable by
+#' This dataset exemplifies the usefullness of combining multiple pairwise comparisons and make them distinguishable by
 #' "meta" field.
 #' 
-#' Check Section "Reverse transcriptase arrest events" in https://github.com/dieterich-lab/JACUSA2/manual/manual.pdf
+#' Check Section "Reverse transcriptase arrest events" in 
+#' https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf
 #' for details on pre-processing and mapping primary sequencing data.
 #' 
 #' @docType data
 #' 
-#' @usage data(Zhou2018)
+#' @usage data(Zhou2018_rt_arrest)
 #' 
 #' @references Zhou, K. I.; Clark, W. C.; Pan, D. W.; Eckwahl, M. J.; Dai, Q. & Pan, T.
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
@@ -237,7 +241,7 @@
 #'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Currently, name of used method (\emph{call-\{1,2\}}, \emph{pileup}, \emph{rt-arrest}, or \emph{lrt-arrest})
+#'		\item name: Character string. Name of used method \emph{rt-arrest}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 #'		\item info: Character string separated with ";" providing additional data for this specific site. Empty field is equal to "*"
@@ -256,37 +260,201 @@
 #'    \item cov_through: Numeric value indicating the read coverage for this site for through reads.
 #'    \item meta: Character string indicating the dataset. Here: "HIVRT", "SIIIRTMn", or "SIIIRTMn".
 #' }
-"Zhou2018"
+"Zhou2018_rt_arrest"
 
-#' rRNA modification map of rRNAs according to Piekna-Przybylska2007
+#' JACUSA2 output for call-2 on HIVRT condition in Zhou et. al 2018 data
 #' 
-#' Data (18S and 28S) has been download from: http://people.biochem.umass.edu/fournierlab/3dmodmap/
-#' and coordinates habe been lifted to hg38.
+#' Zhou2018 et al. 2018 map RNA modification of pseudouridine \eqn{\Psi} by chemically modifying
+#' pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse
+#' transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and
+#' SIIIMg). 
+#' Result are for running JACUSA2 call-2 on processed pairwise +CMC and -CMC(control) data in HIVRT condition are presented.
+#'
+#' Check Section "Reverse transcriptase arrest events" in 
+#' https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf
+#' for details on pre-processing and mapping primary sequencing data.
+#' 
+#' @docType data
+#' 
+#' @usage data(HIVRT_call2)
+#' 
+#' @references Zhou, K. I.; Clark, W. C.; Pan, D. W.; Eckwahl, M. J.; Dai, Q. & Pan, T.
+#' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
+#' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
+#' 
+#' @format a tibble with 19 elements:
+#' \itemize{
+##'		\item contig: Character string representing the contig of the variant
+#'		\item start: Numeric position of variant (>=0)
+#'		\item end: Numeric corresponds to "start + 1"
+#'		\item name: Character string. Name of used method \emph{call-2}
+#'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
+#'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
+#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
+#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
+#'		\item repl: Numeric value: "1" or "2" for all conditions
+#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
+#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
+#' }
+"HIVRT_call2"
+
+#' JACUSA2 output for call-22 on SIIIRTMg condition in Zhou et. al 2018 data
+#' 
+#' Zhou2018 et al. 2018 map RNA modification of pseudouridine \eqn{\Psi} by chemically modifying
+#' pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse
+#' transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and
+#' SIIIMg). 
+#' Result are for running JACUSA2 call-2 on processed pairwise +CMC and -CMC(control) data in SIIIRTMg condition are presented.
+#'
+#' Check Section "Reverse transcriptase arrest events" 
+#' https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf
+#' for details on pre-processing and mapping primary sequencing data.
+#' 
+#' @docType data
+#' 
+#' @usage data(SIIIRTMg_call2)
+#' 
+#' @references Zhou, K. I.; Clark, W. C.; Pan, D. W.; Eckwahl, M. J.; Dai, Q. & Pan, T.
+#' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
+#' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
+#' 
+#' @format a tibble with 19 elements:
+#' \itemize{
+##'		\item contig: Character string representing the contig of the variant
+#'		\item start: Numeric position of variant (>=0)
+#'		\item end: Numeric corresponds to "start + 1"
+#'		\item name: Character string. Name of used method \emph{call-2}
+#'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
+#'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
+#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
+#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
+#'		\item repl: Numeric value: "1" or "2" for all conditions
+#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
+#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
+#' }
+"SIIIRTMg_call2"
+
+#' JACUSA2 output for call-2 on SIIIRTMn condition in Zhou et. al 2018 data
+#' 
+#' Zhou2018 et al. 2018 map RNA modification of pseudouridine \eqn{\Psi} by chemically modifying
+#' pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse
+#' transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and
+#' SIIIMg). 
+#' Result are for running JACUSA2 call-2 on processed pairwise +CMC and -CMC(control) data in SIIIRTMn condition are presented.
+#'
+#' Check Section "Reverse transcriptase arrest events" in 
+#' https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf
+#' for details on pre-processing and mapping primary sequencing data.
+#' 
+#' @docType data
+#'
+#' @usage data(SIIIRTMn_call2)
+#' 
+#' @references Zhou, K. I.; Clark, W. C.; Pan, D. W.; Eckwahl, M. J.; Dai, Q. & Pan, T.
+#' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
+#' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
+#' 
+#' @format a tibble with 19 elements:
+#' \itemize{
+##'		\item contig: Character string representing the contig of the variant
+#'		\item start: Numeric position of variant (>=0)
+#'		\item end: Numeric corresponds to "start + 1"
+#'		\item name: Character string. Name of used method {call-2}
+#'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
+#'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
+#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
+#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
+#'		\item repl: Numeric value: "1" or "2" for all conditions
+#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
+#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
+#' }
+"SIIIRTMn_call2"
+
+#' Combined JACUSA2 output for call-2 on all conditions in Zhou et. al 2018 data
+#' 
+#' Zhou2018 et al. 2018 map RNA modification of pseudouridine \eqn{\Psi} by chemically modifying
+#' pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse
+#' transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and
+#' SIIIMg). 
+#' A combined version of all conditions and their pairwise +CMC and -CMC(control) comparisons is presented.
+#' The data structure contains an additional field "meta_condition" that corresponds and identifies the 
+#' condition from Zhou 2018: 
+#' \itemize{
+#'   \item HIVRT, 
+#'   \item SIIIMn, and
+#'   \item SIIIMg.
+#' }
+#' This dataset exemplifies the usefullness of combining multiple pairwise comparisons and make them distinguishable by
+#' "meta" field.
+#' 
+#' @docType data
+#' 
+#' @usage data(Zhou2018_call2)
+#' 
+#' @references Zhou, K. I.; Clark, W. C.; Pan, D. W.; Eckwahl, M. J.; Dai, Q. & Pan, T.
+#' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
+#' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
+#' 
+#' @format a tibble with 20 elements:
+#' \itemize{
+#'		\item contig: Character string representing the contig of the variant
+#'		\item start: Numeric position of variant (>=0)
+#'		\item end: Numeric corresponds to "start + 1"
+#'		\item name: Character string. Name of used method \emph{call-2}
+#'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
+#'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item info: Character string separated with ";" providing additional data for this specific site. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
+#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
+#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
+#'		\item repl: Numeric value: "1" or "2" for all conditions
+#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
+#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
+#'    \item meta: Character string indicating the dataset. Here: "HIVRT", "SIIIRTMn", or "SIIIRTMn".
+#' }
+"Zhou2018_call2"
+
+#' rRNA modification map of rRNAs according to Taika et al.
+#' 
+#' Data (18S, 28S, and 5.8S) has been extracted from retrieved from PMID: 30202881.
 #'
 #' @docType data
 #' 
-#' @usage data(modmap)
+#' @usage data(rnam)
 #' 
-#' @references D. Piekna-Przybylska, W. A. Decatur, and M. J. Fournier (2007).•↲
-#'             The 3D rRNA modification maps database: with interactive tools for ribosome analysis.•↲
-#'             Nucleic Acids Research.Jan;36:D178-83. Epub 2007 Oct 18.
+#' @references Landscape of the complete RNA chemical modifications in the human 80S ribosome
+#'             Masato Taoka, Yuko Nobe, Yuka Yamaki, Ko Sato, Hideaki Ishikawa, 
+#'             Keiichi Izumikawa, Yoshio Yamauchi, Kouji Hirota, Hiroshi Nakayama, 
+#'             Nobuhiro Takahashi et al. 
+#'             Nucleic Acids Research, Volume 46, Issue 18, 12 October 2018, Pages 9289–9298, 
+#'             https://doi.org/10.1093/nar/gky811
 #' 
 #' @format a data.frame with 3 elements:
 #' \itemize{
-#'   \item rrna: String, either "NR_003286_RNA18SN5" or "NR_003287_RNA28SN5".
+#'   \item rrna: String, either "18S", "28S", or "5.8S"
 #'   \item pos: Numeric 1-index position.
-#'   \item base: String, reference base(A, C, G, T) or modification(Am, Cm, Gm, m1A, m3U, m5C, m62A, m6A, m7G, PseudoU, PseudoUm, or Um)
+#'   \item base: String, reference base(A, C, G, T) or modification(ac4C, AM, Cm, 
+#'         Gm, m1A, m1acp3pusU, m3U, m5C, m62A, m6A, m7G, ND, psU, psUm, Um)
 #' }
-"modmap"
+"rnam"
 
-
-#' call2_APOBEC1_APOBEC1YTHmut_RC14_C2T_call2_result.out
+#' DARTseq TODO
 #' 
 #' TODO
 #' 
 #' @docType data
 #' 
-#' @usage data(APOBEC1)
+#' @usage data(DARTseq)
 #' 
 #' @references TODO
 #' 
@@ -294,4 +462,36 @@
 #' \itemize{
 #'   \item TODO
 #' }
-#"APOBEC1"
+"DARTseq"
+
+#' ACA TODO
+#' 
+#' TODO
+#' 
+#' @docType data
+#' 
+#' @usage data(ACA)
+#' 
+#' @references TODO
+#' 
+#' @format TODO:
+#' \itemize{
+#'   \item TODO
+#' }
+"ACA"
+
+#' MazF TODO
+#' 
+#' TODO
+#' 
+#' @docType data
+#' 
+#' @usage data(MazF)
+#' 
+#' @references TODO
+#' 
+#' @format TODO:
+#' \itemize{
+#'   \item TODO
+#' }
+"MazF"

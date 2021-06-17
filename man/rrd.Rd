@@ -10,7 +10,7 @@ a tibble with 19 elements:
 	\item contig: Character string representing the contig of the variant
 	\item start: Numeric position of variant (>=0)
 	\item end: Numeric corresponds to "start + 1"
-	\item name: Character string. Currently, name of used method (\emph{call-\{1,2\}}, \emph{pileup}, \emph{rt-arrest}, or \emph{lrt-arrest})
+	\item name: Character string. Name of used method \emph{call-2}
 	\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 	\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
 	\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"

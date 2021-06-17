@@ -36,8 +36,8 @@ transcription stops in high-throughput sequencing under 3 different conditions (
 SIIIMg). All three data sets are available in JACUSA2helper via `data()`. Additionally, we have compiled a combined  data set `data(Zhou2018)` that utilizes meta conditions. Note, that this data has NO replicates!
 
 ```{r}
-data(Zhou2018)
-unique(Zhou2018$meta_cond)
+data(Zhou2018_rt_arrest)
+unique(Zhou2018_rt_arrest$meta_cond)
 ```
 
 ### Group By Site (and other)
@@ -55,7 +55,7 @@ last statement will apply to sites of EACH meta condition!
 The following statement will determine the number of covered sites per contig and meta condition:
 
 ```{r}
-dplyr::distinct(Zhou2018, contig, start, end, strand, meta_cond) %>% 
+dplyr::distinct(Zhou2018_rt_arrest, contig, start, end, strand, meta_cond) %>% 
   dplyr::group_by(contig, meta_cond) %>% 
   dplyr::count()
 ```
@@ -63,7 +63,7 @@ dplyr::distinct(Zhou2018, contig, start, end, strand, meta_cond) %>%
 This statement will determine the number of covered sites per contig regardless of the meta condition:
 
 ```{r}
-dplyr::distinct(Zhou2018, contig, start, end, strand) %>% 
+dplyr::distinct(Zhou2018_rt_arrest, contig, start, end, strand) %>% 
   dplyr::group_by(contig) %>% 
   dplyr::count() # count in a group
 ```
@@ -73,7 +73,7 @@ dplyr::distinct(Zhou2018, contig, start, end, strand) %>%
 Filter by coverage regardless of the meta condition.
 
 ```{r}
-filtered_all <- Zhou2018 %>% 
+filtered_all <- Zhou2018_rt_arrest %>% 
   dplyr::filter(All(cov$cond1 >= 20000) & All(cov$cond2 >= 20000)) %>% 
   dplyr::group_by(contig, meta_cond) %>% 
   dplyr::count() # count in a group
@@ -83,9 +83,9 @@ filtered_all
 Filter by coverage of each meta condition.
 
 ```{r}
-filtered_meta <- Zhou2018 %>% 
+filtered_meta <- Zhou2018_rt_arrest %>% 
   dplyr::group_by(meta_cond) %>%
-  dplyr::filter(All(cov$cond1 >= 20000) & All(cov$cond2 >= 20000)) %>% 
+  dplyr::filter(All(cov$cond1 >= 100) & All(cov$cond2 >= 100)) %>% 
   dplyr::group_by(contig, meta_cond) %>% 
   dplyr::count() # count in a group
 filtered_meta
@@ -97,10 +97,8 @@ The data sets of `Zhou2018` have been layout out in such a way that condition 1
 and 2 correspond to carbodiimide (+CMC) treatment and control (-CMC), respectively.
 
 ```{r}
-data(Zhou2018)
-
-result <- gather_repl(Zhou2018$id, Zhou2018$arrest_rate) %>%
-  dplyr::inner_join(Zhou2018 %>% dplyr::select(id, pvalue, meta_cond), by = "id") %>%
+result <- gather_repl(Zhou2018_rt_arrest$id, Zhou2018_rt_arrest$arrest_rate) %>%
+  dplyr::inner_join(Zhou2018_rt_arrest %>% dplyr::select(id, pvalue, meta_cond), by = "id") %>%
   dplyr::mutate(
     data_desc = dplyr::case_when(
       cond == "cond1" ~ "+CMC",
@@ -167,8 +165,8 @@ result %>%
 
 ## Compare coverage
 ```{r}
-gather_repl(Zhou2018$id, Zhou2018$cov) %>%
-  dplyr::inner_join(dplyr::select(Zhou2018, id, meta_cond), by = "id") %>%
+gather_repl(Zhou2018_rt_arrest$id, Zhou2018_rt_arrest$cov) %>%
+  dplyr::inner_join(dplyr::select(Zhou2018_rt_arrest, id, meta_cond), by = "id") %>%
   dplyr::mutate(
     data_desc = dplyr::case_when(
       cond == "cond1" ~ "+CMC",
@@ -194,10 +192,10 @@ gather_repl(Zhou2018$id, Zhou2018$cov) %>%
 We plot the arrest rate for all three meta conditions and +CMC and -CMC treatment.
 
 ```{r}
-Zhou2018 %>% 
-  dplyr::filter(pvalue <= 0.00001) %>%
+Zhou2018_rt_arrest %>% 
+  dplyr::filter(pvalue <= 0.1) %>%
   dplyr::group_by(meta_cond) %>%
-  dplyr::filter(All(cov$cond1 >= 20000) & All(cov$cond2 >= 20000)) %>%
+  dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 >= 10)) %>%
   ggplot2::ggplot(ggplot2::aes(x = arrest_rate$cond1$rep1, y = arrest_rate$cond2$rep1, colour = meta_cond)) +
     ggplot2::geom_point() + 
     ggplot2::ylab("Arrest rate -CMC") + 
@@ -213,20 +211,20 @@ conditions and add  Pseudouridine sites (black points) from
 [3Dmodmap](https://people.biochem.umass.edu/fournierlab/3dmodmap/main.php).
 
 ```{r}
-data(modmap)
-mod <- modmap %>% 
-  dplyr::filter(rrna == "NR_003286_RNA18SN5", base == "PseudoU")
+data(rnam)
+rnam <- rnam %>% 
+  dplyr::filter(rrna == "18S", base == "psU")
 
-Zhou2018 %>%
-  dplyr::filter(contig == "NR_003286_RNA18SN5") %>%
-  dplyr::filter(pvalue <= 0.00001) %>%
+Zhou2018_rt_arrest %>%
+  dplyr::filter(contig == "18S") %>%
+  dplyr::filter(pvalue <= 0.1) %>%
   dplyr::group_by(meta_cond) %>%
-  dplyr::filter(All(cov$cond1 >= 20000) & All(cov$cond1 >= 20000)) %>%
+  dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond1 >= 10)) %>%
   dplyr::mutate(arrest_rate_delta = arrest_rate$cond1$rep1 - arrest_rate$cond2$rep1) %>%
   ggplot2::ggplot(ggplot2::aes(x = end, y = arrest_rate_delta, fill = meta_cond)) +
     ggplot2::geom_bar(stat = "identity") +
-    ggplot2::geom_point(data = mod, ggplot2::aes(x = pos, y = 0), fill = "black") +
-    ggplot2::xlab("Position on RNA18SN5") +
+    ggplot2::geom_point(data = rnam, ggplot2::aes(x = pos, y = 0), fill = "black") +
+    ggplot2::xlab("Position on 18S") +
     ggplot2::ylab("Arrest rate (+CMC - -CMC)") +
     ggplot2::theme(legend.position = "bottom") +
     ggplot2::labs(fill = "Meta condition")
