@@ -16,7 +16,8 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     reshape2,
-    rmarkdown
+    rmarkdown,
+    markdown
 Imports: 
   data.table, 
   tidyr,
