@@ -68,8 +68,9 @@ filtered %>%
   ggplot2::geom_point() + 
   ggplot2::geom_abline(colour = "red") +
   ggplot2::xlab("MazF+ and FTO- read arrest") + 
-  ggplot2::ylab("MazF+ and FTO+ read arrest")
+  ggplot2::ylab("MazF+ and FTO+ read arrest") 
 ```
+
 ## Box plot of arrest rates over all replicates
 
 Arrest rates are plotted depending on the presence or absence of an ACA motif. 
@@ -83,5 +84,9 @@ toplot$sample <- gsub("cond1", "MazF_mock", toplot$sample)
 toplot$sample <- gsub("cond2", "MazF_FTO", toplot$sample)
 
 ggplot2::ggplot(toplot, ggplot2::aes(x = sample, y = arrest_rate, color=ACA)) +
-  ggplot2::geom_boxplot() 
+  ggplot2::geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90))
 ```
+
+## References
+

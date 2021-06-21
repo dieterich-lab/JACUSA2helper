@@ -108,8 +108,9 @@ The following scatter plot summarizes the T/(C+T) frequencies and labels them.
 ggplot(filtered, aes(x=YTHmut.t.ratio, y=YTH.t.ratio,color=pred)) + 
   geom_point() + 
   ggplot2::xlab("Mutated YTH binding domain (T/(C+T))") + 
-  ggplot2::ylab("Active YTH binding domain (T/(C+T))") + theme_classic() +
-  scale_color_manual(values=c('#999999', '#E69F00'))
+  ggplot2::ylab("Active YTH binding domain (T/(C+T))") + 
+  scale_color_manual(values=c('#999999', '#E69F00'), name = "") +
+  theme_classic()
 ```
 
 # References
