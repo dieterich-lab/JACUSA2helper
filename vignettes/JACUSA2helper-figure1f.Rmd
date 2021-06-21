@@ -3,7 +3,7 @@ title: "JACUSA2helper Figure 1F"
 author: "Christoph Dieterich, Michael Piechotta"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
-# bibliography: JACUSA2helper-dartseq.bib
+bibliography: JACUSA2helper-dartseq.bib
 link-citations: yes
 vignette: >
   %\VignetteIndexEntry{JACUSA2helper Figure 1F}
@@ -24,25 +24,12 @@ library(ggplot2);
 set.seed(777)
 ```
 
+## An example on DARTseq
 
-```{r}
-# MazF results
-data(MazF)
-filteredMazF <- MazF %>% 
-  dplyr::filter(pvalue <= 0.05) %>% 
-  dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 >= 10)) %>% 
-  dplyr::filter(robust(arrest))
-```
-
-```{r}
-data(ACA)
-vecACA <- ACA[, "motif"]
-names(vecACA) <- ACA$coord
-vecACA <- ifelse(vecACA == "ACA", "yes", "no")
-filteredMazF$ACA  <- vecACA[filteredMazF$id]
-filteredMazF <- filteredMazF %>% 
-  dplyr::filter(ACA %in% c("yes","no"))
-```
+A complementary genetic approach is an extension of the TRIBE technique called DART-seq @Meyer2019.
+Meyer applied DART-seq on HEK293 cells where the APOBEC domain was fused to the YTH domain from human YTHDF2 (WT and mutated).
+In essence, new C-to-U editing events that are significantly enriched in the YTHDF2-WT, but not in the binding domain mutant are bona fide candidates for m6A RNA modification.
+JACUSA2helper supports the analysis of DARTseq data too (see below). Input is typically read in via `read_result`.
 
 ```{r}
 data("DARTseq")
@@ -57,6 +44,11 @@ filtered <- filtered %>%
   dplyr::filter(bc <= 2) %>%
   dplyr::filter(robust(bases))
 ```
+The above code sequence filters the input to include only sites, which have a call-2 score higher than 2, a coverage across all replicates of at least 10.
+Moreover, the number of distinct base calls should be less or equal 2 (preferably C and U/T) and the base substitution should be visible in all replicates
+of at least one condition.
+
+### Some basic statistics on base transitions in the data
 
 ```{r}
 # sum base call counts of condition / RNA replicates
@@ -73,6 +65,8 @@ rnaref <- Reduce("+", filtered$bases$cond1)
 ref2YTH <- base_sub(rnaref, filtered$ref)
 table(ref2YTH, ref2YTHmut)
 ```
+The following barplot summarizes the number of sites by characteristic base substitutions relative to the reference sequence.
+We observe a lot more C-to-U transistions in the active YTH binding domain as compared to the inactivated binding domain.
 
 ```{r}
 tidyr::tibble(
@@ -91,7 +85,8 @@ tidyr::tibble(
   )
 ```
 
-#nice
+## Quantitative assessment of T/(C+T) frequencies
+
 ```{r}
 tempo <- lapply_cond(
   lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ),
@@ -106,6 +101,8 @@ filtered[["pred"]] <- ifelse(
 )
 filtered$coord <- JACUSA2helper::coord(filtered)
 ```
+
+The following scatter plot summarizes the T/(C+T) frequencies and labels them.
 
 ```{r}
 ggplot(filtered, aes(x=YTHmut.t.ratio, y=YTH.t.ratio,color=pred)) + 
