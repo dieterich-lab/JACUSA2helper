@@ -200,7 +200,7 @@ tidyr::tibble(base_sub = dna2rna) %>% # ggplot requires a data frame
 
 ### Plot coverage distribution
 
-To compare the coverage distribution of each data sample, we create a simple plot of the empirical coverage distribution, where we map cond(ition) to `colour` and rep(licate) to `linetype`.
+To compare the coverage distribution of each data sample, we create a simple plot of the empirical coverage distribution, where we map cond(ition) to `colour` and repl(icate) to `linetype`.
 
 ```{r}
 gather_repl(result$id, result$cov) %>%
@@ -292,9 +292,9 @@ sequencing under 3 different conditions: HIVRT, SIIIRTMn, and SIIIRTMg.
 The result of JACUSA2 are available by using `data()`. 
 Read [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf)
 for details on how data has been processed from the original publication by @Zhou2018. 
-In brief, the data has been filtered to contain the following rRNAs: RNA18SN5 and RNA28SN5.
+In brief, the data has been filtered to contain the following rRNAs: RNA18SN5, RNA28SN5, and RNA5-8SN5.
 
-In the following, we will be looking at the results for `data(HIVRT)`. 
+In the following, we will be looking at the results for `data(HIVRT_rt_arrest)`. 
 By default JACUSA2 output from *rt-arrest* will contain the following 
 structured/nested columns:
 
@@ -332,7 +332,6 @@ dim(HIVRT_rt_arrest)
 filtered <- HIVRT_rt_arrest %>% 
   dplyr::filter(strand == "+") %>%
   dplyr::filter(pvalue <= 0.01) %>% 
-  dplyr::filter(All(cov$cond1 >= 1000) & All(cov$cond2 >= 1000)) %>%
   dplyr::filter(robust(arrest))
 dim(filtered)
 ```
@@ -341,15 +340,15 @@ plot the arrest rate from each condition in a scatter plot.
 
 ```{r}
 filtered %>%
-  ggplot2::ggplot(ggplot2::aes(x = arrest_rate$cond1$rep1, y = arrest_rate$cond2$rep1)) +  
+  ggplot2::ggplot(ggplot2::aes(x = log2(arrest_rate$cond1$rep1), y = log2(arrest_rate$cond2$rep1))) +  
   ggplot2::geom_point() + 
   ggplot2::facet_grid(. ~ contig) + 
   ggplot2::geom_abline(colour = "red") +
-  ggplot2::xlab("+CMC arrest rate") + 
-  ggplot2::ylab("-CMC arrest rate")
+  ggplot2::xlab("log2(+CMC arrest rate)") + 
+  ggplot2::ylab("log2(-CMC arrest rate)")
 ```
 
-From the above plot, we can deduce that the arrest rate is higher in the +CMC condition for both rRNAs when compared against -CMC.
+From the above plot, we can deduce that the arrest rate is higher in the +CMC condition for all rRNAs when compared against -CMC.
 
 If you want to look simultaneously at all conditions (HIVRT, SIIIRTMn, and SIIIRTMg), checkout `vignette("JACUSA2helper-meta-conditions")`.
 

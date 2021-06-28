@@ -33,7 +33,8 @@ JACUSA2helper supports the analysis of several related JACUSA2 result files via 
 
 Here, we will use the the @Zhou2018 data set, where the authors map RNA modification of pseudouridine ($\Psi$) by chemically modifying pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse
 transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and
-SIIIMg). All three data sets are available in JACUSA2helper via `data()`. Additionally, we have compiled a combined  data set `data(Zhou2018)` that utilizes meta conditions. Note, that this data has NO replicates!
+SIIIMg). All three data sets are available in JACUSA2helper via `data()`. Additionally, we have compiled combined data sets `data(Zhou2018_call2)` and `data(Zhou2018_rt_arrest)` that utilizes meta conditions. 
+Note, that this data has NO replicates!
 
 ```{r}
 data(Zhou2018_rt_arrest)
@@ -73,22 +74,11 @@ dplyr::distinct(Zhou2018_rt_arrest, contig, start, end, strand) %>%
 Filter by coverage regardless of the meta condition.
 
 ```{r}
-filtered_all <- Zhou2018_rt_arrest %>% 
-  dplyr::filter(All(cov$cond1 >= 20000) & All(cov$cond2 >= 20000)) %>% 
+filtered_all <- Zhou2018_rt_arrest %>%
+  dplyr::filter(All(cov$cond1 >= 100) & All(cov$cond2 >= 1000)) %>% 
   dplyr::group_by(contig, meta_cond) %>% 
   dplyr::count() # count in a group
 filtered_all
-```
-
-Filter by coverage of each meta condition.
-
-```{r}
-filtered_meta <- Zhou2018_rt_arrest %>% 
-  dplyr::group_by(meta_cond) %>%
-  dplyr::filter(All(cov$cond1 >= 1000) & All(cov$cond2 >= 1000)) %>% 
-  dplyr::group_by(contig, meta_cond) %>% 
-  dplyr::count() # count in a group
-filtered_meta
 ```
 
 # Plot
@@ -189,18 +179,37 @@ gather_repl(Zhou2018_rt_arrest$id, Zhou2018_rt_arrest$cov) %>%
 
 ## Compare arrest rate
 
+Volcano plot of different library types (ignoring 0 arrest rate sites):
+
+```{r}
+Zhou2018_rt_arrest %>%
+  dplyr::filter(strand == "+") %>%
+  ggplot2::ggplot(
+    ggplot2::aes(
+      x = log2((arrest_rate$cond1$rep1) / (arrest_rate$cond2$rep1)),
+      y = -log10(pvalue),
+      colour = meta_cond
+    )
+  ) +
+  ggplot2::geom_point() + 
+  ggplot2::geom_hline(yintercept = 2, linetype = 3, colour = "red") +
+  ggplot2::ylab("-log10(pvalue)") + 
+  ggplot2::xlab("log2(arrest rate +GMC / -GMC)") + 
+  ggplot2::facet_grid(. ~ meta_cond)
+  
+```
+We deduce that `p <= 0.01` is a sensible cutoff.
 We plot the arrest rate for all three meta conditions and +CMC and -CMC treatment.
 
 ```{r}
 Zhou2018_rt_arrest %>%
   dplyr::filter(strand == "+") %>%
-  dplyr::filter(pvalue <= 0.05) %>%
+  dplyr::filter(pvalue <= 0.01) %>%
   dplyr::group_by(meta_cond) %>%
-  #dplyr::filter(All(cov$cond1 >= 1000) & All(cov$cond2 >= 1000)) %>%
-  ggplot2::ggplot(ggplot2::aes(x = arrest_rate$cond1$rep1, y = arrest_rate$cond2$rep1, colour = meta_cond)) +
+  ggplot2::ggplot(ggplot2::aes(x = log2(arrest_rate$cond1$rep1), y = log2(arrest_rate$cond2$rep1), colour = meta_cond)) +
     ggplot2::geom_point() + 
-    ggplot2::ylab("Arrest rate -CMC") + 
-    ggplot2::xlab("Arrest rate +CMC") + 
+    ggplot2::ylab("log2(Arrest rate -CMC)") + 
+    ggplot2::xlab("log2(Arrest rate +CMC)") + 
     ggplot2::facet_grid(. ~ meta_cond) +
     ggplot2::geom_abline(linetype = "dashed", colour = "gray") +
     ggplot2::labs(colour = "Meta condition") +
@@ -212,20 +221,20 @@ conditions and add Pseudouridine sites (black points).
 
 ```{r}
 data(rnam)
-rnam <- rnam %>% 
-  dplyr::filter(rrna == "18S", base == "psU")
+retain_rrna <- "18S"
+filtered_rnam <- rnam %>% 
+  dplyr::filter(rrna == retain_rrna, base == "psU")
 
 Zhou2018_rt_arrest %>%
-  dplyr::filter(contig == "18S") %>%
+  dplyr::filter(contig == retain_rrna) %>%
   dplyr::filter(strand == "+") %>%
   dplyr::filter(pvalue <= 0.01) %>%
   dplyr::group_by(meta_cond) %>%
-  #dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond1 >= 10)) %>%
   dplyr::mutate(arrest_rate_delta = arrest_rate$cond1$rep1 - arrest_rate$cond2$rep1) %>%
   ggplot2::ggplot(ggplot2::aes(x = end, y = arrest_rate_delta, fill = meta_cond)) +
     ggplot2::geom_bar(stat = "identity") +
-    ggplot2::geom_point(data = rnam, ggplot2::aes(x = pos, y = 0), fill = "black") +
-    ggplot2::xlab("Position on 18S") +
+    ggplot2::geom_point(data = filtered_rnam, ggplot2::aes(x = pos, y = 0), fill = "black") +
+    ggplot2::xlab(paste0("Position on ", retain_rrna)) +
     ggplot2::ylab("Arrest rate (+CMC - -CMC)") +
     ggplot2::ylim(c(-0.1, 0.1)) +
     ggplot2::theme(legend.position = "bottom") +
