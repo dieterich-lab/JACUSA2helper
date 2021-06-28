@@ -172,7 +172,7 @@ table(ref2rna)
 Instead of using DNA information from the reference FASTA sequence via column "ref",
 we could use the actual data from condition 1 / DNA.
 
-TODO Robust requires observations (here base calls) to be present in all replicates of at least condition.
+Robust requires observations (here base calls) to be present in all replicates of at least condition.
 
 ```{r}
 cond1_ref <- base_call(filtered$bases$cond1$rep1)
@@ -331,8 +331,8 @@ We filter by pvalue, coverage, strand, and only retain robust arrest events:
 dim(HIVRT_rt_arrest)
 filtered <- HIVRT_rt_arrest %>% 
   dplyr::filter(strand == "+") %>%
-  dplyr::filter(pvalue <= 0.1) %>% 
-  dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 >= 10)) %>%
+  dplyr::filter(pvalue <= 0.01) %>% 
+  dplyr::filter(All(cov$cond1 >= 1000) & All(cov$cond2 >= 1000)) %>%
   dplyr::filter(robust(arrest))
 dim(filtered)
 ```
