@@ -3,20 +3,40 @@
 \docType{data}
 \name{DARTseq}
 \alias{DARTseq}
-\title{DARTseq TODO}
+\title{DART-seq from Meyer 2019}
 \format{
-TODO:
+a tibble with 18 elements:
 \itemize{
-  \item TODO
+   \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
+	\item contig: Character string representing the contig of the variant
+	\item start: Numeric position of variant (>=0)
+	\item end: Numeric corresponds to "start + 1"
+	\item name: Character string. Name of used method \emph{call-2}
+	\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
+	\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+	\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+   \item cov: Numeric value indicating the read coverage for this site
+   \item backtrack1: Character - indicator if backtracking was used for condition 1.
+   \item backtrack2: Character - indicator if backtracking was used for condition 2.
+   \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+   \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+   \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+   \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
+	\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
+	\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
+	\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 }
 }
 \usage{
 data(DARTseq)
 }
 \description{
-TODO
+A complementary genetic approach is an extension of the TRIBE technique called DART-seq Meyer 2019.
+Beyer applied DART-seq on HEK293 cells where the APOBEC domain was fused to the YTH domain from human YTHDF2 (WT and mutated).
+In essence, new C-to-U editing events that are significantly enriched in the YTHDF2-WT, 
+but not in the binding domain mutant are bona fide candidates for m6A RNA modification
 }
 \references{
-TODO
+Meyer, Kate D., Nature methods, December 19, 2019
 }
 \keyword{datasets}

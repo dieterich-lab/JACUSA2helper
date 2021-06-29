@@ -83,7 +83,7 @@ gather_repl <- function(id, x, meta_cond = NULL) {
 
 #' Expand tagged reads
 #' 
-#' TODO
+#' This will expand tagged reads and create new column called "not_untagged_reads".
 #' 
 #' @param result object created by \code{read_result()} or \code{read_results()}.
 #' @param cores Integer defines how many cores to use.

@@ -12,5 +12,5 @@ expand_tag(result, cores = 1)
 \item{cores}{Integer defines how many cores to use.}
 }
 \description{
-TODO
+This will expand tagged reads and create new column called "not_untagged_reads".
 }

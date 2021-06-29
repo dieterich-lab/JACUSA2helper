@@ -3,20 +3,22 @@
 \docType{data}
 \name{ACA}
 \alias{ACA}
-\title{ACA TODO}
+\title{ACA}
 \format{
-TODO:
+a tibble with 18 elements:
 \itemize{
-  \item TODO
+	\item contig: Character string representing the contig of the variant
+	\item start: Numeric position of variant (>=0)
+	\item end: Numeric corresponds to "start + 1"
+	\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+   \item motif: Character string representing the motif.
+	\item coord: Chraceter string representing: "contig:start:strand"
 }
 }
 \usage{
 data(ACA)
 }
 \description{
-TODO
-}
-\references{
-TODO
+Description of motifs.
 }
 \keyword{datasets}

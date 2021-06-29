@@ -1,8 +1,3 @@
-#TODO:
-# update rdd rrd with JACUSA2
-# update rdd rrd with JACUSA2helper
-# standard for JACUSA2 R helper file format
-
 #' Subset of RDDs detected by JACUSA2 in HEK-293 untreated cells
 #'
 #' @docType data
@@ -16,22 +11,26 @@
 #'
 #' A dataset containing a subset of RNA DNA differences (RDDs) identified by JACUSA2 in untreated HEK-293 cells. 
 #' The fields are as follows:
-#' @format a tibble with 19 elements:
+#' @format a tibble with 18 elements:
 #' \itemize{
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
 #'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
 #'		\item name: Character string. Name of used method \emph{call-2}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-#'		\item cond: Numeric value: "1"(here: gDNA) or "2"(here: RNA)
-#'		\item repl: Numeric value: "1" for gDNA(no replicates) and "1" or "2" for RNA(1 replicate)
-#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
-#'		\item bc: Observed base calls for this site. Combination of: "A", "C", "G", and "T"
-#'    \item cov: Numeric value indicating the read coverage for this site
 #' }
 "rdd"
 
@@ -53,22 +52,26 @@
 #'
 #' A dataset containing a subset of RNA RNA differences (RRDs) identified by JACUSA2 in ADAR KD and untreated HEK-293 cells. 
 #' The fields are as follows:
-#' @format a tibble with 19 elements:
+#' @format a tibble with 18 elements:
 #' \itemize{
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
 #'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
 #'		\item name: Character string. Name of used method \emph{call-2}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-#'		\item bases: Numeric tibble representing counts for A, C, G, and T base calls.
-#'		\item cond: Numeric value: "1"(here: ADAR KD) or "2"(here: unreated)
-#'		\item repl Numeric value: "1" or "2" for all conditions
-#'		\item bc: Observed base calls for this site. Combination of: "A", "C", "G", and "T"
-#'    \item cov: Numeric value indicating the read coverage for this site
 #' }
 "rrd"
 
@@ -92,28 +95,30 @@
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
 #' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
 #' 
-#' @format a tibble with 19 elements:
+#' @format a tibble with 22 elements:
 #' \itemize{
-##'		\item contig: Character string representing the contig of the variant
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
+#'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Name of used method \emph{rt-arrest}
-#'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
+#'		\item name: Character string. Name of used method \emph{call-2}
+#'		\item pvalue: Numeric value representing the pvalue of the test.
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item arrest: Numeric tibble with representing counts for A, C, G, and T base calls from arrest reads.
+#'		\item through: Numeric tibble with representing counts for A, C, G, and T base calls from through reads.
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item arrest_rate: Numeric tibble representing the arrest rate for each sample.
+#'    \item arrest_score: Numeric - test-statistic score.
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
-#'		\item arrest: tibble representing counts for A, C, G, and T base calls for arrest reads.
-#'		\item through: tibble representing counts for A, C, G, and T base calls for through reads.
-#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
-#'		\item repl: Numeric value: "1" or "2" for all conditions
-#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
-#'		\item bc_arrest: Observed base calls for this site for arrest reads. Combination of: "A", "C", "G", and "T"
-#'		\item bc_through: Observed base calls for this site for through reads. Combination of: "A", "C", "G", and "T"
-#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
-#'    \item cov_arrest: Numeric value indicating the read coverage for this site for arrest reads.
-#'    \item cov_through: Numeric value indicating the read coverage for this site for through reads.
 #' }
 "HIVRT_rt_arrest"
 
@@ -137,28 +142,30 @@
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
 #' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
 #' 
-#' @format a tibble with 19 elements:
+#' @format a tibble with 22 elements:
 #' \itemize{
-##'		\item contig: Character string representing the contig of the variant
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
+#'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Name of used method \emph{rt-arrest}
-#'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
+#'		\item name: Character string. Name of used method \emph{call-2}
+#'		\item pvalue: Numeric value representing the pvalue of the test.
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item arrest: Numeric tibble with representing counts for A, C, G, and T base calls from arrest reads.
+#'		\item through: Numeric tibble with representing counts for A, C, G, and T base calls from through reads.
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item arrest_rate: Numeric tibble representing the arrest rate for each sample.
+#'    \item arrest_score: Numeric - test-statistic score.
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
-#'		\item arrest: tibble representing counts for A, C, G, and T base calls for arrest reads.
-#'		\item through: tibble representing counts for A, C, G, and T base calls for through reads.
-#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
-#'		\item repl: Numeric value: "1" or "2" for all conditions
-#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
-#'		\item bc_arrest: Observed base calls for this site for arrest reads. Combination of: "A", "C", "G", and "T"
-#'		\item bc_through: Observed base calls for this site for through reads. Combination of: "A", "C", "G", and "T"
-#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
-#'    \item cov_arrest: Numeric value indicating the read coverage for this site for arrest reads.
-#'    \item cov_through: Numeric value indicating the read coverage for this site for through reads.
 #' }
 "SIIIRTMg_rt_arrest"
 
@@ -182,28 +189,30 @@
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
 #' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
 #' 
-#' @format a tibble with 19 elements:
+#' @format a tibble with 22 elements:
 #' \itemize{
-##'		\item contig: Character string representing the contig of the variant
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
+#'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Name of used method \emph{rt-arrest}
-#'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
+#'		\item name: Character string. Name of used method \emph{call-2}
+#'		\item pvalue: Numeric value representing the pvalue of the test.
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item arrest: Numeric tibble with representing counts for A, C, G, and T base calls from arrest reads.
+#'		\item through: Numeric tibble with representing counts for A, C, G, and T base calls from through reads.
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item arrest_rate: Numeric tibble representing the arrest rate for each sample.
+#'    \item arrest_score: Numeric - test-statistic score.
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
-#'		\item arrest: tibble representing counts for A, C, G, and T base calls for arrest reads.
-#'		\item through: tibble representing counts for A, C, G, and T base calls for through reads.
-#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
-#'		\item repl: Numeric value: "1" or "2" for all conditions
-#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
-#'		\item bc_arrest: Observed base calls for this site for arrest reads. Combination of: "A", "C", "G", and "T"
-#'		\item bc_through: Observed base calls for this site for through reads. Combination of: "A", "C", "G", and "T"
-#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
-#'    \item cov_arrest: Numeric value indicating the read coverage for this site for arrest reads.
-#'    \item cov_through: Numeric value indicating the read coverage for this site for through reads.
 #' }
 "SIIIRTMn_rt_arrest"
 
@@ -236,28 +245,30 @@
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
 #' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
 #' 
-#' @format a tibble with 20 elements:
+#' @format a tibble with 23 elements:
 #' \itemize{
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
 #'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Name of used method \emph{rt-arrest}
-#'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
+#'		\item name: Character string. Name of used method \emph{call-2}
+#'		\item pvalue: Numeric value representing the pvalue of the test.
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
-#'		\item info: Character string separated with ";" providing additional data for this specific site. Empty field is equal to "*"
+#'		\item arrest: Numeric tibble with representing counts for A, C, G, and T base calls from arrest reads.
+#'		\item through: Numeric tibble with representing counts for A, C, G, and T base calls from through reads.
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item arrest_rate: Numeric tibble representing the arrest rate for each sample.
+#'    \item arrest_score: Numeric - test-statistic score.
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
+#'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
-#'		\item arrest: tibble representing counts for A, C, G, and T base calls for arrest reads.
-#'		\item through: tibble representing counts for A, C, G, and T base calls for through reads.
-#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
-#'		\item repl: Numeric value: "1" or "2" for all conditions
-#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
-#'		\item bc_arrest: Observed base calls for this site for arrest reads. Combination of: "A", "C", "G", and "T"
-#'		\item bc_through: Observed base calls for this site for through reads. Combination of: "A", "C", "G", and "T"
-#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
-#'    \item cov_arrest: Numeric value indicating the read coverage for this site for arrest reads.
-#'    \item cov_through: Numeric value indicating the read coverage for this site for through reads.
 #'    \item meta: Character string indicating the dataset. Here: "HIVRT", "SIIIRTMn", or "SIIIRTMn".
 #' }
 "Zhou2018_rt_arrest"
@@ -282,22 +293,26 @@
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
 #' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
 #' 
-#' @format a tibble with 19 elements:
+#' @format a tibble with 18 elements:
 #' \itemize{
-##'		\item contig: Character string representing the contig of the variant
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
+#'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
 #'		\item name: Character string. Name of used method \emph{call-2}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
-#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
-#'		\item repl: Numeric value: "1" or "2" for all conditions
-#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
-#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
 #' }
 "HIVRT_call2"
 
@@ -321,22 +336,26 @@
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
 #' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
 #' 
-#' @format a tibble with 19 elements:
+#' @format a tibble with 18 elements:
 #' \itemize{
-##'		\item contig: Character string representing the contig of the variant
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
+#'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
 #'		\item name: Character string. Name of used method \emph{call-2}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
-#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
-#'		\item repl: Numeric value: "1" or "2" for all conditions
-#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
-#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
 #' }
 "SIIIRTMg_call2"
 
@@ -360,22 +379,26 @@
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
 #' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
 #' 
-#' @format a tibble with 19 elements:
+#' @format a tibble with 18 elements:
 #' \itemize{
-##'		\item contig: Character string representing the contig of the variant
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
+#'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
-#'		\item name: Character string. Name of used method {call-2}
+#'		\item name: Character string. Name of used method \emph{call-2}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
 #'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
-#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
-#'		\item repl: Numeric value: "1" or "2" for all conditions
-#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
-#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
 #' }
 "SIIIRTMn_call2"
 
@@ -404,22 +427,26 @@
 #' Pseudouridines have context-dependent mutation and stop rates in high-throughput sequencing 
 #' RNA Biology, Informa UK Limited, 2018 , 15 , 892-900
 #' 
-#' @format a tibble with 20 elements:
+#' @format a tibble with 19 elements:
 #' \itemize{
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
 #'		\item contig: Character string representing the contig of the variant
 #'		\item start: Numeric position of variant (>=0)
 #'		\item end: Numeric corresponds to "start + 1"
 #'		\item name: Character string. Name of used method \emph{call-2}
 #'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 #'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
-#'		\item info: Character string separated with ";" providing additional data for this specific site. Empty field is equal to "*"
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
+#'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-#'		\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
-#'		\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
-#'		\item repl: Numeric value: "1" or "2" for all conditions
-#'		\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
-#'    \item cov: Numeric value indicating the read coverage for this site for all reads.
 #'    \item meta: Character string indicating the dataset. Here: "HIVRT", "SIIIRTMn", or "SIIIRTMn".
 #' }
 "Zhou2018_call2"
@@ -448,50 +475,99 @@
 #' }
 "rnam"
 
-#' DARTseq TODO
+#' DART-seq from Meyer 2019
 #' 
-#' TODO
+#' A complementary genetic approach is an extension of the TRIBE technique called DART-seq Meyer 2019.
+#' Beyer applied DART-seq on HEK293 cells where the APOBEC domain was fused to the YTH domain from human YTHDF2 (WT and mutated).
+#' In essence, new C-to-U editing events that are significantly enriched in the YTHDF2-WT, 
+#' but not in the binding domain mutant are bona fide candidates for m6A RNA modification
 #' 
 #' @docType data
 #' 
 #' @usage data(DARTseq)
 #' 
-#' @references TODO
+#' @references Meyer, Kate D., Nature methods, December 19, 2019
 #' 
-#' @format TODO:
+#' @format a tibble with 18 elements:
 #' \itemize{
-#'   \item TODO
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
+#'		\item contig: Character string representing the contig of the variant
+#'		\item start: Numeric position of variant (>=0)
+#'		\item end: Numeric corresponds to "start + 1"
+#'		\item name: Character string. Name of used method \emph{call-2}
+#'		\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
+#'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
+#'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 #' }
 "DARTseq"
 
-#' ACA TODO
+#' ACA
 #' 
-#' TODO
+#' Description of motifs.
 #' 
 #' @docType data
 #' 
 #' @usage data(ACA)
 #' 
-#' @references TODO
-#' 
-#' @format TODO:
+#' @format a tibble with 18 elements:
 #' \itemize{
-#'   \item TODO
+#'		\item contig: Character string representing the contig of the variant
+#'		\item start: Numeric position of variant (>=0)
+#'		\item end: Numeric corresponds to "start + 1"
+#'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'    \item motif: Character string representing the motif.
+#'		\item coord: Chraceter string representing: "contig:start:strand"
 #' }
 "ACA"
 
-#' MazF TODO
+#' MazF from Zhang et al. 2019
 #' 
-#' TODO
+#' In the following, the use of of the rt-arrest function will be applied to a MazF digestion assay from Zhang et al. 2019.
+#' Herein, 3 replicates of HEK293 mRNA were treated with FTO or mock treated and then subjected to a MazF digestion assay.
 #' 
 #' @docType data
 #' 
 #' @usage data(MazF)
 #' 
-#' @references TODO
+#' @references Zhang, Zhang and Chen, Li-Qian and Zhao, Yu-Li and Yang, 
+#'             Cai-Guang and Roundtree, Ian A. and Zhang, Zijie and Ren, Jian and 
+#'             Xie, Wei and He, Chuan and Luo, Guan-Zheng
+#'             Science advances, July 5, 2019
+#'             
 #' 
-#' @format TODO:
+#' @format a tibble with 22 elements:
 #' \itemize{
-#'   \item TODO
+#'    \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
+#'		\item contig: Character string representing the contig of the variant
+#'		\item start: Numeric position of variant (>=0)
+#'		\item end: Numeric corresponds to "start + 1"
+#'		\item name: Character string. Name of used method \emph{call-2}
+#'		\item pvalue: Numeric value representing the pvalue of the test.
+#'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+#'		\item arrest: Numeric tibble with representing counts for A, C, G, and T base calls from arrest reads.
+#'		\item through: Numeric tibble with representing counts for A, C, G, and T base calls from through reads.
+#'		\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+#'    \item cov: Numeric value indicating the read coverage for this site
+#'    \item arrest_rate: Numeric tibble representing the arrest rate for each sample.
+#'    \item arrest_score: Numeric - test-statistic score.
+#'    \item backtrack1: Character - indicator if backtracking was used for condition 1.
+#'    \item backtrack2: Character - indicator if backtracking was used for condition 2.
+#'    \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+#'    \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+#'    \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+#'    \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
+#'		\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
+#'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
+#'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 #' }
 "MazF"

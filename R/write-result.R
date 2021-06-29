@@ -1,5 +1,4 @@
-# TODO finish
-
+# TODO
 # Writes a JACUSA2 result object to a file.
 # 
 # Writes a JACUSA2 result object to a file. 
@@ -79,7 +78,7 @@ write_result <- function(result, file, txt = "") {
 .pack_call_pileup <- function(result, name) {
   result[[.CALL_PILEUP_COL]]
 
-  data_cols <- NULL # TODO
+  data_cols <- NULL
   cols <- c(.bed6("score"), data_cols, .INFO_COL, .FILTER_INFO_COL, .REF_BASE_COL)
   result[["name"]] <- name
 

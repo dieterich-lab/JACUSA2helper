@@ -70,7 +70,6 @@ lapply_repl <- function(x, f, ..., cores = 1) {
       tidyr::as_tibble()
   }
 
-  # TODO use lapply_cond
   parallel::mclapply(
     x, .helper,
     mc.cores = min(names(x), cores),

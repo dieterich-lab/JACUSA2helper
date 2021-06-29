@@ -146,7 +146,7 @@ In the following, we will:
 * retain sites with coverage >= 10 for all replicates,
 * remove sites with > 2 observed bases (excluding reference base),
 * apply a filter that retains only robust sites (RNA editing must be present in 
-  all/both replicates - see TODO),
+  all/both replicates),
 * Finally, we compute the base substitution (here RNA editing sites against FASTA 
   reference) per replicate.
 

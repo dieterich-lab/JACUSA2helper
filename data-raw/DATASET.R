@@ -1,6 +1,6 @@
 library("JACUSA2helper")
 
-# Piechotta2017 data TODO use real data from JACUSA2
+# Piechotta2017 data
 prefix <- "call-2-"
 
 rdd <- JACUSA2helper:::read_result(paste0(prefix, "rdd", ".out"), unpack = TRUE)
@@ -50,11 +50,11 @@ fnames <- paste0("rt-arrest-", meta_conds, ".out")
 Zhou2018_rt_arrest <- JACUSA2helper:::read_results(fnames, meta_conds, cond_descs)
 usethis::use_data(Zhou2018_rt_arrest, overwrite = TRUE, compress = "bzip2")
 
-# DARtSeq TODO
+# DARtSeq
 DARTseq <- JACUSA2helper:::read_result("Score2_APOBEC1YTH_APOBEC1YTHmut_RC18_call2_result.out")
 usethis::use_data(DARTseq, overwrite = TRUE, compress = "bzip2")
 
-# MazF TODO
+# MazF
 MazF <- JACUSA2helper:::read_result("Cutoff005_MazF_vs_cond2_FTO_RC18_rtarrest_plain_result.out")
 usethis::use_data(MazF, overwrite = TRUE, compress = "bzip2")
 

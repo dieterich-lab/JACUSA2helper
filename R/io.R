@@ -215,10 +215,11 @@ base_call <-function(bases) {
 #' @param result JACUSA2 result object.
 #' @param cond_count integer Number of conditions.
 #' @param cores integer Number of compute cores to use. Default: 1.
-#' @return TODO 
+#' @param col2type list Maps column names of result object to transformation, e.g.: as.numeric.
+#' @return returns a JACUSA2 result object with "info" unpacked.
 #' 
 #' @export
-unpack_info <- function(result, cond_count, cores = 1) {
+unpack_info <- function(result, cond_count, cores = 1, col2type = c("arrest_score" = as.numeric)) {
   info <- tidyr::separate_rows(result[, c("id", .INFO_COL)], info, sep = ";")
 
   . <- key <- value <- NULL
@@ -243,6 +244,14 @@ unpack_info <- function(result, cond_count, cores = 1) {
     result <- .unpack_indels(result, cond_count, cores)
   }
 
+  cols <- names(result)
+  for (col in names(col2type)) {
+    if (! col %in% cols) {
+      next
+    }
+    result[[col]] <- col2type[[col]](result[[col]])
+  }
+  
   result
 }
 

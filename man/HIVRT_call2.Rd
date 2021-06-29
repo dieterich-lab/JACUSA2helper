@@ -5,22 +5,26 @@
 \alias{HIVRT_call2}
 \title{JACUSA2 output for call-2 on HIVRT condition in Zhou et. al 2018 data}
 \format{
-a tibble with 19 elements:
+a tibble with 18 elements:
 \itemize{
+   \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
 	\item contig: Character string representing the contig of the variant
 	\item start: Numeric position of variant (>=0)
 	\item end: Numeric corresponds to "start + 1"
 	\item name: Character string. Name of used method \emph{call-2}
 	\item score: Numeric value representing the test-statistc. Higher values indicate more divergent pileups
 	\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+	\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+   \item cov: Numeric value indicating the read coverage for this site
+   \item backtrack1: Character - indicator if backtracking was used for condition 1.
+   \item backtrack2: Character - indicator if backtracking was used for condition 2.
+   \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+   \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+   \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+   \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
 	\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
 	\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 	\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
-	\item bases: tibble representing counts for A, C, G, and T base calls for all reads (=arrest + through).
-	\item cond: Numeric value: "1"(here: +GMC) or "2"(-GMC)
-	\item repl: Numeric value: "1" or "2" for all conditions
-	\item bc: Observed base calls for this site from all reads. Combination of: "A", "C", "G", and "T"
-   \item cov: Numeric value indicating the read coverage for this site for all reads.
 }
 }
 \usage{

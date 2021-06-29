@@ -3,20 +3,45 @@
 \docType{data}
 \name{MazF}
 \alias{MazF}
-\title{MazF TODO}
+\title{MazF from Zhang et al. 2019}
 \format{
-TODO:
+a tibble with 22 elements:
 \itemize{
-  \item TODO
+   \item id: Character string representing a unique identifier - created from contig, start, [end], and strand.
+	\item contig: Character string representing the contig of the variant
+	\item start: Numeric position of variant (>=0)
+	\item end: Numeric corresponds to "start + 1"
+	\item name: Character string. Name of used method \emph{call-2}
+	\item pvalue: Numeric value representing the pvalue of the test.
+	\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
+	\item arrest: Numeric tibble with representing counts for A, C, G, and T base calls from arrest reads.
+	\item through: Numeric tibble with representing counts for A, C, G, and T base calls from through reads.
+	\item bases: Numeric tibble with representing counts for A, C, G, and T base calls.
+   \item cov: Numeric value indicating the read coverage for this site
+   \item arrest_rate: Numeric tibble representing the arrest rate for each sample.
+   \item arrest_score: Numeric - test-statistic score.
+   \item backtrack1: Character - indicator if backtracking was used for condition 1.
+   \item backtrack2: Character - indicator if backtracking was used for condition 2.
+   \item backtrackP: Character - indicator if backtracking was used for condition pooled condition.
+   \item reset1: Character - indicator if default estimation was unstable with for condition 1.
+   \item reset2: Character - indicator if default estimation was unstable with for condition 2.
+   \item resetP: Character - indicator if default estimation was unstable with for pooled condition.
+	\item info: Character string separated with ";" provding additional data for this specific site. Empty field is equal to "*"
+	\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
+	\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 }
 }
 \usage{
 data(MazF)
 }
 \description{
-TODO
+In the following, the use of of the rt-arrest function will be applied to a MazF digestion assay from Zhang et al. 2019.
+Herein, 3 replicates of HEK293 mRNA were treated with FTO or mock treated and then subjected to a MazF digestion assay.
 }
 \references{
-TODO
+Zhang, Zhang and Chen, Li-Qian and Zhao, Yu-Li and Yang, 
+            Cai-Guang and Roundtree, Ian A. and Zhang, Zijie and Ren, Jian and 
+            Xie, Wei and He, Chuan and Luo, Guan-Zheng
+            Science advances, July 5, 2019
 }
 \keyword{datasets}
