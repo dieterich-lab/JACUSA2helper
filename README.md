@@ -20,6 +20,4 @@ install it directly from the repository via [devtools](https://www.r-project.org
 
 
 ## Usage
-Check the following R Vignettes:
-* General [JACUSA2helper](https://github.com/dieterich-lab/JACUSA2helper/vignette/JACUSA2helper.html) vignette,
-* [Meta conditions](https://github.com/dieterich-lab/JACUSA2helper/vignette/JACUSA2helper-meta-conditions.html) vignette, and
+Check [JACUSA2helper doc](https://dieterich-lab.github.io/JACUSA2helper/).

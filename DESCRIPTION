@@ -4,9 +4,13 @@ Title: Post-processing for JACUSA2 output
 Version: 1.99-10
 Depends: R (>= 3.5)
 Date: 2021-06-14
-Author: Michael Piechotta
-Maintainer: <michael.piechotta@gmail.com>
+Authors@R: c(person("Michael", "Piechotta", email = "michael.piechotta@gmail.com", role = c("aut", "cre")),
+         person("Qi", "Wang", role = c("ctb")),
+         person("Christoph", "Dieterich", role = c("ctb")),
+         person("Dieterich Lab", role = c("fnd")))
 Description: This package enables post-processing of JACUSA2 output: read, filter, plot, write.
+URL: https://github.com/dieterich-lab/JACUSA2helper, https://dieterich-lab.github.io/JACUSA2helper/
+BugReports: https://github.com/dieterich-lab/JACUSA2helper/issues
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.1.1
@@ -17,7 +21,8 @@ Suggests:
     knitr,
     reshape2,
     rmarkdown,
-    markdown
+    markdown,
+    covr
 Imports: 
   data.table, 
   tidyr,
