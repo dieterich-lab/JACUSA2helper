@@ -1,6 +1,7 @@
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/dieterich-lab/JACUSA2helper/workflows/R-CMD-check/badge.svg)](https://github.com/dieterich-lab/JACUSA2helper/actions)
-  <!-- badges: end -->
+[![R-CMD-check](https://github.com/dieterich-lab/JACUSA2helper/workflows/R-CMD-check/badge.svg)](https://github.com/dieterich-lab/JACUSA2helper/actions)
+<!-- badges: end -->
 
 # Overview
 
