@@ -1,8 +1,3 @@
-<!-- badges: start -->
-  [![R-CMD-check](https://github.com/dieterich-lab/JACUSA2helper/workflows/R-CMD-check/badge.svg)](https://github.com/dieterich-lab/JACUSA2helper/actions)
-[![R-CMD-check](https://github.com/dieterich-lab/JACUSA2helper/workflows/R-CMD-check/badge.svg)](https://github.com/dieterich-lab/JACUSA2helper/actions)
-<!-- badges: end -->
-
 # Overview
 
 Auxiliary R package for the assessment of [JACUSA1.x](https://github.com/dieterich-lab/JACUSA) and [JACUSA2.x](https://github.com/dieterich-lab/JACUSA2) results.
@@ -21,8 +16,12 @@ install it directly from the repository via [devtools](https://www.r-project.org
 ### devtools
 1. Make sure, [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html) is installed
 2. Start R
-3. Run `install_github("dieterich-lab/JACUSA2helper")`
+3. Run `install_github("dieterich-lab/JACUSA2helper", build_vignettes = TRUE`
 
 
-## Usage
-Check [JACUSA2helper doc](https://dieterich-lab.github.io/JACUSA2helper/).
+## Documentation
+Check vignettes:
+* ``vignette(JACUSA2helper)``
+* ``vignette(JACUSA2helper-figure1e)``
+* ``vignette(JACUSA2helper-figure1f)``
+* ``vignette(JACUSA2helper-meta-conditions)``

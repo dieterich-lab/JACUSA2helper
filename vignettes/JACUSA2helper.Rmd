@@ -41,7 +41,7 @@ the tidy data approach from @Wickham2014 to feature easy interaction with
 
 In the following, we will focus on single pairwise comparisons of two conditions 
 of one output file. If you want to analyze multiple files with similar pairwise 
-comparisons, read `vignette("JACUSA2helper meta conditions")`. 
+comparisons, read `vignette("JACUSA2helper-meta-conditions")`. 
 
 ## Multi site and new features
 While previously in JACUSA*1*, a site could be uniquely identified as one line 
