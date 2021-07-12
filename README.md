@@ -16,12 +16,12 @@ install it directly from the repository via [devtools](https://www.r-project.org
 ### devtools
 1. Make sure, [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html) is installed
 2. Start R
-3. Run `install_github("dieterich-lab/JACUSA2helper", build_vignettes = TRUE`
+3. Run `install_github("dieterich-lab/JACUSA2helper", build_vignettes = TRUE)`
 
 
 ## Documentation
 Check vignettes:
-* ``vignette(JACUSA2helper)``
-* ``vignette(JACUSA2helper-figure1e)``
-* ``vignette(JACUSA2helper-figure1f)``
-* ``vignette(JACUSA2helper-meta-conditions)``
+* `vignette(JACUSA2helper)`
+* `vignette(JACUSA2helper-figure1e)`
+* `vignette(JACUSA2helper-figure1f)`
+* `vignette(JACUSA2helper-meta-conditions)`
