@@ -18,7 +18,6 @@ install it directly from the repository via [devtools](https://www.r-project.org
 2. Start R
 3. Run `install_github("dieterich-lab/JACUSA2helper", build_vignettes = TRUE)`
 
-
 ## Documentation
 Check vignettes:
 * `vignette(JACUSA2helper)`
