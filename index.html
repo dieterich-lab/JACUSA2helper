@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">JACUSA2helper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.99-10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.99-11</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/JACUSA2helper.html">Get started</a>
 </li>
@@ -57,20 +53,20 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/JACUSA2helper-figure1e.html">JACUSA2helper Figure 1E</a>
+      <a href="articles/JACUSA2helper-figure1e.html">Analysis of m6A mapping by MazF with JACUSA2helper</a>
     </li>
     <li>
-      <a href="articles/JACUSA2helper-figure1f.html">JACUSA2helper Figure 1F</a>
+      <a href="articles/JACUSA2helper-figure1f.html">Analysis of DART-seq with JACUSA2helper</a>
     </li>
     <li>
-      <a href="articles/JACUSA2helper-meta-condtions.html">JACUSA2helper meta conditions</a>
+      <a href="articles/JACUSA2helper-meta-condtions.html">Introduction to meta conditions with JACUSA2helper</a>
     </li>
   </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/dieterich-lab/JACUSA2helper/">
+  <a href="https://github.com/dieterich-lab/JACUSA2helper/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -87,89 +83,95 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="overview" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#overview" class="anchor"></a>Overview</h1></div>
-<p>Auxiliary R package for the assessment of <a href="https://github.com/dieterich-lab/JACUSA">JACUSA1.x</a> and <a href="https://github.com/dieterich-lab/JACUSA2">JACUSA2.x</a> results.</p>
-<div id="install" class="section level2">
-<h2 class="hasAnchor">
-<a href="#install" class="anchor"></a>Install</h2>
-<p>Install JACUSA2helper by either downloading a specific <a href="https://github.com/dieterich-lab/JACUSA2helper/releases">release</a> or install it directly from the repository via <a href="https://www.r-project.org/nosvn/pandoc/devtools.html">devtools</a>.</p>
-<div id="download" class="section level3">
-<h3 class="hasAnchor">
-<a href="#download" class="anchor"></a>Download</h3>
-<ol>
-<li>Download JACUSA2helper from <a href="https://github.com/dieterich-lab/JACUSA2helper/releases">releases</a>
+<div class="section level1">
+<div class="page-header"><h1 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h1></div>
+<p>Auxiliary R package for the assessment of <a href="https://github.com/dieterich-lab/JACUSA" class="external-link">JACUSA1.x</a> and <a href="https://github.com/dieterich-lab/JACUSA2" class="external-link">JACUSA2.x</a> results.</p>
+<div class="section level2">
+<h2 id="install">Install<a class="anchor" aria-label="anchor" href="#install"></a>
+</h2>
+<p>Install JACUSA2helper by either downloading a specific <a href="https://github.com/dieterich-lab/JACUSA2helper/releases" class="external-link">release</a> or install it directly from the repository via <a href="https://www.r-project.org/nosvn/pandoc/devtools.html" class="external-link">devtools</a>.</p>
+<div class="section level3">
+<h3 id="download">Download<a class="anchor" aria-label="anchor" href="#download"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>Download JACUSA2helper from <a href="https://github.com/dieterich-lab/JACUSA2helper/releases" class="external-link">releases</a>
 </li>
 <li>Change to directory where JACUSA2helper was saved</li>
 <li>Start R</li>
-<li>Install downloaded package by running: <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("&lt;DOWNLOADED-FILE&gt;")</a></code>
+<li>Install downloaded package by running: <code>install.packages("&lt;DOWNLOADED-FILE&gt;")</code>
 </li>
 </ol>
 </div>
-<div id="devtools" class="section level3">
-<h3 class="hasAnchor">
-<a href="#devtools" class="anchor"></a>devtools</h3>
-<ol>
-<li>Make sure, <a href="https://www.r-project.org/nosvn/pandoc/devtools.html">devtools</a> is installed</li>
+<div class="section level3">
+<h3 id="devtools">devtools<a class="anchor" aria-label="anchor" href="#devtools"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>Make sure, <a href="https://www.r-project.org/nosvn/pandoc/devtools.html" class="external-link">devtools</a> is installed</li>
 <li>Start R</li>
 <li>Run <code>install_github("dieterich-lab/JACUSA2helper", build_vignettes = TRUE)</code>
 </li>
 </ol>
 </div>
 </div>
-<div id="documentation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#documentation" class="anchor"></a>Documentation</h2>
-<p>Check vignettes:</p>
-<ul>
-<li><code>vignette(JACUSA2helper)</code></li>
-<li><code>vignette(JACUSA2helper-figure1e)</code></li>
-<li><code>vignette(JACUSA2helper-figure1f)</code></li>
-<li><code>vignette(JACUSA2helper-meta-conditions)</code></li>
-</ul>
+<div class="section level2">
+<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+</h2>
+<p>Check vignettes: * <code>vignette(Introduction to JACUSA2helper)</code> * <code>vignette(Analysis of DART-seq with JACUSA2helper)</code> * <code>vignette(Analysis of m6A mapping by MazF with JACUSA2helper)</code> * <code>vignette(Introduction to meta conditions with JACUSA2helper)</code></p>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/dieterich-lab/JACUSA2helper/">https://​github.com/​dieterich-lab/​JACUSA2helper/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/dieterich-lab/JACUSA2helper/issues">https://​github.com/​dieterich-lab/​JACUSA2helper/​issues</a>
-</li>
+<li><a href="https://github.com/dieterich-lab/JACUSA2helper/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/dieterich-lab/JACUSA2helper/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a> + file <a href="LICENSE-text.html">LICENSE</a>
+<a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a> + file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing JACUSA2helper</a></li>
+</ul>
+</div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Michael Piechotta <br><small class="roles"> Author, maintainer </small>  </li>
 <li>
-<a href="http://dieterichlab.org/">Dieterich Lab</a> <br><small class="roles"> Funder </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<a href="http://dieterichlab.org/" class="external-link">Dieterich Lab</a> <br><small class="roles"> Funder </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
+
+
 
   </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Michael Piechotta, <a href="http://dieterichlab.org/">Dieterich Lab</a>.</p>
+  <p></p>
+<p>Developed by Michael Piechotta, <a href="http://dieterichlab.org/" class="external-link">Dieterich Lab</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -177,6 +179,8 @@
 
   
 
+
+  
 
   </body>
 </html>
