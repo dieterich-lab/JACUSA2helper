@@ -20,7 +20,7 @@ install it directly from the repository via [devtools](https://www.r-project.org
 
 ## Documentation
 Check vignettes:
-* `vignette(Introduction to JACUSA2helper)`
-* `vignette(Analysis of DART-seq with JACUSA2helper)`
-* `vignette(Analysis of m6A mapping by MazF with JACUSA2helper)`
-* `vignette(Introduction to meta conditions with JACUSA2helper)`
+* `vignette("Introduction to JACUSA2helper")`
+* `vignette("Analysis of DART-seq with JACUSA2helper")`
+* `vignette("Analysis of m6A mapping by MazF with JACUSA2helper")`
+* `vignette("Introduction to meta conditions with JACUSA2helper")`
