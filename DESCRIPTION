@@ -1,7 +1,7 @@
 Package: JACUSA2helper
 Type: Package
 Title: Post-processing for JACUSA2 output
-Version: 1.99-10
+Version: 1.99-11
 Depends: R (>= 3.5)
 Date: 2021-06-14
 Authors@R: c(person("Michael", "Piechotta", email = "michael.piechotta@gmail.com", role = c("aut", "cre")),
@@ -13,7 +13,7 @@ URL: https://github.com/dieterich-lab/JACUSA2helper, https://dieterich-lab.githu
 BugReports: https://github.com/dieterich-lab/JACUSA2helper/issues
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 LazyData: true
 LazyDataCompression: bzip2
 Suggests: 

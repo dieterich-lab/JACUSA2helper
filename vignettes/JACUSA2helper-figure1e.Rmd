@@ -1,12 +1,12 @@
 ---
-title: "JACUSA2helper Figure 1E"
+title: "m6A mapping by MazF treatment and sequencing"
 author: "Christoph Dieterich, Michael Piechotta"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: JACUSA2helper-figure1e.bib
 link-citations: yes
 vignette: >
-  %\VignetteIndexEntry{JACUSA2helper Figure 1E}
+  %\VignetteIndexEntry{m6A mapping by MazF treatment and sequencing}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -27,35 +27,50 @@ set.seed(777)
 See `vignette("JACUSA2helper")` for general description of analysis with JACUSA2helper.
 For details on JACUSA2, check the [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf).
 
-In the following, the use of of the rt-arrest function will be applied to a MazF digestion assay from @Zhang2019.
+In the following, the use of the rt-arrest function will be applied to a MazF digestion assay from @Zhang2019 (use case 1 in @Piechotta2021).
 Herein, 3 replicates of HEK293 mRNA were treated with FTO or mock treated and then subjected to a MazF digestion assay.
 
-## Pre-filter MazF data
 
-JACUSA2helper directly reads in output from JACUSA2 via the `read_result` function. As a next step we apply filters on the p_value, read coverage and select for only robust events.
-This means that only sites are called where an arrest event is visible across all replicates for at least one condition.
+## Pre-processing MazF data
+
+For this analysis we need to add bases(+2nt) downstream of identified SNVs to compare against the expected ACA motif.
+We compiled a Bash script that adds bases downstream of SNVs to the *info* field: 
+[add_seq.sh](https://github.com/dieterich-lab/JACUSA2/blob/master/scripts/add_seq.sh).
+
+You will need the FASTA sequence that you used to map your reads and the matching FASTA index.
+Make sure that you have [bedtools](https://bedtools.readthedocs.io/en/latest/) and [awk](https://www.gnu.org/software/gawk/manual/gawk.html) installed.
+
+1. Download [add_seq.sh](https://github.com/dieterich-lab/JACUSA2/blob/master/scripts/add_seq.sh)
+2. Check if the index "<FASTA>.fai" exists, otherwise run: "samtools faidx <FASTA>"
+3. `./add_seq.sh -j <JACUSA> -f <FASTA> > <PROCESSED>` 
+
+The *info* column in `<PROCESSED>` should contain values such as: "seq=ACG". 
+The first position corresponds to the position of SNV. Position 2 and 3 are downstream of the SNV.
+
+## Filter MazF data
+
+JACUSA2helper directly reads output from JACUSA2 via the `read_result` function. Make sure to run `read_result(..., unpack=True)` to make data
+stored within the *info* field available.
+
+As a next step, we apply filters on the *pvalue*, read coverage(*cov*), and select only robust events.
+This means that only sites are retained where an arrest event is visible across all replicates in at least one condition.
 
 ```{r}
-# MazF results
-data(MazF)
-filtered <- MazF %>% 
+# MazF_FTO results
+data(MazF_FTO)
+filtered <- MazF_FTO %>% 
   dplyr::filter(pvalue <= 0.05) %>% 
   dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 >= 10)) %>% 
   dplyr::filter(robust(arrest))
 ```
 
+
 ## Read and merge sequence motif information at cleavage site
 
-The data structure is modified such that the presence or absence of the canonical clevage side motif is added (see also Figure 1D in manuscript).
+The data structure is modified such that the presence or absence of the canonical cleavage side motif is added (see also Figure 1D in @Piechotta2021).
 
 ```{r}
-data(ACA)
-vecACA <- ACA$motif
-names(vecACA) <- ACA$coord
-vecACA <- ifelse(vecACA == "ACA", "yes", "no")
-filtered$ACA <- vecACA[filtered$id]
-filtered <- filtered %>% 
-  dplyr::filter(ACA %in% c("yes","no"))
+filtered$ACA <- ifelse(filtered$seq == "ACA", "yes", "no")
 ```
 
 ## Scatter plot of arrest rates for replicate 1
@@ -67,26 +82,32 @@ filtered %>%
   ggplot2::ggplot(ggplot2::aes(x = arrest_rate$cond1$rep1, y = arrest_rate$cond2$rep1, color = ACA)) +  
   ggplot2::geom_point() + 
   ggplot2::geom_abline(colour = "red") +
-  ggplot2::xlab("MazF+ and FTO- read arrest") + 
-  ggplot2::ylab("MazF+ and FTO+ read arrest") 
+  ggplot2::xlab("MazF and mock read arrest") + 
+  ggplot2::ylab("MazF and FTO read arrest") +
+  ggplot2::labs(color="ACA motif")
 ```
 
 ## Box plot of arrest rates over all replicates
 
-Arrest rates are plotted depending on the presence or absence of an ACA motif. 
+Arrest rates are plotted depending on the presence or absence of an ACA motif in FTO and mock treated HEK293 cells. 
+(Corresponds to Figure 1E in @Piechotta2021)
 
 ```{r}
-toplot <- melt(as.matrix(filtered$arrest_rate))
+toplot <- reshape2::melt(as.matrix(filtered$arrest_rate))
 toplot$ACA <- rep(filtered$ACA, 6)
 colnames(toplot) <- c("Id", "sample", "arrest_rate", "ACA")
 
-toplot$sample <- gsub("cond1", "MazF_mock", toplot$sample)
-toplot$sample <- gsub("cond2", "MazF_FTO", toplot$sample)
+# add informative labels
+toplot$sample <- gsub("cond1", "mock", toplot$sample)
+toplot$sample <- gsub("cond2", "FTO", toplot$sample)
+toplot$treatment <- gsub("\\.rep[0-9]+", "", toplot$sample)
 
-ggplot2::ggplot(toplot, ggplot2::aes(x = sample, y = arrest_rate, color=ACA)) +
+ggplot2::ggplot(toplot, ggplot2::aes(x = sample, y = arrest_rate, linetype=treatment, color=ACA)) +
   ggplot2::geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 90))
+  ggplot2::ylab("arrest rate") +
+  ggplot2::xlab("MazF") +
+  ggplot2::labs(color="ACA motif")
+  #theme(axis.text.x = element_text(angle = 45))
 ```
 
 ## References
-

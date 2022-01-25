@@ -511,33 +511,14 @@
 #' }
 "DARTseq"
 
-#' ACA
-#' 
-#' Description of motifs.
-#' 
-#' @docType data
-#' 
-#' @usage data(ACA)
-#' 
-#' @format a tibble with 18 elements:
-#' \itemize{
-#'		\item contig: Character string representing the contig of the variant
-#'		\item start: Numeric position of variant (>=0)
-#'		\item end: Numeric corresponds to "start + 1"
-#'		\item strand: Character representing strand information; "+", "-", or "."(no strand information available)
-#'    \item motif: Character string representing the motif.
-#'		\item coord: Chraceter string representing: "contig:start:strand"
-#' }
-"ACA"
-
-#' MazF from Zhang et al. 2019
+#' MazF_FTO from Zhang et al. 2019
 #' 
 #' In the following, the use of of the rt-arrest function will be applied to a MazF digestion assay from Zhang et al. 2019.
 #' Herein, 3 replicates of HEK293 mRNA were treated with FTO or mock treated and then subjected to a MazF digestion assay.
 #' 
 #' @docType data
 #' 
-#' @usage data(MazF)
+#' @usage data(MazF_FTO)
 #' 
 #' @references Zhang, Zhang and Chen, Li-Qian and Zhao, Yu-Li and Yang, 
 #'             Cai-Guang and Roundtree, Ian A. and Zhang, Zijie and Ren, Jian and 
@@ -570,4 +551,4 @@
 #'		\item filter: ";"-separated character string showing feature filter information. Empty field is equal to "*"
 #'		\item ref: Character "A", "C", "G", "T", or "N" representing the reference base for this site - inverted when strand is "-".
 #' }
-"MazF"
+"MazF_FTO"

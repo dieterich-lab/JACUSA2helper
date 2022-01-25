@@ -1,12 +1,12 @@
 ---
-title: "JACUSA2helper Figure 1F"
+title: "DART-seq"
 author: "Christoph Dieterich, Michael Piechotta"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: JACUSA2helper-dartseq.bib
 link-citations: yes
 vignette: >
-  %\VignetteIndexEntry{JACUSA2helper Figure 1F}
+  %\VignetteIndexEntry{DART-seq}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -54,7 +54,7 @@ of at least one condition.
 # sum base call counts of condition / RNA replicates
 rna_bases <- Reduce("+", filtered$bases$cond2)
 
-# we don't need lapply_repl, because we don't operate on all replicate from all
+# we don't need lapply_repl, because we don't operate on all replicates from all
 # conditions - only condition 2 / RNA
 ref2YTHmut <- base_sub(rna_bases, filtered$ref)
 table(ref2YTHmut)
@@ -66,7 +66,7 @@ ref2YTH <- base_sub(rnaref, filtered$ref)
 table(ref2YTH, ref2YTHmut)
 ```
 The following barplot summarizes the number of sites by characteristic base substitutions relative to the reference sequence.
-We observe a lot more C-to-U transistions in the active YTH binding domain as compared to the inactivated binding domain.
+We observe a lot more C-to-U transitions in the active YTH binding domain as compared to the inactivated binding domain.
 
 ```{r}
 tidyr::tibble(
@@ -105,12 +105,15 @@ filtered$coord <- JACUSA2helper::coord(filtered)
 The following scatter plot summarizes the T/(C+T) frequencies and labels them.
 
 ```{r}
-ggplot(filtered, aes(x=YTHmut.t.ratio, y=YTH.t.ratio,color=pred)) + 
-  geom_point() + 
+ggplot2::ggplot(filtered, ggplot2::aes(x=YTHmut.t.ratio, y=YTH.t.ratio,color=pred)) + 
+  ggplot2::geom_point() + 
   ggplot2::xlab("Mutated YTH binding domain (T/(C+T))") + 
   ggplot2::ylab("Active YTH binding domain (T/(C+T))") + 
-  scale_color_manual(values=c('#999999', '#E69F00'), name = "") +
-  theme_classic()
+  ggplot2::scale_color_manual(values=c('#999999', '#E69F00'), name = "") +
+  ggplot2::annotate(geom="text", x=0.8, y=0.25, label="Negatives", color="#999999", size=6) + 
+  ggplot2::annotate(geom="text", x=0.25, y=0.8, label="Positives", color="#E69F00", size=6) + 
+  ggplot2::theme_classic() +
+  ggplot2::theme(legend.position = "none")
 ```
 
 # References
