@@ -1,12 +1,12 @@
 ---
-title: "JACUSA2helper"
+title: "Introduction to JACUSA2helper"
 author: "Michael Piechotta"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: JACUSA2helper.bib
 link-citations: yes
 vignette: >
-  %\VignetteIndexEntry{JACUSA2helper}
+  %\VignetteIndexEntry{Introduction to JACUSA2helper}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

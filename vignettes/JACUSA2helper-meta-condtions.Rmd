@@ -1,12 +1,12 @@
 ---
-title: "JACUSA2helper meta conditions"
+title: "Introduction to meta conditions with JACUSA2helper"
 author: "Michael Piechotta"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: JACUSA2helper-meta-conditions.bib
 link-citations: yes
 vignette: >
-  %\VignetteIndexEntry{JACUSA2helper meta conditions}
+  %\VignetteIndexEntry{Introduction to meta conditions with JACUSA2helper}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

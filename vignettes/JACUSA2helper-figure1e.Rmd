@@ -1,12 +1,12 @@
 ---
-title: "m6A mapping by MazF treatment and sequencing"
+title: "Analysis of m6A mapping by MazF with JACUSA2helper"
 author: "Christoph Dieterich, Michael Piechotta"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: JACUSA2helper-figure1e.bib
 link-citations: yes
 vignette: >
-  %\VignetteIndexEntry{m6A mapping by MazF treatment and sequencing}
+  %\VignetteIndexEntry{Analysis of m6A mapping by MazF with JACUSA2helper}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
