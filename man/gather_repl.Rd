@@ -7,11 +7,11 @@
 gather_repl(id, x, meta_cond = NULL)
 }
 \arguments{
-\item{id}{vector that unique identifies each row}
-
 \item{x}{structured column}
 
 \item{meta_cond}{vector of meta conditions}
+
+\item{ids}{vector}
 }
 \value{
 extracted column

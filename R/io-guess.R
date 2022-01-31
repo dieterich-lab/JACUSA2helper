@@ -1,31 +1,34 @@
+.type2prefix <-function(type) {
+  if (type == .UNKNOWN_METHOD) {
+    stop("Unknown type: ", type)
+  }
+
+  if (type == .CALL_PILEUP) {
+    return(c(.CALL_PILEUP_COL))
+  } else if (type %in% c(.RT_ARREST, .LRT_ARREST)) {
+    return(c(.ARREST_COL, .THROUGH_COL))
+  } else {
+    stop("Unknown type: ", type)
+  }
+}
+
 # Guess conditions and replicates from labels
 .guess_cond_count <- function(type, header_names) {
   if (type == .UNKNOWN_METHOD) {
     stop("Unknown type: ", type)
   }
   
-  cond_count <- 0
-  if (type == .CALL_PILEUP) {
-    prefix <- .CALL_PILEUP_COL
-    cond_repl <- .extract_cond_repl(header_names, prefix)
-    cond_count <- .find_cond_count(cond_repl)
-  } else if (type %in% c(.RT_ARREST, .LRT_ARREST)) {
-    cond_counts <- lapply(c(.ARREST_COL, .THROUGH_COL), function(x) {
-      cond_repl <- .extract_cond_repl(header_names, x)
-      return(.find_cond_count(cond_repl))
-    })
-    cond_count <- unique(unlist(cond_counts))
-    if (length(cond_count) != 1) {
-      stop("Error guessing conditions for lrt-arrest: cond1, cond2 = ", cond_count)
-    }
-  } else {
-    stop("Unknown type: ", type)
+  cond_counts <- lapply(.type2prefix(type), function(x) {
+    return(.find_cond_count(.extract_cond_repl(header_names, x)))
+  })
+  cond_count <- unique(unlist(cond_counts))
+  if (length(cond_count) != 1) {
+    stop("Error guessing conditions for lrt-arrest: cond1, cond2 = ", cond_count)
   }
-  
-  if (cond_count < 1) {
+  if (length(cond_count) != 1 || cond_count < 1) {
     stop("Conditions could not be guessed from: ", header_names)
   }
-  
+
   cond_count
 }
 

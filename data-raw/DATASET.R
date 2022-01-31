@@ -51,16 +51,8 @@ Zhou2018_rt_arrest <- JACUSA2helper:::read_results(fnames, meta_conds, cond_desc
 usethis::use_data(Zhou2018_rt_arrest, overwrite = TRUE, compress = "bzip2")
 
 # DARtSeq
-DARTseq <- JACUSA2helper:::read_result("Score2_APOBEC1YTH_APOBEC1YTHmut_RC18_call2_result.out")
+DARTseq <- JACUSA2helper:::read_result("Score2_APOBEC1YTH_APOBEC1YTHmut_RC18_call2_result.out", unpack = TRUE)
 usethis::use_data(DARTseq, overwrite = TRUE, compress = "bzip2")
 
 MazF_FTO <- JACUSA2helper:::read_result("Cutoff01_MazF_vs_cond2_FTO_RC22_rtarrest_with_seq_and_ann.out", unpack=TRUE)
 usethis::use_data(MazF_FTO, overwrite = TRUE, compress = "bzip2")
-# MazF
-#MazF <- JACUSA2helper:::read_result("Cutoff005_MazF_vs_cond2_FTO_RC18_rtarrest_plain_result.out")
-#usethis::use_data(MazF, overwrite = TRUE, compress = "bzip2")
-# ACA
-#pos <- c("contig", "start", "end", "strand")
-#ACA <- read.table("ACA.txt", col.names=c(pos, "motif"), header = FALSE, stringsAsFactors = FALSE)
-#ACA$coord <- JACUSA2helper:::coord(ACA)
-#usethis::use_data(ACA, overwrite = TRUE, compress = "bzip2")

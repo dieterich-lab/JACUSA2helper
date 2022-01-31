@@ -15,6 +15,7 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 options(tibble.print_min = 4L, tibble.print_max = 4L)
 library(JACUSA2helper)
+library(plyranges)
 library(magrittr)
 set.seed(777)
 ```
@@ -68,13 +69,13 @@ Note that `rdd` is a tibble - check [tibble](http://tibble.tidyverse.org) for
 more details. 
 
 Use dplyr to manipulate the result object `rdd`. Check details on 
-[dplyr](https://github.com/tidyverse/dplyr) and read `vignette("dplyr")`.
+[dplyr](https://github.com/tidyverse/dplyr) and [plyranges](https://www.bioconductor.org/packages/release/bioc/html/plyranges.html).
 
 ### Structured column
 JACUSA2 features structured columns (nested tibbles) where condition and replicate 
 specific data is stored, e.g.: bases, cov, etc.
 ```{r}
-str(rdd[c("id", "bases", "cov")])
+str(rdd[, c("bases", "cov")])
 ```
 
 Check structure of column with:
@@ -119,11 +120,11 @@ In a first step, we will retain sites with score >= 2.
 
 ```{r}
 # before filtering
-dim(rdd)
+length(rdd)
 result <- dplyr::filter(rdd, score >= 2)
 print("After filtering")
 # after filtering
-dim(result)
+length(result)
 ```
 
 In order to formulate complicate statements with `dplyr::filter()` featuring 
@@ -136,8 +137,7 @@ The following statement retains sites where all replicates of condition 1 have
 coverage >= 50 and at least one replicate of condition 2 has 10 reads:
 ```{r}
 rdd %>% 
-  dplyr::filter(All(cov$cond1 >= 50) & Any(cov$cond2 >= 10)) %>%
-  dplyr::select(id, cov)
+  dplyr::filter(All(cov$cond1 >= 50) & Any(cov$cond2 >= 10))
 ```
 
 In the following, we will:
@@ -150,9 +150,10 @@ In the following, we will:
 * Finally, we compute the base substitution (here RNA editing sites against FASTA 
   reference) per replicate.
 
+# TODO
 ```{r}
 filtered <- rdd
-filtered[["bc"]] <- lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ) %>% Reduce("+", .) %>% base_count()
+GenomicRanges::mcols(filtered)["bc"] <- lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ) %>% Reduce("+", .) %>% base_count()
 filtered %>%
   dplyr::filter(score >= 2) %>%
   dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 > 10)) %>%
@@ -202,12 +203,15 @@ tidyr::tibble(base_sub = dna2rna) %>% # ggplot requires a data frame
 
 To compare the coverage distribution of each data sample, we create a simple plot of the empirical coverage distribution, where we map cond(ition) to `colour` and repl(icate) to `linetype`.
 
+
+<!-- TODO
 ```{r}
 gather_repl(result$id, result$cov) %>%
   ggplot2::ggplot(ggplot2::aes(x = value, colour = cond, linetype = repl)) + 
     ggplot2::stat_ecdf(geom = "step") +
     ggplot2::xlab("Coverage")
 ```
+-->
 
 
 In order to improve the preliminary plot, we need to modify the following aspects:
@@ -219,6 +223,7 @@ In order to improve the preliminary plot, we need to modify the following aspect
 
 First, a data description is added to the result object:
 
+<!-- TODO
 ```{r}
 result <- gather_repl(rdd$id, rdd$cov) %>%
   dplyr::mutate(
@@ -229,7 +234,7 @@ result <- gather_repl(rdd$id, rdd$cov) %>%
     )
   )
 ```
-
+-->
 
 Supplementary data `limits` and `labels` are created to enable sleek legend by relating cond(ition) and repl(icate) to data description.
 They will be mapped to `colour` and `linetype`.
@@ -306,47 +311,51 @@ structured/nested columns:
 ```{r}
 data("HIVRT_rt_arrest")
 # column names of arrest data
-names(HIVRT_rt_arrest)
+names(GenomicRanges::mcols(HIVRT_rt_arrest))
 ```
 
+<!--
 We investigate the strand specific coverage distribution of reads and discover that more reads are mapped to the "+" strand.
 The other mappings are probably artefacts. But this discussion is beyond the scope of this vignette.
 
 ```{r}
-gather_repl(HIVRT_rt_arrest$id, HIVRT_rt_arrest$cov) %>% # extract coverages
-dplyr::inner_join(dplyr::select(HIVRT_rt_arrest, id, contig, strand), by = "id") %>% # add contig and strand
-ggplot2::ggplot(ggplot2::aes(x = value, colour = strand)) + 
-  ggplot2::geom_density() + ggplot2::scale_x_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
-  ) +
-ggplot2::xlab("Coverage") +
-ggplot2::theme(legend.position = "bottom") + 
-ggplot2::facet_grid(contig ~ .)
+#gather_repl(HIVRT_rt_arrest$cov) %>% # extract coverages
+#dplyr::inner_join(dplyr::select(HIVRT_rt_arrest, id, contig, strand), by = "id") %>% # add contig and strand
+#ggplot2::ggplot(ggplot2::aes(x = value, colour = strand)) + 
+#  ggplot2::geom_density() + ggplot2::scale_x_log10(
+#    breaks = scales::trans_breaks("log10", function(x) 10^x),
+#    labels = scales::trans_format("log10", scales::math_format(10^.x))
+#  ) +
+#ggplot2::xlab("Coverage") +
+#ggplot2::theme(legend.position = "bottom") + 
+#ggplot2::facet_grid(contig ~ .)
 ```
+-->
 
 We filter by pvalue, coverage, strand, and only retain robust arrest events:
 
 ```{r}
-dim(HIVRT_rt_arrest)
+length(HIVRT_rt_arrest)
 filtered <- HIVRT_rt_arrest %>% 
   dplyr::filter(strand == "+") %>%
   dplyr::filter(pvalue <= 0.01) %>% 
   dplyr::filter(robust(arrest))
-dim(filtered)
+length(filtered)
 ```
 We use `gather_repl()` function to transform the filtered result object and 
 plot the arrest rate from each condition in a scatter plot.
 
+<!-- TODO
 ```{r}
-filtered %>%
-  ggplot2::ggplot(ggplot2::aes(x = log2(arrest_rate$cond1$rep1), y = log2(arrest_rate$cond2$rep1))) +  
-  ggplot2::geom_point() + 
-  ggplot2::facet_grid(. ~ contig) + 
-  ggplot2::geom_abline(colour = "red") +
-  ggplot2::xlab("log2(+CMC arrest rate)") + 
-  ggplot2::ylab("log2(-CMC arrest rate)")
+#GenomicRanges::mcols(filtered) %>% as.data.frame() %>%
+#  ggplot2::ggplot(ggplot2::aes(x = log2(arrest_rate$cond1$rep1), y = log2(arrest_rate$cond2$rep1))) +  
+#  ggplot2::geom_point() + 
+#  ggplot2::facet_grid(. ~ contig) + 
+#  ggplot2::geom_abline(colour = "red") +
+#  ggplot2::xlab("log2(+CMC arrest rate)") + 
+#  ggplot2::ylab("log2(-CMC arrest rate)")
 ```
+--> 
 
 From the above plot, we can deduce that the arrest rate is higher in the +CMC condition for all rRNAs when compared against -CMC.
 

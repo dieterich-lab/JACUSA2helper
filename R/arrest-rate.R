@@ -8,10 +8,7 @@
 #'
 #' @export
 add_arrest_rate <- function(result, cores = 1) {
-  arrest_cov <- coverage(result[[.ARREST_COL]])
-  through_cov <- coverage(result[[.THROUGH_COL]])
-
-  result[[.ARREST_RATE_COL]] <- mapply_repl(arrest_rate, arrest_cov, through_cov)
+  df <- GenomicRanges::mcols(result)
 
   result
 }

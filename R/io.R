@@ -42,7 +42,7 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
       # parse and store header
       # fix header: #contig -> contig
       header_names <- sub("^#", "", line);
-      header_names <- unlist(strsplit(header_names, "\t"))
+      header_names <- unlist(base::strsplit(header_names, split = "\t", fixed = TRUE))
       
       # guess number of conditions  
       guessed_cond_count <- .guess_cond_count(type, header_names)
@@ -87,56 +87,39 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, progress = TRUE, 
   }
   
   # create result depending on determined method type 
-  result <- .create_result(type, cond_count, data, unpack, cores)
+  result <- .create_result(type, cond_count, data, cores)
+  data <- NULL
+
+  # unpack info field
+  if (unpack) {
+    # FIXME 
+    prefixes <- .type2prefix(type)
+    prefix <- prefixes[1]
+    ins_keys <- c(paste0("ins", .extract_cond_repl(header_names, prefix)), "insertion_score", "insertion_pvalue")
+    del_keys <- c(paste0("del", .extract_cond_repl(header_names, prefix)), "deletion_score", "deletion_pvalue")
+    
+    unpack_keys <- c(
+      ins_keys, del_keys,
+      "arrest_score",
+      paste0("reset", c(1:cond_count, "P")),
+      paste0("backtrack", c(1:cond_count, "P"))
+    )
+    result <- unpack_info(result, cond_count, unpack_keys, 1)
+  }
+  
   attr(result, .ATTR_TYPE) <- type
   if (length(cond_desc)) {
     attr(result, .ATTR_COND_DESC) <- cond_desc
   }
   attr(result, .ATTR_HEADER) <- jacusa_header
-  #result <- sticky::sticky(result)
-  id <- info <- filter <- ref <- NULL
-  result <- result %>%
-    dplyr::select(id, dplyr::everything()) %>%
-    dplyr::select(-c(info, filter, ref), c(info, filter, ref))
-    
 
-    result
+  result
 }
 
-#' Merged coordinate information
-#'
-#' Merge contig:start|start-end:strand from JACUSA2 result object
-#'
-#' @param result object created by \code{read_result()} or \code{read_results()}.
-#' @return merged coorindates information
-#' 
-#' @export
-coord <- function(result) {
-  paste0(
-    result$contig,
-    ":", ifelse(result$end - result$start == 1, result$start, paste0(result$start, "-", result$end)),
-    ":", result$strand
-  )
-}
-
-# FIXME remove |read_sub
-.id <- function(data) {
-  coord <- coord(data)
-  regex <- paste0("(", .SUB_TAG_COL, "|read_sub)=([^;]+)")
-  if (any(stringr::str_detect(data[[.INFO_COL]], regex))) {
-    sub_tag <- stringr::str_match(data[[.INFO_COL]], regex)[, 3]
-    sub_tag <- clean_tag(sub_tag)
-    return(paste0(coord, ":", sub_tag))
-  }
-  coord
-}
 
 
 # Create result for type and conditions from data 
-.create_result <- function(type, cond_count, data, unpack, cores) {
-  # unique id for rows, important for expanding
-  data$id <- .id(data)
-  
+.create_result <- function(type, cond_count, data, cores) {
   cols <- NULL
   if(type == .CALL_PILEUP) {
     cols <- c(.CALL_PILEUP_COL)
@@ -145,26 +128,52 @@ coord <- function(result) {
   } else {
     stop("Unknown type: ", type)
   }
-  result <- .unpack_cols(data, cols, cond_count, .BASES, cores)
+  unpacked <- .unpack_cols(data, cols, cond_count, .BASES, cores)
+  
+  l <- list(
+    seqnames = data$contig,
+    ranges = IRanges::IRanges(start=data$start, end=data$end),
+    strand = GenomicRanges::strand(data$strand)
+  )
+  gr <- do.call(GenomicRanges::GRanges, l)
+  GenomicRanges::mcols(gr) <- unpacked[, setdiff(colnames(unpacked), c("contig", "start", "end", "strand"))]
+  
   # process arrest and through columns
   if (type %in% c(.RT_ARREST, .LRT_ARREST)) {
-    result[[.CALL_PILEUP_COL]] <- mapply_repl(
-      Reduce, 
-      result[[.ARREST_COL]], result[[.THROUGH_COL]], 
-      MoreArgs=list(f="+"), cores = cores
+    GenomicRanges::mcols(gr)[[.CALL_PILEUP_COL]] <- mapply_repl(
+      Reduce,
+      GenomicRanges::mcols(gr)[[.ARREST_COL]], 
+      GenomicRanges::mcols(gr)[[.THROUGH_COL]],
+      MoreArgs = list("f" = "+"),
+      cores = cores
     )
-    result <- add_arrest_rate(result)
+    gr <- add_arrest_rate(gr)
   }
 
   # add coverage
-  result[[.COV]] <- coverage(result[[.CALL_PILEUP_COL]])
+  GenomicRanges::mcols(gr)[[.COV]] <- coverage(GenomicRanges::mcols(gr)[[.CALL_PILEUP_COL]])
 
-  # unpack info field
-  if (unpack) {
-    result <- unpack_info(result, cond_count, cores)
-  }
+  gr
+}
 
-  result
+#' Merged coordinate information
+#' 
+#' Merge contig:start|start-end:strand from AJCUSA2 result object
+#' 
+#' @param result object created by \code{read_result()} or \code{read_results()}.
+#' @return merged coorindates information
+#' @export
+#' 
+id <- function(result) {
+  paste0(
+    GenomicRanges::seqnames(result),
+    ":",
+    GenomicRanges::start(result),
+    "-",
+    GenomicRanges::end(result),
+    ":",
+    GenomicRanges::strand(result)
+  )
 }
 
 #' Observed base calls.
@@ -203,9 +212,28 @@ base_call <-function(bases) {
 # replace empty with actual values
 .fill_empty <- function(df, cols, new_cols) {
   new_value <- paste0(rep(0, length(new_cols)), collapse = ",")
-  df[cols][df[cols] == .EMPTY] <- new_value
-  
+
+  for (col in cols) {
+    i <- df[, col] == .EMPTY | df[, col] == ""
+    if (length(i)) {
+      df[i, col] <- new_value
+    }
+  }
+
   df
+}
+
+#' Get keys of info field.
+#' 
+#' Get keys of info field.
+#' 
+#' @param info Vector of strings.
+#' @return returndfs a vector of available keys.
+#' 
+#' @export
+get_info_keys <- function(info) {
+  keys <- base::strsplit(gsub("(;?[^=;]+)=[^=;]+", "\\1", info), ";", fixed=TRUE) %>% unlist() %>% unique()
+  return(setdiff(keys, .EMPTY))
 }
 
 #' Unpack info field
@@ -215,51 +243,50 @@ base_call <-function(bases) {
 #' @param result JACUSA2 result object.
 #' @param cond_count integer Number of conditions.
 #' @param cores integer Number of compute cores to use. Default: 1.
-#' @param col2type list Maps column names of result object to transformation, e.g.: as.numeric.
 #' @return returns a JACUSA2 result object with "info" unpacked.
 #' 
 #' @export
-unpack_info <- function(result, cond_count, cores = 1, col2type = c("arrest_score" = as.numeric)) {
-  info <- tidyr::separate_rows(result[, c("id", .INFO_COL)], info, sep = ";")
+unpack_info <- function(result, cond_count, keys=get_info_keys(result), cores = 1) {
+  info <- fast_unpack_info(GenomicRanges::mcols(result)[, .INFO_COL], names=keys) %>% as.data.frame()
 
-  . <- key <- value <- NULL
-  x <- strsplit(info[[.INFO_COL]], "=") %>% do.call(rbind, .) %>% as.data.frame() %>% tidyr::as_tibble()
-  colnames(x) <- c("key", "value")
-  
-  # FIXME remove
-  i <- x$key == "read_sub"
-  if (any(i)) {
-    x[i, "key"] <- .SUB_TAG_COL
+  for (col in c(paste0("reset", c(1:cond_count, "P")), paste0("backtrack", c(1:cond_count, "P")))) {
+    i <- info[, col] == ""
+    info[i, col] <- NA
   }
 
-  info <- info[, "id"]
-  info <- dplyr::bind_cols(info, x) %>% 
-    dplyr::filter(key != .EMPTY) %>%
-    tidyr::pivot_wider(names_from = key, values_from=value)
-  
-  result <- dplyr::inner_join(result, info, by = "id")
+  # FIXME remove
+  if ("read_sub" %in% colnames(info)) {
+    colnames(info)[colnames(info) == .SUB_TAG_COL]
+    warning(paste0("Renamed deprecated field 'read_sub' to '", .SUB_TAG_COL, "'"))
+  }
+
+  GenomicRanges::mcols(result) <- cbind(GenomicRanges::mcols(result), info)
+  col2type <- c("arrest_score"= as.numeric)
+  cols <- names(GenomicRanges::mcols(result))
+  for (col in names(col2type)) {
+    if (col %in% cols) {
+      if (all(GenomicRanges::mcols(result)[[col]] == "")) {
+        GenomicRanges::mcols(result)[col] <- NULL
+      } else {
+        i <- GenomicRanges::mcols(result)[[col]] == ""
+        if (length(i)) {
+          GenomicRanges::mcols(result)[i, col] <- NA
+        }
+        GenomicRanges::mcols(result)[[col]] <- col2type[[col]](GenomicRanges::mcols(result)[[col]])
+      }
+    }
+  }
+  # cleanup
   
   # parse indels on demand
-  if (any(c("insertion_score", "deletion_score") %in% names(result))) {
-    result <- .unpack_indels(result, cond_count, cores)
-  }
+  result <- .unpack_indels(result, cond_count, cores)
 
-  cols <- names(result)
-  for (col in names(col2type)) {
-    if (! col %in% cols) {
-      next
-    }
-    result[[col]] <- col2type[[col]](result[[col]])
-  }
-  
   result
 }
 
 # expand strings from vector s
 .unpack <- function(s, new_cols) {
-  . <- NULL
-  df <- lapply(strsplit(s, ","), as.numeric) %>% 
-    do.call(rbind, .) %>% 
+  df <- lapply(data.table::tstrsplit(s, split = ",", fixed = TRUE), as.numeric) %>% 
     as.data.frame() %>%
     tidyr::as_tibble()
   colnames(df) <- new_cols
@@ -270,18 +297,18 @@ unpack_info <- function(result, cond_count, cores = 1, col2type = c("arrest_scor
 # expand cols
 .unpack_cols <- function(df, prefixes, cond_count, new_cols, cores) {
   matches = .matches(df, prefixes, cond_count)
-  
+
   cols <- unique(matches$col)
   df <- .fill_empty(df, cols, new_cols)
 
   unpacked <- parallel::mclapply(
     df[cols], 
     .unpack, new_cols=new_cols, 
-    mc.cores = min(cols, cores), mc.preschedule = FALSE
+    mc.cores = min(cols, cores),
+    mc.allow.recursive = FALSE
   )
-
   df <- dplyr::select(df, -dplyr::one_of(cols)) %>% tidyr::as_tibble()
-
+  
   for (prefix in prefixes) {
     i <- matches$prefix == prefix
     if (any(i)) {
@@ -313,14 +340,49 @@ unpack_info <- function(result, cond_count, cores = 1, col2type = c("arrest_scor
 
 
 # helper function to extract deletion info(s)
-.unpack_indels <- function(df, cond_count, cores) {
-  result <- .unpack_cols(df, c("ins", "del"), cond_count, c("reads", "coverage"), cores)
-  meta_cols <- c("deletion_score", "deletion_pvalue", "insertion_score", "insertion_pvalue")
-  
-  
-  for (col in names(result)[names(result) %in% meta_cols]) {
-    result[[col]] <- as.numeric(result[[col]])
+.unpack_indels <- function(result, cond_count, cores) {
+  for (operation in c("insertion", "deletion")) {
+    op <- substr(operation, 0, 3)
+    score <- paste0(operation, "_score")
+    pvalue <- paste0(operation, "_pvalue")
+    
+    matches = .matches(GenomicRanges::mcols(result), c(op), cond_count)
+    cols <- unique(matches$col)
+    # delete empty cols
+    if (all(GenomicRanges::mcols(result)[[score]] == "")) {
+      cols <- c(score, pvalue, cols)
+      GenomicRanges::mcols(result)[cols] <- NULL
+    } else {
+      new_cols <- c("reads", "coverage")
+      GenomicRanges::mcols(result)[[score]] <- as.numeric(GenomicRanges::mcols(result)[[score]])
+      GenomicRanges::mcols(result)[[pvalue]] <- as.numeric(GenomicRanges::mcols(result)[[pvalue]])
+      
+      df <- as.data.frame(GenomicRanges::mcols(result)[cols])
+      df <- .fill_empty(df, cols, new_cols)
+      
+      unpacked <- parallel::mclapply(
+        df[cols], 
+        .unpack, new_cols=new_cols, 
+        mc.cores = min(cols, cores),
+        mc.allow.recursive = FALSE
+      )
+      for (col in cols) {
+        GenomicRanges::mcols(result)[[col]] <- NULL
+      }
+
+      i <- matches$prefix == op
+      if (any(i)) {
+        merged <- .merge_cond(unpacked[matches[i, "col"]], matches[i, ])
+        GenomicRanges::mcols(result)[[op]] <- tidyr::as_tibble(merged)
+      }
+    }
   }
+
+  #df <- .unpack_cols(df, c("ins", "del"), cond_count, c("reads", "coverage"), cores)
+  #meta_cols <- c("deletion_score", "deletion_pvalue", "insertion_score", "insertion_pvalue")
+  #for (col in names(df)[names(df) %in% meta_cols]) {
+  #  df[[col]] <- as.numeric(df[[col]])
+  #}
 
   result
 }
@@ -347,15 +409,14 @@ read_results <- function(files, meta_conds, cond_descs, unpack = FALSE, cores = 
     attr(result, .ATTR_TYPE) <- NULL
     attr(result, .ATTR_COND_DESC) <- NULL
 
-    result[[.META_COND_COL]] <- meta_cond
+    GenomicRanges::mcols(result)[[.META_COND_COL]] <- meta_cond
     return(list(result, type))
   }, files, meta_conds, cond_descs, mc.cores = min(length(files), cores), SIMPLIFY = FALSE)
 
   types <- lapply(l, "[[", 2) %>% unlist(use.names = FALSE)
 
-  
   # combine read files
-  results <- do.call(rbind, lapply(l, "[[", 1))
+  results <- unlist(as(lapply(l, "[[", 1), "GRangesList"))
   results$meta_cond <- as.factor(results$meta_cond)
 
   attr(results, .ATTR_TYPE) <- types

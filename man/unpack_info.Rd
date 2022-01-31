@@ -4,12 +4,7 @@
 \alias{unpack_info}
 \title{Unpack info field}
 \usage{
-unpack_info(
-  result,
-  cond_count,
-  cores = 1,
-  col2type = c(arrest_score = as.numeric)
-)
+unpack_info(result, cond_count, keys = get_info_keys(result), cores = 1)
 }
 \arguments{
 \item{result}{JACUSA2 result object.}
@@ -17,8 +12,6 @@ unpack_info(
 \item{cond_count}{integer Number of conditions.}
 
 \item{cores}{integer Number of compute cores to use. Default: 1.}
-
-\item{col2type}{list Maps column names of result object to transformation, e.g.: as.numeric.}
 }
 \value{
 returns a JACUSA2 result object with "info" unpacked.

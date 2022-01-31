@@ -58,7 +58,7 @@ coverage <- function(bases, cores = 1) {
 #' 
 #' Extract values from a structured column.
 #' 
-#' @param id vector that unique identifies each row
+#' @param ids vector
 #' @param x structured column
 #' @param meta_cond vector of meta conditions
 #' @return extracted column
@@ -68,7 +68,7 @@ gather_repl <- function(id, x, meta_cond = NULL) {
   r <- list()
   for (cond in names(x)) {
     for (repl in names(x[[cond]])) {
-      df <- tidyr::tibble(id = id, value = x[[cond]][[repl]])
+        df <- tidyr::tibble(id = id, value = x[[cond]][[repl]])
       if (! is.null(meta_cond)) {
         df[["meta_cond"]] <- meta_cond
       }
@@ -90,6 +90,7 @@ gather_repl <- function(id, x, meta_cond = NULL) {
 #' @param result object tagged and not tagged structured base columns.
 #' @export
 expand_tag <- function(result, cores = 1) {
+  # FIXME
   result$coord <- coord(result)
   # extract data from tagged and not tagged reads
   tag <- NULL
