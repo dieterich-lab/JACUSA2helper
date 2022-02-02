@@ -19,8 +19,9 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 4L, tibble.print_max = 4L)
 library(JACUSA2helper)
 library(magrittr)
-library(dplyr);
-library(ggplot2);
+library(plyranges)
+library(dplyr)
+library(ggplot2)
 set.seed(777)
 ```
 
@@ -35,8 +36,10 @@ JACUSA2helper supports the analysis of DARTseq data too (see below). Input is ty
 data("DARTseq")
 filtered <- DARTseq
 
-filtered[["bc"]] <- lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ) %>% 
-  Reduce("+", .) %>% base_count()
+# calculate number of unique base calls per site
+GenomicRanges::mcols(filtered)[["bc"]] <- lapply(filtered$bases, Reduce, f = "+") %>% 
+  Reduce(f="+") %>% 
+  base_count()
 
 filtered <- filtered %>%
   dplyr::filter(score >= 2) %>%
@@ -65,7 +68,7 @@ rnaref <- Reduce("+", filtered$bases$cond1)
 ref2YTH <- base_sub(rnaref, filtered$ref)
 table(ref2YTH, ref2YTHmut)
 ```
-The following barplot summarizes the number of sites by characteristic base substitutions relative to the reference sequence.
+The following bar plot summarizes the number of sites by characteristic base substitutions relative to the reference sequence.
 We observe a lot more C-to-U transitions in the active YTH binding domain as compared to the inactivated binding domain.
 
 ```{r}
@@ -92,27 +95,28 @@ tempo <- lapply_cond(
   lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ),
   base_ratio
 )
-filtered[["YTH.t.ratio"]] <- tempo$cond1$T
-filtered[["YTHmut.t.ratio"]] <- tempo$cond2$T
-filtered[["pred"]] <- ifelse(
+GenomicRanges::mcols(filtered)[["YTH.t.ratio"]] <- tempo$cond1$T
+GenomicRanges::mcols(filtered)[["YTHmut.t.ratio"]] <- tempo$cond2$T
+GenomicRanges::mcols(filtered)[["pred"]] <- ifelse(
   tempo$cond1$T > tempo$cond2$T, 
   "Positives", 
   "Negatives"
 )
-filtered$coord <- JACUSA2helper::coord(filtered)
 ```
 
 The following scatter plot summarizes the T/(C+T) frequencies and labels them.
 
 ```{r}
-ggplot2::ggplot(filtered, ggplot2::aes(x=YTHmut.t.ratio, y=YTH.t.ratio,color=pred)) + 
-  ggplot2::geom_point() + 
-  ggplot2::xlab("Mutated YTH binding domain (T/(C+T))") + 
-  ggplot2::ylab("Active YTH binding domain (T/(C+T))") + 
-  ggplot2::scale_color_manual(values=c('#999999', '#E69F00'), name = "") +
-  ggplot2::annotate(geom="text", x=0.8, y=0.25, label="Negatives", color="#999999", size=6) + 
-  ggplot2::annotate(geom="text", x=0.25, y=0.8, label="Positives", color="#E69F00", size=6) + 
-  ggplot2::theme_classic() +
+GenomicRanges::mcols(filtered)[c("YTHmut.t.ratio", "YTH.t.ratio", "pred")] %>% 
+  as.data.frame() %>%
+  ggplot2::ggplot(ggplot2::aes(x=YTHmut.t.ratio, y=YTH.t.ratio, color=pred)) + 
+    ggplot2::geom_point() + 
+    ggplot2::xlab("Mutated YTH binding domain (T/(C+T))") + 
+    ggplot2::ylab("Active YTH binding domain (T/(C+T))") + 
+    ggplot2::scale_color_manual(values=c('#999999', '#E69F00'), name = "") +
+    ggplot2::annotate(geom="text", x=0.8, y=0.25, label="Negatives", color="#999999", size=6) + 
+    ggplot2::annotate(geom="text", x=0.25, y=0.8, label="Positives", color="#E69F00", size=6) + 
+    ggplot2::theme_classic() +
   ggplot2::theme(legend.position = "none")
 ```
 

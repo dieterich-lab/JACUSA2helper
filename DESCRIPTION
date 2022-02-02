@@ -1,7 +1,7 @@
 Package: JACUSA2helper
 Type: Package
 Title: Post-processing for JACUSA2 output
-Version: 1.9.9.9000
+Version: 1.9.9.9100
 Depends: R (>= 3.5)
 Date: 2022-01-26
 Authors@R: c(person("Michael", "Piechotta", email = "michael.piechotta@gmail.com", role = c("aut", "cre")),
@@ -17,27 +17,30 @@ RoxygenNote: 7.1.2
 LazyData: true
 LazyDataCompression: bzip2
 biocViews:
-    GenomicRanges,
-    IRanges,
-    plyranges,
-    Rsamtools,
-Suggests: 
-    testthat (>= 2.1.0),
-    knitr,
-    reshape2,
-    rmarkdown,
-    markdown,
-LinkingTo: Rcpp
 Imports: 
   data.table, 
+  tibble,
   tidyr,
   dplyr, 
   rlang, 
   magrittr,
-  ggplot2, 
-  parallel,
-  scales,
-  methods, 
   stringr,
-  Rcpp
+  Rcpp,
+  GenomicRanges,
+  IRanges,
+  plyranges,
+  methods
+Suggests: 
+  ggplot2, 
+  scales,
+  Rsamtools,
+  testthat (>= 2.1.0),
+  knitr,
+  reshape2,
+  rmarkdown,
+  markdown,
+  NMF,
+  BSgenome,
+  BSgenome.Hsapiens.NCBI.GRCh38
+LinkingTo: Rcpp
 VignetteBuilder: knitr

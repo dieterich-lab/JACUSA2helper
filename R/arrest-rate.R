@@ -3,13 +3,21 @@
 #' Calculates and adds arrest rate from \code{arrest} and \code{through} columns.
 #' 
 #' @param result object created by \code{read_result()} or \code{read_results()}.
-#' @param cores Integer defines how many cores to use.
 #' @return result object with arrest rate field \code{arrest_rate} added.
 #'
 #' @export
-add_arrest_rate <- function(result, cores = 1) {
-  df <- GenomicRanges::mcols(result)
+add_arrest_rate <- function(result) {
+  df <- GenomicRanges::mcols(result)[, c(.ARREST_COL, .THROUGH_COL)]
+  arrest_covs <- coverage(df[[.ARREST_COL]])
+  through_covs <- coverage(df[[.THROUGH_COL]])
 
+  stopifnot(names(arrest_covs) == names(through_covs))
+
+  tmp <- mapply(function(arrest, through) {
+    arrest_rate(arrest, through) %>% dplyr::as_tibble()
+  }, arrest_covs, through_covs, SIMPLIFY = FALSE)
+  GenomicRanges::mcols(result)[[.ARREST_RATE_COL]] <- tmp %>% dplyr::as_tibble()
+  
   result
 }
 

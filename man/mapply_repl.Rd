@@ -4,7 +4,7 @@
 \alias{mapply_repl}
 \title{Apply f to all replicates}
 \usage{
-mapply_repl(f, ..., MoreArgs = NULL, cores = 1)
+mapply_repl(f, ..., MoreArgs = NULL)
 }
 \arguments{
 \item{f}{function to apply to each replicate data}
@@ -12,8 +12,6 @@ mapply_repl(f, ..., MoreArgs = NULL, cores = 1)
 \item{...}{see mapply}
 
 \item{MoreArgs}{see mapply}
-
-\item{cores}{numer of cores to use}
 }
 \value{
 tibble

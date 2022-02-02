@@ -19,9 +19,5 @@ Removes sites that sites that have been marked by feature/artefact filter.
 }
 \examples{
 data(rdd)
-# remove sites that are marked by artefact filter "D"
-dim(rdd)
-dim(dplyr::filter(rdd, filter_artefact(filter, c("D"))))
-# remove all sites that are marked by some artefact filter
-dim(dplyr::filter(rdd, filter_artefact(filter)))
+sum(filter_artefact(rdd$filter, c("D")))
 }

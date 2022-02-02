@@ -18,7 +18,8 @@ knitr::opts_chunk$set(
 )
 options(tibble.print_min = 4L, tibble.print_max = 4L)
 library(JACUSA2helper)
-library(dplyr);
+library(dplyr)
+library(plyranges)
 library(reshape2)
 library(ggplot2)
 
@@ -73,18 +74,41 @@ The data structure is modified such that the presence or absence of the canonica
 filtered$ACA <- ifelse(filtered$seq == "ACA", "yes", "no")
 ```
 
-## Scatter plot of arrest rates for replicate 1
+## Scatter plot of average arrest rates
 
 Arrest rates are plotted depending on the presence or absence of an ACA motif. 
 
 ```{r}
-filtered %>%
-  ggplot2::ggplot(ggplot2::aes(x = arrest_rate$cond1$rep1, y = arrest_rate$cond2$rep1, color = ACA)) +  
+# rearrange metadata -  calculate average arrest rate
+df <- data.frame(
+  cond1 = rowMeans(GenomicRanges::mcols(filtered)$arrest_rate$cond1),
+  cond2 = rowMeans(GenomicRanges::mcols(filtered)$arrest_rate$cond2),
+  ACA = GenomicRanges::mcols(filtered)$ACA
+)
+
+# scatter plot
+df %>%
+  ggplot2::ggplot(ggplot2::aes(x = cond1, y = cond2, color = ACA)) +  
   ggplot2::geom_point() + 
   ggplot2::geom_abline(colour = "red") +
-  ggplot2::xlab("MazF and mock read arrest") + 
-  ggplot2::ylab("MazF and FTO read arrest") +
-  ggplot2::labs(color="ACA motif")
+  ggplot2::xlab("MazF and mock avg. read arrest") + 
+  ggplot2::ylab("MazF and FTO avg. read arrest") +
+  ggplot2::labs(color="ACA motif") + 
+  ggplot2::facet_wrap(.~ACA)
+```
+
+## Box plot of average over arrest rates and significant sites
+
+```{r}
+# scatter plot
+reshape2::melt(df, variable = "condition", value.name = "arrest_rate") %>%
+  mutate(condition=recode(condition, cond1="MazF and mock", cond2="MazF and FTO")) %>%
+  ggplot2::ggplot(ggplot2::aes(x = condition, y = arrest_rate, color = ACA, line_type = condition)) +  
+  ggplot2::geom_boxplot() + 
+  ggplot2::xlab("samples") + 
+  ggplot2::ylab("avg. read arrest") +
+  ggplot2::labs(color="ACA motif") + 
+  ggplot2::facet_wrap(.~ACA)
 ```
 
 ## Box plot of arrest rates over all replicates
@@ -107,7 +131,6 @@ ggplot2::ggplot(toplot, ggplot2::aes(x = sample, y = arrest_rate, linetype=treat
   ggplot2::ylab("arrest rate") +
   ggplot2::xlab("MazF") +
   ggplot2::labs(color="ACA motif")
-  #theme(axis.text.x = element_text(angle = 45))
 ```
 
 ## References

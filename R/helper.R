@@ -46,35 +46,39 @@
 #' Calculate coverage for structured column.
 #' 
 #' @param bases structured column of bases
-#' @param cores number of cores to use
 #' @return structure column with coverages
 #' 
 #' @export
-coverage <- function(bases, cores = 1) {
-  lapply_repl(bases, rowSums, cores)
+coverage <- function(bases) {
+  lapply_repl(bases, rowSums)
 }
 
 #' Extract values from a structured column.
 #' 
-#' Extract values from a structured column.
+#' Extract valeus from a structured column and adds "contig:start-end:strand".
+#' This is usefull if data should be used with `ggplot2`.
 #' 
-#' @param ids vector
-#' @param x structured column
-#' @param meta_cond vector of meta conditions
+#' @param result JACUSA2 result object
+#' @param col name of structured column
 #' @return extracted column
 #' 
 #' @export
-gather_repl <- function(id, x, meta_cond = NULL) {
+gather_repl <- function(result, col) {
   r <- list()
-  for (cond in names(x)) {
-    for (repl in names(x[[cond]])) {
-        df <- tidyr::tibble(id = id, value = x[[cond]][[repl]])
-      if (! is.null(meta_cond)) {
-        df[["meta_cond"]] <- meta_cond
-      }
-      df[["cond"]] <- cond
-      df[["repl"]] <- repl
-      r[[length(r) + 1]] <- df
+  
+  #if (! is.null(meta_cond)) {
+  #  df[["meta_cond"]] <- meta_cond
+  #}
+  
+  df <- GenomicRanges::mcols(result)[[col]]
+  id_ <- JACUSA2helper::id(result)
+  for (cond in names(df)) {
+    for (repl in names(df[[cond]])) {
+      tmp <- tidyr::tibble(value = df[[cond]][[repl]])
+      tmp[["cond"]] <- cond
+      tmp[["repl"]] <- repl
+      tmp[["id"]] <- id_
+      r[[length(r) + 1]] <- tmp
     }
   }
   dplyr::bind_rows(r)
@@ -86,12 +90,9 @@ gather_repl <- function(id, x, meta_cond = NULL) {
 #' This will expand tagged reads and create new column called "not_untagged_reads".
 #' 
 #' @param result object created by \code{read_result()} or \code{read_results()}.
-#' @param cores Integer defines how many cores to use.
-#' @param result object tagged and not tagged structured base columns.
 #' @export
-expand_tag <- function(result, cores = 1) {
-  # FIXME
-  result$coord <- coord(result)
+expand_tag <- function(result) {
+  result$id <- id(result)
   # extract data from tagged and not tagged reads
   tag <- NULL
   total <- result %>% dplyr::filter(tag == .EMPTY)
@@ -100,7 +101,7 @@ expand_tag <- function(result, cores = 1) {
   
   # extract data from tagged
   tagged <- result %>% dplyr::filter(tag != .EMPTY)
-  matching <- match(tagged$coord, total$coord)
+  matching <- match(tagged$id, total$id)
   
   if (any(! is.na(matching))) {
     tagged_bases <- tagged$bases[which(! is.na(matching)), ]
@@ -112,9 +113,28 @@ expand_tag <- function(result, cores = 1) {
       total - tagged
     }, 
     total$bases,
-    total$tagged_bases,
-    cores = cores
+    total$tagged_bases
   )
   
   total
+}
+
+#' Extend region
+#' 
+#' Extend region
+#' 
+#' @param gr object created by \code{read_result()} or \code{read_results()}.
+#' @param left integer number of nucleotides to shift.
+#' @param right integer number of nucleotides to shift.
+#' @return Extended region
+#' @export
+extend <- function(gr, left = 0, right = 0) {
+  GenomicRanges::GRanges(
+    seqnames=GenomicRanges::seqnames(gr),
+    ranges=IRanges::IRanges(
+      start=GenomicRanges::start(gr) - left,
+      end=GenomicRanges::end(gr) + right
+    ),
+    strand=GenomicRanges::strand(gr)
+  )
 }

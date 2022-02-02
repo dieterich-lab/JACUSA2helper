@@ -4,12 +4,10 @@
 \alias{add_arrest_rate}
 \title{Add arrest rate.}
 \usage{
-add_arrest_rate(result, cores = 1)
+add_arrest_rate(result)
 }
 \arguments{
 \item{result}{object created by \code{read_result()} or \code{read_results()}.}
-
-\item{cores}{Integer defines how many cores to use.}
 }
 \value{
 result object with arrest rate field \code{arrest_rate} added.

@@ -4,7 +4,7 @@
 \alias{lapply_repl}
 \title{Apply f to all replicates}
 \usage{
-lapply_repl(x, f, ..., cores = 1)
+lapply_repl(x, f, ...)
 }
 \arguments{
 \item{x}{tibble of data per condition}
@@ -12,8 +12,6 @@ lapply_repl(x, f, ..., cores = 1)
 \item{f}{function to apply to each replicate data}
 
 \item{...}{parameters for f}
-
-\item{cores}{numer of cores to use}
 }
 \value{
 tibble

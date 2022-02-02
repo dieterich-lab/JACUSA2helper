@@ -4,18 +4,17 @@
 \alias{gather_repl}
 \title{Extract values from a structured column.}
 \usage{
-gather_repl(id, x, meta_cond = NULL)
+gather_repl(result, col)
 }
 \arguments{
-\item{x}{structured column}
+\item{result}{JACUSA2 result object}
 
-\item{meta_cond}{vector of meta conditions}
-
-\item{ids}{vector}
+\item{col}{name of structured column}
 }
 \value{
 extracted column
 }
 \description{
-Extract values from a structured column.
+Extract valeus from a structured column and adds "contig:start-end:strand".
+This is usefull if data should be used with `ggplot2`.
 }

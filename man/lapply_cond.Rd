@@ -4,7 +4,7 @@
 \alias{lapply_cond}
 \title{Apply f to all conditions}
 \usage{
-lapply_cond(x, f, ..., cores = 1)
+lapply_cond(x, f, ...)
 }
 \arguments{
 \item{x}{tibble of data per condition}
@@ -12,8 +12,6 @@ lapply_cond(x, f, ..., cores = 1)
 \item{f}{function to apply to each condition data}
 
 \item{...}{parameters for f}
-
-\item{cores}{numer of cores to use}
 }
 \value{
 tibble

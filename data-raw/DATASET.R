@@ -54,5 +54,5 @@ usethis::use_data(Zhou2018_rt_arrest, overwrite = TRUE, compress = "bzip2")
 DARTseq <- JACUSA2helper:::read_result("Score2_APOBEC1YTH_APOBEC1YTHmut_RC18_call2_result.out", unpack = TRUE)
 usethis::use_data(DARTseq, overwrite = TRUE, compress = "bzip2")
 
-MazF_FTO <- JACUSA2helper:::read_result("Cutoff01_MazF_vs_cond2_FTO_RC22_rtarrest_with_seq_and_ann.out", unpack=TRUE)
+MazF_FTO <- JACUSA2helper:::read_result("Cutoff01_MazF_vs_cond2_FTO_RC22_rtarrest_with_seq.out", unpack=TRUE)
 usethis::use_data(MazF_FTO, overwrite = TRUE, compress = "bzip2")

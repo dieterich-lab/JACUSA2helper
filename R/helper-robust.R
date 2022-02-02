@@ -40,18 +40,10 @@ robust <- function(x) {
 #' @param x tibble of data per condition
 #' @param f function to apply to each condition data
 #' @param ... parameters for f
-#' @param cores numer of cores to use
 #' @return tibble
 #' @export
-lapply_cond <- function(x, f, ..., cores = 1) {
-  parallel::mclapply(
-    x, f, ..., 
-    mc.cores = min(names(x), cores),
-    mc.preschedule = FALSE,
-    mc.allow.recursive = FALSE
-  ) %>% 
-    .as() %>% 
-    tidyr::as_tibble()
+lapply_cond <- function(x, f, ...) {
+  lapply(x, f, ...) %>% .as() %>% tidyr::as_tibble()
 }
 
 #' Apply f to all replicates
@@ -60,22 +52,16 @@ lapply_cond <- function(x, f, ..., cores = 1) {
 #' @param x tibble of data per condition
 #' @param f function to apply to each replicate data
 #' @param ... parameters for f
-#' @param cores numer of cores to use
 #' @return tibble
 #' @export
-lapply_repl <- function(x, f, ..., cores = 1) {
+lapply_repl <- function(x, f, ...) {
   .helper <- function(y) {
     lapply(y, f, ...) %>% 
       lapply(.as) %>% 
       tidyr::as_tibble()
   }
 
-  parallel::mclapply(
-    x, .helper,
-    mc.cores = min(names(x), cores),
-    mc.preschedule = FALSE,
-    mc.allow.recursive = FALSE
-  ) %>% tidyr::as_tibble()
+  lapply(x, .helper) %>% tidyr::as_tibble()
 }
 
 # make everything a tibble if it has a 2nd dimension
@@ -93,10 +79,9 @@ lapply_repl <- function(x, f, ..., cores = 1) {
 #' @param f function to apply to each replicate data
 #' @param ... see mapply
 #' @param MoreArgs see mapply
-#' @param cores numer of cores to use
 #' @return tibble
 #' @export
-mapply_repl <- function(f, ..., MoreArgs = NULL, cores = 1) {
+mapply_repl <- function(f, ..., MoreArgs = NULL) {
   .helper <- function(...) {
     dots <- list(...)
     mapply(f, ..., MoreArgs = MoreArgs, SIMPLIFY = FALSE) %>% 
@@ -104,11 +89,5 @@ mapply_repl <- function(f, ..., MoreArgs = NULL, cores = 1) {
       tidyr::as_tibble()
   }
   
-  parallel::mcmapply(
-    .helper,
-    ...,
-    SIMPLIFY = FALSE,
-    mc.cores = cores,
-    mc.preschedule = FALSE
-  ) %>% tidyr::as_tibble()
+  mapply(.helper, ..., SIMPLIFY = FALSE) %>% tidyr::as_tibble()
 }

@@ -7,11 +7,7 @@
 #' @return vector of logical.
 #' @examples
 #' data(rdd)
-#' # remove sites that are marked by artefact filter "D"
-#' dim(rdd)
-#' dim(dplyr::filter(rdd, filter_artefact(filter, c("D"))))
-#' # remove all sites that are marked by some artefact filter
-#' dim(dplyr::filter(rdd, filter_artefact(filter)))
+#' sum(filter_artefact(rdd$filter, c("D")))
 #' @export
 filter_artefact <- function(filter, artefacts = NULL) {
   if (is.null(artefacts)) {

@@ -4,12 +4,10 @@
 \alias{coverage}
 \title{Calculate coverage for structured column.}
 \usage{
-coverage(bases, cores = 1)
+coverage(bases)
 }
 \arguments{
 \item{bases}{structured column of bases}
-
-\item{cores}{number of cores to use}
 }
 \value{
 structure column with coverages

@@ -4,12 +4,10 @@
 \alias{expand_tag}
 \title{Expand tagged reads}
 \usage{
-expand_tag(result, cores = 1)
+expand_tag(result)
 }
 \arguments{
-\item{result}{object tagged and not tagged structured base columns.}
-
-\item{cores}{Integer defines how many cores to use.}
+\item{result}{object created by \code{read_result()} or \code{read_results()}.}
 }
 \description{
 This will expand tagged reads and create new column called "not_untagged_reads".
