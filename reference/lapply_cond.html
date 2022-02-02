@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">JACUSA2helper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.99-11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9100</span>
       </span>
     </div>
 
@@ -42,6 +42,9 @@
     </li>
     <li>
       <a href="../articles/JACUSA2helper-meta-condtions.html">Introduction to meta conditions with JACUSA2helper</a>
+    </li>
+    <li>
+      <a href="../articles/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -69,7 +72,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lapply_cond</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, <span class="va">...</span>, cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">lapply_cond</span><span class="op">(</span><span class="va">x</span>, <span class="va">f</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -80,8 +83,6 @@
 <dd><p>function to apply to each condition data</p></dd>
 <dt>...</dt>
 <dd><p>parameters for f</p></dd>
-<dt>cores</dt>
-<dd><p>numer of cores to use</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

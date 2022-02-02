@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">JACUSA2helper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.99-11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9100</span>
       </span>
     </div>
 
@@ -61,6 +61,9 @@
     <li>
       <a href="../articles/JACUSA2helper-meta-condtions.html">Introduction to meta conditions with JACUSA2helper</a>
     </li>
+    <li>
+      <a href="../articles/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -81,13 +84,13 @@
 
       
 
-      </header><script src="JACUSA2helper-meta-condtions_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction to meta conditions with JACUSA2helper</h1>
                         <h4 data-toc-skip class="author">Michael Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-01-25</h4>
+            <h4 data-toc-skip class="date">2022-02-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper-meta-condtions.Rmd" class="external-link"><code>vignettes/JACUSA2helper-meta-condtions.Rmd</code></a></small>
       <div class="hidden name"><code>JACUSA2helper-meta-condtions.Rmd</code></div>
@@ -102,7 +105,7 @@
 <h3 id="meta-condition">Meta condition<a class="anchor" aria-label="anchor" href="#meta-condition"></a>
 </h3>
 <p>JACUSA2helper supports the analysis of several related JACUSA2 result files via <code>results &lt;- read_results(files, meta_conds)</code> where <code>meta_conds</code> is a vector of strings that provides a descriptive name for each file in the vector of strings <code>files</code>.</p>
-<p>Here, we will use the the <span class="citation">Zhou et al. (<a href="#ref-Zhou2018" role="doc-biblioref">2018</a>)</span> data set, where the authors map RNA modification of pseudouridine (<span class="math inline">\(\Psi\)</span>) by chemically modifying pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and SIIIMg). All three data sets are available in JACUSA2helper via <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>. Additionally, we have compiled combined data sets <code>data(Zhou2018_call2)</code> and <code>data(Zhou2018_rt_arrest)</code> that utilizes meta conditions. Note, that this data has NO replicates!</p>
+<p>Here, we will use the the <span class="citation"><a href="#ref-Zhou2018" role="doc-biblioref">Zhou et al.</a> (<a href="#ref-Zhou2018" role="doc-biblioref">2018</a>)</span> data set, where the authors map RNA modification of pseudouridine (<span class="math inline">\(\Psi\)</span>) by chemically modifying pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and SIIIMg). All three data sets are available in JACUSA2helper via <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>. Additionally, we have compiled combined data sets <code>data(Zhou2018_call2)</code> and <code>data(Zhou2018_rt_arrest)</code> that utilizes meta conditions. Note, that this data has NO replicates!</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">$</span><span class="va">meta_cond</span><span class="op">)</span>
@@ -123,208 +126,204 @@
 <h3 id="number-of-sites">Number of sites<a class="anchor" aria-label="anchor" href="#number-of-sites"></a>
 </h3>
 <p>The following statement will determine the number of covered sites per contig and meta condition:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span>, <span class="va">contig</span>, <span class="va">start</span>, <span class="va">end</span>, <span class="va">strand</span>, <span class="va">meta_cond</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">contig</span>, <span class="va">meta_cond</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 3</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Groups:   contig, meta_cond [9]</span></span>
-<span class="co">#&gt;   contig meta_cond     n</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 18S    HIVRT      <span style="text-decoration: underline;">3</span>571</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 18S    SIIIRTMg   <span style="text-decoration: underline;">1</span>867</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 18S    SIIIRTMn   <span style="text-decoration: underline;">1</span>892</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 28S    HIVRT      <span style="text-decoration: underline;">8</span>291</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 5 more rows</span></span></code></pre></div>
+<!-- TODO
+#```{r}
+#GenomicRanges::mcols(Zhou2018_rt_arrest) %>% as.data.frame() %>%
+#  dplyr::distinct(contig, meta_cond) %>% 
+#  dplyr::group_by(contig, meta_cond) %>% 
+#  dplyr::count()
+#```
+-->
 <p>This statement will determine the number of covered sites per contig regardless of the meta condition:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span>, <span class="va">contig</span>, <span class="va">start</span>, <span class="va">end</span>, <span class="va">strand</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">contig</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># count in a group</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 2</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Groups:   contig [3]</span></span>
-<span class="co">#&gt;   contig     n</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 18S     <span style="text-decoration: underline;">3</span>572</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 28S     <span style="text-decoration: underline;">8</span>306</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 5.8S     248</span></code></pre></div>
+<!-- TODO
+#```{r}
+#dplyr::distinct(Zhou2018_rt_arrest, contig, start, end, strand) %>% 
+#  dplyr::group_by(contig) %>% 
+#  dplyr::count() # count in a group
+#```
+-->
 </div>
 <div class="section level2">
 <h2 id="filter">Filter<a class="anchor" aria-label="anchor" href="#filter"></a>
 </h2>
 <p>Filter by coverage regardless of the meta condition.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">filtered_all</span> <span class="op">&lt;-</span> <span class="va">Zhou2018_rt_arrest</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/All.html">All</a></span><span class="op">(</span><span class="va">cov</span><span class="op">$</span><span class="va">cond1</span> <span class="op">&gt;=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="../reference/All.html">All</a></span><span class="op">(</span><span class="va">cov</span><span class="op">$</span><span class="va">cond2</span> <span class="op">&gt;=</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">contig</span>, <span class="va">meta_cond</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># count in a group</span>
-<span class="va">filtered_all</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 3</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Groups:   contig, meta_cond [9]</span></span>
-<span class="co">#&gt;   contig meta_cond     n</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 18S    HIVRT      <span style="text-decoration: underline;">1</span>868</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 18S    SIIIRTMg   <span style="text-decoration: underline;">1</span>865</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 18S    SIIIRTMn   <span style="text-decoration: underline;">1</span>868</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 28S    HIVRT      <span style="text-decoration: underline;">4</span>675</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 5 more rows</span></span></code></pre></div>
+<!--TODO
+#```{r}
+#filtered_all <- Zhou2018_rt_arrest %>%
+#  dplyr::filter(All(cov$cond1 >= 100) & All(cov$cond2 >= 1000)) %>% 
+#  dplyr::group_by(contig, meta_cond) %>% 
+#  dplyr::count() # count in a group
+#filtered_all
+#```
+-->
 </div>
 <div class="section level2">
 <h2 id="plot">Plot<a class="anchor" aria-label="anchor" href="#plot"></a>
 </h2>
 <p>First, we add a description <code>data_desc</code> of the conditions to the result object. The data sets of <code>Zhou2018</code> have been layout out in such a way that condition 1 and 2 correspond to carbodiimide (+CMC) treatment and control (-CMC), respectively.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gather_repl.html">gather_repl</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">$</span><span class="va">id</span>, <span class="va">Zhou2018_rt_arrest</span><span class="op">$</span><span class="va">arrest_rate</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">pvalue</span>, <span class="va">meta_cond</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>
-    data_desc <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span>
-      <span class="va">cond</span> <span class="op">==</span> <span class="st">"cond1"</span> <span class="op">~</span> <span class="st">"+CMC"</span>,
-      <span class="va">cond</span> <span class="op">==</span> <span class="st">"cond2"</span> <span class="op">~</span> <span class="st">"-CMC"</span>,
-    <span class="op">)</span>
-  <span class="op">)</span>
-
-<span class="co"># grouping enables nice legends in plot</span>
-<span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">interaction</span>, <span class="va">result</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cond"</span>, <span class="st">"repl"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
-<span class="va">result</span><span class="op">$</span><span class="va">group</span> <span class="op">&lt;-</span> <span class="va">group</span>
-<span class="co"># relate group={cond(ition), repl(icat)}, and nice label</span>
-<span class="va">meta_desc</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">cond</span>, <span class="va">repl</span>, <span class="va">group</span>, <span class="va">data_desc</span><span class="op">)</span>
-<span class="co"># map group values to nice labels (data_desc)</span>
-<span class="va">limits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">meta_desc</span><span class="op">[[</span><span class="st">"group"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-<span class="va">labels</span> <span class="op">&lt;-</span> <span class="va">meta_desc</span><span class="op">[[</span><span class="st">"data_desc"</span><span class="op">]</span><span class="op">]</span></code></pre></div>
+<!-- TODO
+#```{r}
+#result <- gather_repl(Zhou2018_rt_arrest$id, Zhou2018_rt_arrest$arrest_rate) %>%
+#  dplyr::inner_join(Zhou2018_rt_arrest %>% dplyr::select(id, pvalue, meta_cond), by = "id") %>%
+#  dplyr::mutate(
+#    data_desc = dplyr::case_when(
+#      cond == "cond1" ~ "+CMC",
+#      cond == "cond2" ~ "-CMC",
+#    )
+#  )
+#
+## grouping enables nice legends in plot
+#group <- do.call(interaction, result[c("cond", "repl")])
+#result$group <- group
+## relate group={cond(ition), repl(icat)}, and nice label
+#meta_desc <- dplyr::distinct(result, cond, repl, group, data_desc)
+## map group values to nice labels (data_desc)
+#limits <- as.vector(meta_desc[["group"]])
+#labels <- meta_desc[["data_desc"]]
+#```
+-->
 <p>Next, we define a ggplot2 object that allows to merge legend for different scales. Check <a href="https://ozh2014.wordpress.com/2017/06/26/combine-related-legends-into-one-in-ggplot2/" class="external-link">combine legends</a> for details. In brief, we use <code>colour</code> to represent cond(ition) and <code>linetype</code> to represent repl(icate) an relate their possible combinations to descriptive <code>labels</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">colour_scale</span> <span class="op">&lt;-</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>
-  name <span class="op">=</span> <span class="st">"Treatment"</span>,
-  labels <span class="op">=</span> <span class="va">labels</span>,
-  limits <span class="op">=</span> <span class="va">limits</span>,
-  values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">meta_desc</span><span class="op">[[</span><span class="st">"cond"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="va">linetype_scale</span> <span class="op">&lt;-</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_linetype_manual</a></span><span class="op">(</span>
-  name <span class="op">=</span> <span class="st">"Treatment"</span>,
-  labels <span class="op">=</span> <span class="va">labels</span>,
-  limits <span class="op">=</span> <span class="va">limits</span>,
-  values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">meta_desc</span><span class="op">[[</span><span class="st">"repl"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<!--
+#```{r}
+#colour_scale <- ggplot2::scale_colour_manual(
+#  name = "Treatment",
+#  labels = labels,
+#  limits = limits,
+#  values = factor(meta_desc[["cond"]]) %>% as.integer()
+#)
+#linetype_scale <- ggplot2::scale_linetype_manual(
+#  name = "Treatment",
+#  labels = labels,
+#  limits = limits,
+#  values = factor(meta_desc[["repl"]]) %>% as.integer()
+#)
+#```
+-->
 <div class="section level3">
 <h3 id="pvalue-distribution">Pvalue distribution<a class="anchor" aria-label="anchor" href="#pvalue-distribution"></a>
 </h3>
 <p>Plot of the empirical cumulative distributions of pvalues for all meta conditions.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result</span> <span class="op">%&gt;%</span> 
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pvalue</span>, colour <span class="op">=</span> <span class="va">meta_cond</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"Meta condition"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Density"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html" class="external-link">stat_ecdf</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"step"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"pvalue"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> </code></pre></div>
-<p><img src="JACUSA2helper-meta-condtions_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
-</div>
-<div class="section level3">
-<h3 id="empirical-cumulative-arrest-rate-distribution">Empirical cumulative arrest rate distribution<a class="anchor" aria-label="anchor" href="#empirical-cumulative-arrest-rate-distribution"></a>
-</h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result</span> <span class="op">%&gt;%</span> 
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">group</span>, linetype <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html" class="external-link">stat_ecdf</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"step"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="va">colour_scale</span> <span class="op">+</span>
-  <span class="va">linetype_scale</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Density"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Arrest rate"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">meta_cond</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span></code></pre></div>
-<p><img src="JACUSA2helper-meta-condtions_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
-</div>
-<div class="section level3">
-<h3 id="compare-coverage">Compare coverage<a class="anchor" aria-label="anchor" href="#compare-coverage"></a>
-</h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/gather_repl.html">gather_repl</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">$</span><span class="va">id</span>, <span class="va">Zhou2018_rt_arrest</span><span class="op">$</span><span class="va">cov</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span>, <span class="va">id</span>, <span class="va">meta_cond</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>
-    data_desc <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span>
-      <span class="va">cond</span> <span class="op">==</span> <span class="st">"cond1"</span> <span class="op">~</span> <span class="st">"+CMC"</span>,
-      <span class="va">cond</span> <span class="op">==</span> <span class="st">"cond2"</span> <span class="op">~</span> <span class="st">"-CMC"</span>,
-    <span class="op">)</span>
-  <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">group</span>, linetype <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html" class="external-link">stat_ecdf</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"step"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="va">colour_scale</span> <span class="op">+</span>
-  <span class="va">linetype_scale</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span>
-    breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/trans_breaks.html" class="external-link">trans_breaks</a></span><span class="op">(</span><span class="st">"log10"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">10</span><span class="op">^</span><span class="va">x</span><span class="op">)</span>,
-    labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/trans_format.html" class="external-link">trans_format</a></span><span class="op">(</span><span class="st">"log10"</span>, <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_parse.html" class="external-link">math_format</a></span><span class="op">(</span><span class="fl">10</span><span class="op">^</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span>
-  <span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Read Coverage"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">meta_cond</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span></code></pre></div>
-<p><img src="JACUSA2helper-meta-condtions_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
-</div>
-<div class="section level3">
-<h3 id="compare-arrest-rate">Compare arrest rate<a class="anchor" aria-label="anchor" href="#compare-arrest-rate"></a>
-</h3>
-<p>Volcano plot of different library types (ignoring 0 arrest rate sites):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">Zhou2018_rt_arrest</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">strand</span> <span class="op">==</span> <span class="st">"+"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>
-      x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="op">(</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond1</span><span class="op">$</span><span class="va">rep1</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond2</span><span class="op">$</span><span class="va">rep1</span><span class="op">)</span><span class="op">)</span>,
-      y <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">pvalue</span><span class="op">)</span>,
-      colour <span class="op">=</span> <span class="va">meta_cond</span>
-    <span class="op">)</span>
-  <span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">2</span>, linetype <span class="op">=</span> <span class="fl">3</span>, colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"-log10(pvalue)"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"log2(arrest rate +GMC / -GMC)"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">.</span> <span class="op">~</span> <span class="va">meta_cond</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 323 rows containing missing values (geom_point).</span></code></pre></div>
-<p><img src="JACUSA2helper-meta-condtions_files/figure-html/unnamed-chunk-11-1.png" width="700"> We deduce that <code>p &lt;= 0.01</code> is a sensible cutoff. We plot the arrest rate for all three meta conditions and +CMC and -CMC treatment.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">Zhou2018_rt_arrest</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">strand</span> <span class="op">==</span> <span class="st">"+"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pvalue</span> <span class="op">&lt;=</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">meta_cond</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond1</span><span class="op">$</span><span class="va">rep1</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond2</span><span class="op">$</span><span class="va">rep1</span><span class="op">)</span>, colour <span class="op">=</span> <span class="va">meta_cond</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"log2(Arrest rate -CMC)"</span><span class="op">)</span> <span class="op">+</span> 
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"log2(Arrest rate +CMC)"</span><span class="op">)</span> <span class="op">+</span> 
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">.</span> <span class="op">~</span> <span class="va">meta_cond</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>linetype <span class="op">=</span> <span class="st">"dashed"</span>, colour <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"Meta condition"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
-<p><img src="JACUSA2helper-meta-condtions_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
-<p>We plot the arrest rate delta of +CMC and -CMC treatment for all three meta conditions and add Pseudouridine sites (black points).</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">rnam</span><span class="op">)</span>
-<span class="va">retain_rrna</span> <span class="op">&lt;-</span> <span class="st">"18S"</span>
-<span class="va">filtered_rnam</span> <span class="op">&lt;-</span> <span class="va">rnam</span> <span class="op">%&gt;%</span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">rrna</span> <span class="op">==</span> <span class="va">retain_rrna</span>, <span class="va">base</span> <span class="op">==</span> <span class="st">"psU"</span><span class="op">)</span>
+<!--
+#```{r}
+result %>% 
+  ggplot2::ggplot(ggplot2::aes(x = pvalue, colour = meta_cond)) +
+  ggplot2::labs(colour = "Meta condition") +
+  ggplot2::ylab("Density") +
+  ggplot2::stat_ecdf(geom = "step") +
+  ggplot2::xlab("pvalue") +
+  ggplot2::theme(legend.position = "bottom") 
+```
 
-<span class="va">Zhou2018_rt_arrest</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">contig</span> <span class="op">==</span> <span class="va">retain_rrna</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">strand</span> <span class="op">==</span> <span class="st">"+"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pvalue</span> <span class="op">&lt;=</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">meta_cond</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>arrest_rate_delta <span class="op">=</span> <span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond1</span><span class="op">$</span><span class="va">rep1</span> <span class="op">-</span> <span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond2</span><span class="op">$</span><span class="va">rep1</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end</span>, y <span class="op">=</span> <span class="va">arrest_rate_delta</span>, fill <span class="op">=</span> <span class="va">meta_cond</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">filtered_rnam</span>, <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pos</span>, y <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Position on "</span>, <span class="va">retain_rrna</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Arrest rate (+CMC - -CMC)"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Meta condition"</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 3 rows containing missing values (position_stack).</span></code></pre></div>
-<p><img src="JACUSA2helper-meta-condtions_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
+
+## Empirical cumulative arrest rate distribution
+#```{r}
+result %>% 
+  ggplot2::ggplot(ggplot2::aes(x = value, colour = group, linetype = group)) +
+  ggplot2::stat_ecdf(geom = "step") +
+  colour_scale +
+  linetype_scale +
+  ggplot2::xlab("Density") +
+  ggplot2::xlab("Arrest rate") +
+  ggplot2::theme(legend.position = "bottom") + 
+  ggplot2::facet_grid(meta_cond ~ .)
+```
+
+## Compare coverage
+#```{r}
+gather_repl(Zhou2018_rt_arrest$id, Zhou2018_rt_arrest$cov) %>%
+  dplyr::inner_join(dplyr::select(Zhou2018_rt_arrest, id, meta_cond), by = "id") %>%
+  dplyr::mutate(
+    data_desc = dplyr::case_when(
+      cond == "cond1" ~ "+CMC",
+      cond == "cond2" ~ "-CMC",
+    )
+  ) %>%
+  ggplot2::ggplot(ggplot2::aes(x = value, colour = group, linetype = group)) +
+  ggplot2::stat_ecdf(geom = "step") +
+  colour_scale +
+  linetype_scale +
+  ggplot2::scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) + 
+  ggplot2::xlab("Read Coverage") +
+  ggplot2::theme(legend.position = "bottom") + 
+  ggplot2::facet_grid(meta_cond ~ .)
+#```
+
+
+## Compare arrest rate
+
+Volcano plot of different library types (ignoring 0 arrest rate sites):
+
+#```{r}
+Zhou2018_rt_arrest %>%
+  dplyr::filter(strand == "+") %>%
+  ggplot2::ggplot(
+    ggplot2::aes(
+      x = log2((arrest_rate$cond1$rep1) / (arrest_rate$cond2$rep1)),
+      y = -log10(pvalue),
+      colour = meta_cond
+    )
+  ) +
+  ggplot2::geom_point() + 
+  ggplot2::geom_hline(yintercept = 2, linetype = 3, colour = "red") +
+  ggplot2::ylab("-log10(pvalue)") + 
+  ggplot2::xlab("log2(arrest rate +GMC / -GMC)") + 
+  ggplot2::facet_grid(. ~ meta_cond)
+  
+#```
+We deduce that `p <= 0.01` is a sensible cutoff.
+We plot the arrest rate for all three meta conditions and +CMC and -CMC treatment.
+
+#```{r}
+Zhou2018_rt_arrest %>%
+  dplyr::filter(strand == "+") %>%
+  dplyr::filter(pvalue <= 0.01) %>%
+  dplyr::group_by(meta_cond) %>%
+  ggplot2::ggplot(ggplot2::aes(x = log2(arrest_rate$cond1$rep1), y = log2(arrest_rate$cond2$rep1), colour = meta_cond)) +
+    ggplot2::geom_point() + 
+    ggplot2::ylab("log2(Arrest rate -CMC)") + 
+    ggplot2::xlab("log2(Arrest rate +CMC)") + 
+    ggplot2::facet_grid(. ~ meta_cond) +
+    ggplot2::geom_abline(linetype = "dashed", colour = "gray") +
+    ggplot2::labs(colour = "Meta condition") +
+    ggplot2::theme(legend.position = "bottom")
+#```
+
+We plot the arrest rate delta of +CMC and -CMC treatment for all three meta 
+conditions and add Pseudouridine sites (black points).
+
+#```{r}
+#data(rnam)
+#retain_rrna <- "18S"
+#filtered_rnam <- rnam %>% 
+#  dplyr::filter(rrna == retain_rrna, base == "psU")
+#
+#Zhou2018_rt_arrest %>%
+#  dplyr::filter(contig == retain_rrna) %>%
+#  dplyr::filter(strand == "+") %>%
+#  dplyr::filter(pvalue <= 0.01) %>%
+#  dplyr::group_by(meta_cond) %>%
+#  dplyr::mutate(arrest_rate_delta = arrest_rate$cond1$rep1 - arrest_rate$cond2$rep1) %>%
+#  ggplot2::ggplot(ggplot2::aes(x = end, y = arrest_rate_delta, fill = meta_cond)) +
+#    ggplot2::geom_bar(stat = "identity") +
+#    ggplot2::geom_point(data = filtered_rnam, ggplot2::aes(x = pos, y = 0), fill = "black") +
+#    ggplot2::xlab(paste0("Position on ", retain_rrna)) +
+#    ggplot2::ylab("Arrest rate (+CMC - -CMC)") +
+#    ggplot2::ylim(c(-0.1, 0.1)) +
+#    ggplot2::theme(legend.position = "bottom") +
+#    ggplot2::labs(fill = "Meta condition")
+#```
+-->
 </div>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references">
-<div id="ref-Zhou2018">
-<p>Zhou, Katherine I., Wesley C. Clark, David W. Pan, Matthew J. Eckwahl, Qing Dai, and Tao Pan. 2018. “Pseudouridines Have Context-Dependent Mutation and Stop Rates in High-Throughput Sequencing.” <em>RNA Biology</em> 15 (7): 892–900. <a href="https://doi.org/10.1080/15476286.2018.1462654" class="external-link">https://doi.org/10.1080/15476286.2018.1462654</a>.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Zhou2018" class="csl-entry">
+Zhou, Katherine I., Wesley C. Clark, David W. Pan, Matthew J. Eckwahl, Qing Dai, and Tao Pan. 2018. <span>“Pseudouridines Have Context-Dependent Mutation and Stop Rates in High-Throughput Sequencing.”</span> <em><span>RNA</span> Biology</em> 15 (7): 892–900. <a href="https://doi.org/10.1080/15476286.2018.1462654" class="external-link">https://doi.org/10.1080/15476286.2018.1462654</a>.
 </div>
 </div>
 </div>

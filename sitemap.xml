@@ -16,6 +16,9 @@
     <loc>/articles/JACUSA2helper-meta-condtions.html</loc>
   </url>
   <url>
+    <loc>/articles/JACUSA2helper-nanopore.html</loc>
+  </url>
+  <url>
     <loc>/articles/JACUSA2helper.html</loc>
   </url>
   <url>
@@ -91,13 +94,13 @@
     <loc>/reference/clean_tag.html</loc>
   </url>
   <url>
-    <loc>/reference/coord.html</loc>
-  </url>
-  <url>
     <loc>/reference/coverage.html</loc>
   </url>
   <url>
     <loc>/reference/expand_tag.html</loc>
+  </url>
+  <url>
+    <loc>/reference/extend.html</loc>
   </url>
   <url>
     <loc>/reference/extract_info.html</loc>
@@ -106,10 +109,19 @@
     <loc>/reference/extract_score.html</loc>
   </url>
   <url>
+    <loc>/reference/fast_unpack_info.html</loc>
+  </url>
+  <url>
     <loc>/reference/filter_artefact.html</loc>
   </url>
   <url>
     <loc>/reference/gather_repl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_info_keys.html</loc>
+  </url>
+  <url>
+    <loc>/reference/id.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>

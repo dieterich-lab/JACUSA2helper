@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">JACUSA2helper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.99-11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9100</span>
       </span>
     </div>
 
@@ -42,6 +42,9 @@
     </li>
     <li>
       <a href="../articles/JACUSA2helper-meta-condtions.html">Introduction to meta conditions with JACUSA2helper</a>
+    </li>
+    <li>
+      <a href="../articles/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -69,24 +72,17 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">unpack_info</span><span class="op">(</span>
-  <span class="va">result</span>,
-  <span class="va">cond_count</span>,
-  cores <span class="op">=</span> <span class="fl">1</span>,
-  col2type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>arrest_score <span class="op">=</span> <span class="va">as.numeric</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">unpack_info</span><span class="op">(</span><span class="va">info</span>, <span class="va">cond_count</span>, keys <span class="op">=</span> <span class="fu"><a href="get_info_keys.html">get_info_keys</a></span><span class="op">(</span><span class="va">info</span><span class="op">)</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>result</dt>
-<dd><p>JACUSA2 result object.</p></dd>
+    <dl><dt>info</dt>
+<dd><p>Vector of stings.</p></dd>
 <dt>cond_count</dt>
 <dd><p>integer Number of conditions.</p></dd>
-<dt>cores</dt>
-<dd><p>integer Number of compute cores to use. Default: 1.</p></dd>
-<dt>col2type</dt>
-<dd><p>list Maps column names of result object to transformation, e.g.: as.numeric.</p></dd>
+<dt>keys</dt>
+<dd><p>vector of string of keys to extract from "info".</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
