@@ -3,7 +3,7 @@ title: "Analysis of m6A mapping by MazF with JACUSA2helper"
 author: "Christoph Dieterich, Michael Piechotta"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
-bibliography: JACUSA2helper-figure1e.bib
+bibliography: JACUSA2helper-mazf.bib
 link-citations: yes
 vignette: >
   %\VignetteIndexEntry{Analysis of m6A mapping by MazF with JACUSA2helper}
