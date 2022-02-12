@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">JACUSA2helper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9100</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9200</span>
       </span>
     </div>
 
@@ -35,16 +35,16 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/JACUSA2helper-figure1e.html">Analysis of m6A mapping by MazF with JACUSA2helper</a>
+      <a href="../articles/JACUSA2helper-dart-seq.html">Analysis of DART-seq with JACUSA2helper</a>
     </li>
     <li>
-      <a href="../articles/JACUSA2helper-figure1f.html">Analysis of DART-seq with JACUSA2helper</a>
+      <a href="../articles/JACUSA2helper-mazf.html">Analysis of m6A mapping by MazF with JACUSA2helper</a>
     </li>
     <li>
       <a href="../articles/JACUSA2helper-meta-condtions.html">Introduction to meta conditions with JACUSA2helper</a>
     </li>
     <li>
-      <a href="../articles/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
+      <a href="../articles/web_only/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -72,19 +72,30 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">read_result</span><span class="op">(</span><span class="va">file</span>, cond_desc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>, unpack <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">read_result</span><span class="op">(</span>
+  <span class="va">file</span>,
+  cond_desc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
+  unpack <span class="op">=</span> <span class="cn">FALSE</span>,
+  tmpdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,
+  showProgress <span class="op">=</span> <span class="cn">FALSE</span>,
+  <span class="va">...</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>file</dt>
-<dd><p>String that represents the file name of the JACUSA2 output.</p></dd>
+<dd><p>String that represents the file name of the JACUSA2 output or an URL.</p></dd>
 <dt>cond_desc</dt>
 <dd><p>Vector of strings that represent names/descriptions for conditions.</p></dd>
 <dt>unpack</dt>
 <dd><p>Boolean indicates if info column should be processed.</p></dd>
+<dt>tmpdir</dt>
+<dd><p>String @see `data.table::fread`.</p></dd>
+<dt>showProgress</dt>
+<dd><p>Boolean @see `data.table::fread`.</p></dd>
 <dt>...</dt>
-<dd><p>parameters forwarded to `data.table::fread`</p></dd>
+<dd><p>parameters forwarded to `data.table::fread`.</p></dd>
 </dl></div>
 
   </div>

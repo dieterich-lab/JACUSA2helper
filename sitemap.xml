@@ -7,10 +7,16 @@
     <loc>/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>/articles/JACUSA2helper-dart-seq.html</loc>
+  </url>
+  <url>
     <loc>/articles/JACUSA2helper-figure1e.html</loc>
   </url>
   <url>
     <loc>/articles/JACUSA2helper-figure1f.html</loc>
+  </url>
+  <url>
+    <loc>/articles/JACUSA2helper-mazf.html</loc>
   </url>
   <url>
     <loc>/articles/JACUSA2helper-meta-condtions.html</loc>
@@ -23,6 +29,9 @@
   </url>
   <url>
     <loc>/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>/articles/web_only/JACUSA2helper-nanopore.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>

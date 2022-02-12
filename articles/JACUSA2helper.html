@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">JACUSA2helper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9100</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9200</span>
       </span>
     </div>
 
@@ -53,16 +53,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/JACUSA2helper-figure1e.html">Analysis of m6A mapping by MazF with JACUSA2helper</a>
+      <a href="../articles/JACUSA2helper-dart-seq.html">Analysis of DART-seq with JACUSA2helper</a>
     </li>
     <li>
-      <a href="../articles/JACUSA2helper-figure1f.html">Analysis of DART-seq with JACUSA2helper</a>
+      <a href="../articles/JACUSA2helper-mazf.html">Analysis of m6A mapping by MazF with JACUSA2helper</a>
     </li>
     <li>
       <a href="../articles/JACUSA2helper-meta-condtions.html">Introduction to meta conditions with JACUSA2helper</a>
     </li>
     <li>
-      <a href="../articles/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
+      <a href="../articles/web_only/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
     </li>
   </ul>
 </li>
@@ -90,7 +90,7 @@
       <h1 data-toc-skip>Introduction to JACUSA2helper</h1>
                         <h4 data-toc-skip class="author">Michael Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-02-02</h4>
+            <h4 data-toc-skip class="date">2022-02-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper.Rmd" class="external-link"><code>vignettes/JACUSA2helper.Rmd</code></a></small>
       <div class="hidden name"><code>JACUSA2helper.Rmd</code></div>
@@ -101,17 +101,14 @@
     
 <p>A typical workflow for analyzing <a href="https://github.com/dieterich-lab/JACUSA2" class="external-link">JACUSA2</a> output file(s) with <a href="https://github.com/dieterich-lab/JACUSA2helper" class="external-link">JACUSA2helper</a> consists of:</p>
 <ul>
-<li>Read JACUSA2 output file(s) into result object - currently represented as <code><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GenomicRanges::GRanges</a></code>.</li>
+<li>Read JACUSA2 output file(s) into result object.</li>
 <li>Add optional data, e.g.: <code><a href="../reference/base_sub.html">base_sub()</a></code> - add base substitution.</li>
-<li>Filter result object by some criteria, e.g.: <code>dplyr::filter(All(cov$cond1 &gt;= 10))</code> - retain sites with read coverage &gt;= 10, and use <code><a href="../reference/All.html">All()</a></code> or <code>Any</code> on columns with data for conditions and replicates.</li>
+<li>Filter result object by some criteria, e.g.: <code>dplyr::filter(All(cov$cond1 &gt;= 10))</code> - retain sites with read coverage &gt;= 10, and use <code><a href="../reference/All.html">All()</a></code> or <code>Any</code> on structured columns (conditions and replicates).</li>
 <li>Plot filtered result object.</li>
 </ul>
 <p>JACUSA2helper supports the analysis of the following methods from JACUSA2: <em>call-{1,2}</em>, <em>pileup</em>, <em>rt-arrest</em>, and <em>lrt-arrest</em>(experimental). Check the <a href="https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf" class="external-link">JACUSA2 manual</a> for more details.</p>
-<p>The main data structure is the result object that is currently represented as <code><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GenomicRanges::GRanges</a></code>. See <a href="https://bioconductor.org/packages/devel/bioc/vignettes/GenomicRanges/inst/doc/GenomicRangesIntroduction.html" class="external-link">An Introduction to the GenomicRanges Package</a>.</p>
-<p>In brief, JACUSA2 specific data is stored as metadata and can be accessed via <code>GenomicRanges::mcols</code>.</p>
-<p><a href="https://www.bioconductor.org/packages/release/bioc/html/plyranges.html" class="external-link">plyranges</a> enables to use <code>GenomicRanges</code> within <a href="https://github.com/tidyverse/dplyr" class="external-link">dplyr</a> and <a href="https://github.com/tidyverse/ggplot2" class="external-link">ggplot2</a>.</p>
-<p>In the following, we will focus on single pairwise comparisons of two conditions of one output file. If you want to analyze multiple files with similar pairwise comparisons, read <code>vignette("Introduction to meta conditions with JACUSA2helper")</code>. Expect increased memory requirements when using multiple JACUSA2 output with <code>read_results</code>. Make sure all JACUSA2 output files have the same number of conditions and replicates when using <code>read_results</code>.</p>
-<p>Reading files serially with <code>read_result</code> is much more memory efficient and allows for file specific filtering.</p>
+<p>The main data structure is the result object that is implemented by following the tidy data approach from <span class="citation"><a href="#ref-Wickham2014" role="doc-biblioref">Wickham</a> (<a href="#ref-Wickham2014" role="doc-biblioref">2014</a>)</span> to feature easy interaction with <a href="https://github.com/tidyverse/dplyr" class="external-link">dplyr</a> and <a href="https://github.com/tidyverse/ggplot2" class="external-link">ggplot2</a>.</p>
+<p>In the following, we will focus on single pairwise comparisons of two conditions of one output file. If you want to analyze multiple files with similar pairwise comparisons, read <code>vignette("JACUSA2helper-meta-conditions")</code>.</p>
 <div class="section level3">
 <h3 id="multi-site-and-new-features">Multi site and new features<a class="anchor" aria-label="anchor" href="#multi-site-and-new-features"></a>
 </h3>
@@ -124,45 +121,72 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dieterich-lab/JACUSA2helper" class="external-link">JACUSA2helper</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">rdd</span><span class="op">)</span></code></pre></div>
-<p>Note that <code>rdd</code> is a <code>GenomicRanges:GRanges</code> object - check <a href="https://bioconductor.org/packages/devel/bioc/vignettes/GenomicRanges/inst/doc/GenomicRangesIntroduction.html" class="external-link">An Introduction to the GenomicRanges Package</a> for more details.</p>
+<p>Note that <code>rdd</code> is a tibble - check <a href="http://tibble.tidyverse.org" class="external-link">tibble</a> for more details.</p>
 <p>Use dplyr to manipulate the result object <code>rdd</code>. Check details on <a href="https://github.com/tidyverse/dplyr" class="external-link">dplyr</a> and <a href="https://www.bioconductor.org/packages/release/bioc/html/plyranges.html" class="external-link">plyranges</a>.</p>
 <div class="section level4">
-<h4 id="structured-columns">Structured columns<a class="anchor" aria-label="anchor" href="#structured-columns"></a>
+<h4 id="structured-column">Structured column<a class="anchor" aria-label="anchor" href="#structured-column"></a>
 </h4>
-<p>JACUSA2 features structured columns (nested tibbles) where condition and replicate specific data is stored, e.g.: “bases,” “cov,” etc.</p>
+<p>JACUSA2 features structured columns (nested tibbles) where condition and replicate specific data is stored, e.g.: bases, cov, etc.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">rdd</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bases"</span>, <span class="st">"cov"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span>
-<span class="co">#&gt;   ..@ rownames       : NULL</span>
-<span class="co">#&gt;   ..@ nrows          : int 10018</span>
-<span class="co">#&gt;   ..@ listData       :List of 2</span>
-<span class="co">#&gt;   .. ..$ bases: tibble [10,018 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   .. .. ..$ cond1: tibble [10,018 × 1] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   .. .. .. ..$ rep1: tibble [10,018 × 4] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   .. .. .. .. ..$ A: num [1:10018] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;   .. .. .. .. ..$ C: num [1:10018] 0 8 2 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;   .. .. .. .. ..$ G: num [1:10018] 5 0 0 2 8 2 0 2 0 0 ...</span>
-<span class="co">#&gt;   .. .. .. .. ..$ T: num [1:10018] 0 0 0 0 0 0 3 0 7 32 ...</span>
-<span class="co">#&gt;   .. .. ..$ cond2: tibble [10,018 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   .. .. .. ..$ rep1: tibble [10,018 × 4] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   .. .. .. .. ..$ A: num [1:10018] 9 0 6 3 6 4 0 2 0 0 ...</span>
-<span class="co">#&gt;   .. .. .. .. ..$ C: num [1:10018] 0 0 0 0 0 0 2 0 3 0 ...</span>
-<span class="co">#&gt;   .. .. .. .. ..$ G: num [1:10018] 1 0 0 12 11 5 0 3 0 1 ...</span>
-<span class="co">#&gt;   .. .. .. .. ..$ T: num [1:10018] 0 5 0 0 0 0 0 0 2 16 ...</span>
-<span class="co">#&gt;   .. .. .. ..$ rep2: tibble [10,018 × 4] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   .. .. .. .. ..$ A: num [1:10018] 5 0 4 2 5 2 0 1 0 0 ...</span>
-<span class="co">#&gt;   .. .. .. .. ..$ C: num [1:10018] 0 0 0 0 0 0 1 0 1 0 ...</span>
-<span class="co">#&gt;   .. .. .. .. ..$ G: num [1:10018] 0 0 0 13 17 3 0 8 0 1 ...</span>
-<span class="co">#&gt;   .. .. .. .. ..$ T: num [1:10018] 0 6 0 0 0 0 1 0 1 19 ...</span>
-<span class="co">#&gt;   .. ..$ cov  : tibble [10,018 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   .. .. ..$ cond1: tibble [10,018 × 1] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   .. .. .. ..$ rep1: num [1:10018] 5 8 2 2 8 2 3 2 7 32 ...</span>
-<span class="co">#&gt;   .. .. ..$ cond2: tibble [10,018 × 2] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;   .. .. .. ..$ rep1: num [1:10018] 10 5 6 15 17 9 2 5 5 17 ...</span>
-<span class="co">#&gt;   .. .. .. ..$ rep2: num [1:10018] 5 6 4 15 22 5 2 9 2 20 ...</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">rdd</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bases"</span>, <span class="st">"cov"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+<span class="co">#&gt; Formal class 'GRanges' [package "GenomicRanges"] with 7 slots</span>
+<span class="co">#&gt;   ..@ seqnames       :Formal class 'Rle' [package "S4Vectors"] with 4 slots</span>
+<span class="co">#&gt;   .. .. ..@ values         : Factor w/ 35 levels "GL000194.1","GL000195.1",..: 1 2 3 4 5 6 7 8 9 10 ...</span>
+<span class="co">#&gt;   .. .. ..@ lengths        : int [1:35] 3 8 1 1 2 1 3 1 1 1 ...</span>
+<span class="co">#&gt;   .. .. ..@ elementMetadata: NULL</span>
+<span class="co">#&gt;   .. .. ..@ metadata       : list()</span>
+<span class="co">#&gt;   ..@ ranges         :Formal class 'IRanges' [package "IRanges"] with 6 slots</span>
+<span class="co">#&gt;   .. .. ..@ start          : int [1:10018] 11097 70341 80493 138153 143152 149424 149551 165531 46563 84583 ...</span>
+<span class="co">#&gt;   .. .. ..@ width          : int [1:10018] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">#&gt;   .. .. ..@ NAMES          : NULL</span>
+<span class="co">#&gt;   .. .. ..@ elementType    : chr "ANY"</span>
+<span class="co">#&gt;   .. .. ..@ elementMetadata: NULL</span>
+<span class="co">#&gt;   .. .. ..@ metadata       : list()</span>
+<span class="co">#&gt;   ..@ strand         :Formal class 'Rle' [package "S4Vectors"] with 4 slots</span>
+<span class="co">#&gt;   .. .. ..@ values         : Factor w/ 3 levels "+","-","*": 2 1 2 1 2 1 2 1 2 1 ...</span>
+<span class="co">#&gt;   .. .. ..@ lengths        : int [1:2868] 3 5 4 1 2 2 1 1 1 2 ...</span>
+<span class="co">#&gt;   .. .. ..@ elementMetadata: NULL</span>
+<span class="co">#&gt;   .. .. ..@ metadata       : list()</span>
+<span class="co">#&gt;   ..@ seqinfo        :Formal class 'Seqinfo' [package "GenomeInfoDb"] with 4 slots</span>
+<span class="co">#&gt;   .. .. ..@ seqnames   : chr [1:35] "GL000194.1" "GL000195.1" "GL000214.1" "GL000216.1" ...</span>
+<span class="co">#&gt;   .. .. ..@ seqlengths : int [1:35] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;   .. .. ..@ is_circular: logi [1:35] NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;   .. .. ..@ genome     : chr [1:35] NA NA NA NA ...</span>
+<span class="co">#&gt;   ..@ elementMetadata:Formal class 'DFrame' [package "S4Vectors"] with 6 slots</span>
+<span class="co">#&gt;   .. .. ..@ rownames       : NULL</span>
+<span class="co">#&gt;   .. .. ..@ nrows          : int 10018</span>
+<span class="co">#&gt;   .. .. ..@ listData       :List of 2</span>
+<span class="co">#&gt;   .. .. .. ..$ bases: tibble [10,018 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;   .. .. .. .. ..$ cond1: tibble [10,018 × 1] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;   .. .. .. .. .. ..$ rep1: tibble [10,018 × 4] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ A: num [1:10018] 0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ C: num [1:10018] 0 8 2 0 0 0 0 0 0 0 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ G: num [1:10018] 5 0 0 2 8 2 0 2 0 0 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ T: num [1:10018] 0 0 0 0 0 0 3 0 7 32 ...</span>
+<span class="co">#&gt;   .. .. .. .. ..$ cond2: tibble [10,018 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;   .. .. .. .. .. ..$ rep1: tibble [10,018 × 4] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ A: num [1:10018] 9 0 6 3 6 4 0 2 0 0 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ C: num [1:10018] 0 0 0 0 0 0 2 0 3 0 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ G: num [1:10018] 1 0 0 12 11 5 0 3 0 1 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ T: num [1:10018] 0 5 0 0 0 0 0 0 2 16 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. ..$ rep2: tibble [10,018 × 4] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ A: num [1:10018] 5 0 4 2 5 2 0 1 0 0 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ C: num [1:10018] 0 0 0 0 0 0 1 0 1 0 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ G: num [1:10018] 0 0 0 13 17 3 0 8 0 1 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. .. ..$ T: num [1:10018] 0 6 0 0 0 0 1 0 1 19 ...</span>
+<span class="co">#&gt;   .. .. .. ..$ cov  : tibble [10,018 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;   .. .. .. .. ..$ cond1: tibble [10,018 × 1] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;   .. .. .. .. .. ..$ rep1: num [1:10018] 5 8 2 2 8 2 3 2 7 32 ...</span>
+<span class="co">#&gt;   .. .. .. .. ..$ cond2: tibble [10,018 × 2] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;   .. .. .. .. .. ..$ rep1: num [1:10018] 10 5 6 15 17 9 2 5 5 17 ...</span>
+<span class="co">#&gt;   .. .. .. .. .. ..$ rep2: num [1:10018] 5 6 4 15 22 5 2 9 2 20 ...</span>
+<span class="co">#&gt;   .. .. ..@ elementType    : chr "ANY"</span>
+<span class="co">#&gt;   .. .. ..@ elementMetadata: NULL</span>
+<span class="co">#&gt;   .. .. ..@ metadata       : list()</span>
 <span class="co">#&gt;   ..@ elementType    : chr "ANY"</span>
-<span class="co">#&gt;   ..@ elementMetadata: NULL</span>
-<span class="co">#&gt;   ..@ metadata       : list()</span></code></pre></div>
+<span class="co">#&gt;   ..@ metadata       : list()</span>
+<span class="co">#&gt;   ..$ JACUSA2.type  : chr "call-pileup"</span>
+<span class="co">#&gt;   ..$ JACUSA2.header: chr " JACUSA2 Version: 2.0.0 call-2 -a D,Y -c 2 -P2 RF_FIRSTSTRAND -p 4 -r untr_hek293_rdds.out gDNA-rdds.bam untr-1"| __truncated__</span></code></pre></div>
 <p>Check structure of column with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">rdd</span><span class="op">$</span><span class="va">cov</span><span class="op">)</span>
@@ -210,16 +234,15 @@
 <div class="section level4">
 <h4 id="filtering-with-dplyrfilter">Filtering with <code>dplyr::filter()</code><a class="anchor" aria-label="anchor" href="#filtering-with-dplyrfilter"></a>
 </h4>
-<p><a href="https://github.com/tidyverse/dplyr" class="external-link">dplyr</a> and <code>%&gt;%</code> from <a href="https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html" class="external-link">magrittr</a> allow to formulate compact analysis pipelines.</p>
+<p>dplyr and <code>%&gt;%</code> from magrittr allow to formulate compact analysis pipelines.</p>
 <p>In a first step, we will retain sites with score &gt;= 2.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"BEFORE filtering"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "BEFORE filtering"</span>
+<code class="sourceCode R"><span class="co"># before filtering</span>
 <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">rdd</span><span class="op">)</span>
 <span class="co">#&gt; [1] 10018</span>
 <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">rdd</span>, <span class="va">score</span> <span class="op">&gt;=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"AFTER filtering"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "AFTER filtering"</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"After filtering"</span><span class="op">)</span>
+<span class="co">#&gt; [1] "After filtering"</span>
 <span class="co"># after filtering</span>
 <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
 <span class="co">#&gt; [1] 1733</span></code></pre></div>
@@ -291,19 +314,74 @@
 <li>apply a filter that retains only robust sites (RNA editing must be present in all/both replicates),</li>
 <li>Finally, we compute the base substitution (here RNA editing sites against FASTA reference) per replicate.</li>
 </ul>
+</div>
+</div>
+<div class="section level2">
+<h2 id="todo">TODO<a class="anchor" aria-label="anchor" href="#todo"></a>
+</h2>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">filtered</span> <span class="op">&lt;-</span> <span class="va">rdd</span>
-
-<span class="co"># calculate how many different base calls are present at site across conditions and replicates</span>
-<span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu">mcols</span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span><span class="op">[</span><span class="st">"bc"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lapply_cond.html">lapply_cond</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">$</span><span class="va">bases</span>, <span class="kw">function</span><span class="op">(</span><span class="va">b</span><span class="op">)</span> <span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="st">"+"</span>, <span class="va">b</span><span class="op">)</span> <span class="op">}</span> <span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="st">"+"</span>, <span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/base_count.html">base_count</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co"># filter</span>
-<span class="va">filtered</span> <span class="op">&lt;-</span> <span class="va">filtered</span> <span class="op">%&gt;%</span>
+<span class="va">filtered</span><span class="op">$</span><span class="va">bc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lapply_cond.html">lapply_cond</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">$</span><span class="va">bases</span>, <span class="kw">function</span><span class="op">(</span><span class="va">b</span><span class="op">)</span> <span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="st">"+"</span>, <span class="va">b</span><span class="op">)</span> <span class="op">}</span> <span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="st">"+"</span>, <span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/base_count.html">base_count</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">filtered</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">score</span> <span class="op">&gt;=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/All.html">All</a></span><span class="op">(</span><span class="va">cov</span><span class="op">$</span><span class="va">cond1</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="../reference/All.html">All</a></span><span class="op">(</span><span class="va">cov</span><span class="op">$</span><span class="va">cond2</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">bc</span> <span class="op">&lt;=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/robust.html">robust</a></span><span class="op">(</span><span class="va">bases</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; GRanges object with 246 ranges and 17 metadata columns:</span>
+<span class="co">#&gt;           seqnames    ranges strand |        name     score        info</span>
+<span class="co">#&gt;              &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;numeric&gt; &lt;character&gt;</span>
+<span class="co">#&gt;     [1] GL000195.1     85622      - |      call-2   4.07819           *</span>
+<span class="co">#&gt;     [2] GL000220.1    118145      + |      call-2   4.61688           *</span>
+<span class="co">#&gt;     [3]         MT      7402      + |      call-2   3.41595           *</span>
+<span class="co">#&gt;     [4]          X 118604441      + |      call-2   2.95517           *</span>
+<span class="co">#&gt;     [5]          X 118672671      - |      call-2   8.33540           *</span>
+<span class="co">#&gt;     ...        ...       ...    ... .         ...       ...         ...</span>
+<span class="co">#&gt;   [242]         22  19956270      + |      call-2   2.84008           *</span>
+<span class="co">#&gt;   [243]         22  24970609      + |      call-2   9.56645           *</span>
+<span class="co">#&gt;   [244]         22  30733077      - |      call-2   3.09863           *</span>
+<span class="co">#&gt;   [245]         22  41326713      + |      call-2   3.22868           *</span>
+<span class="co">#&gt;   [246]         22  50357344      + |      call-2   2.59208           *</span>
+<span class="co">#&gt;              filter         ref                                   bases</span>
+<span class="co">#&gt;         &lt;character&gt; &lt;character&gt;                                &lt;tbl_df&gt;</span>
+<span class="co">#&gt;     [1]           D           A 15:  0: 0:...:12: 3: 0:...:13: 3: 0:...</span>
+<span class="co">#&gt;     [2]         D;Y           C  0:101: 0:...: 0:16: 3:...: 0:20: 4:...</span>
+<span class="co">#&gt;     [3]         D;Y           C  0: 86: 0:...: 0:10: 0:...: 0:10: 0:...</span>
+<span class="co">#&gt;     [4]           D           G  0:  0:44:...: 4: 0:86:...: 2: 0:88:...</span>
+<span class="co">#&gt;     [5]           *           A 29:  0: 0:...: 6: 0: 5:...: 5: 0:13:...</span>
+<span class="co">#&gt;     ...         ...         ...                                     ...</span>
+<span class="co">#&gt;   [242]         D;Y           G      0:0:38:...: 0:2:40:...: 0:3:33:...</span>
+<span class="co">#&gt;   [243]           *           A     37:0: 0:...: 3:0:11:...: 5:0: 9:...</span>
+<span class="co">#&gt;   [244]           D           T      0:0: 0:...: 0:4: 0:...: 0:1: 0:...</span>
+<span class="co">#&gt;   [245]           *           A     31:0: 0:...:19:0: 2:...:12:0: 3:...</span>
+<span class="co">#&gt;   [246]         D;Y           T      0:0: 0:...: 0:0: 1:...: 0:0: 3:...</span>
+<span class="co">#&gt;               cov         seq      reset1      reset2      resetP  backtrack1</span>
+<span class="co">#&gt;          &lt;tbl_df&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="co">#&gt;     [1]  15:15:16                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="co">#&gt;     [2] 101:19:24                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="co">#&gt;     [3]  86:13:12                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="co">#&gt;     [4]  44:90:90                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="co">#&gt;     [5]  29:11:18                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="co">#&gt;     ...       ...         ...         ...         ...         ...         ...</span>
+<span class="co">#&gt;   [242]  38:42:36                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="co">#&gt;   [243]  37:14:14                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="co">#&gt;   [244]  48:21:26                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="co">#&gt;   [245]  31:21:15                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="co">#&gt;   [246]  28:14:14                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="co">#&gt;          backtrack2  backtrackP         ins         del        bc</span>
+<span class="co">#&gt;         &lt;character&gt; &lt;character&gt;    &lt;tbl_df&gt;    &lt;tbl_df&gt; &lt;integer&gt;</span>
+<span class="co">#&gt;     [1]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span>
+<span class="co">#&gt;     [2]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span>
+<span class="co">#&gt;     [3]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span>
+<span class="co">#&gt;     [4]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span>
+<span class="co">#&gt;     [5]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span>
+<span class="co">#&gt;     ...         ...         ...         ...         ...       ...</span>
+<span class="co">#&gt;   [242]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span>
+<span class="co">#&gt;   [243]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span>
+<span class="co">#&gt;   [244]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span>
+<span class="co">#&gt;   [245]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span>
+<span class="co">#&gt;   [246]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span>
+<span class="co">#&gt;   -------</span>
+<span class="co">#&gt;   seqinfo: 35 sequences from an unspecified genome; no seqlengths</span>
 
 <span class="co"># sum base call counts of condition / RNA replicates</span>
 <span class="va">rna_bases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="st">"+"</span>, <span class="va">filtered</span><span class="op">$</span><span class="va">bases</span><span class="op">$</span><span class="va">cond2</span><span class="op">)</span>
@@ -313,19 +391,26 @@
 <span class="va">ref2rna</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/base_sub.html">base_sub</a></span><span class="op">(</span><span class="va">rna_bases</span>, <span class="va">filtered</span><span class="op">$</span><span class="va">ref</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">ref2rna</span><span class="op">)</span>
 <span class="co">#&gt; ref2rna</span>
-<span class="co">#&gt; A-&gt;C A-&gt;G A-&gt;T C-&gt;A C-&gt;G C-&gt;T G-&gt;A G-&gt;C G-&gt;T T-&gt;A T-&gt;C T-&gt;G </span>
-<span class="co">#&gt;    6  171    2    3    2    9   23    6    1    5   15    3</span></code></pre></div>
+<span class="co">#&gt;      A-&gt;C     A-&gt;CG      A-&gt;G      A-&gt;T      C-&gt;A     C-&gt;AG      C-&gt;G      C-&gt;T </span>
+<span class="co">#&gt;       170         1      4823       367       279         1       487       258 </span>
+<span class="co">#&gt;      G-&gt;A     G-&gt;AT      G-&gt;C     G-&gt;CT      G-&gt;T no change      T-&gt;A     T-&gt;AC </span>
+<span class="co">#&gt;       716         1        69         1        86         6       840         1 </span>
+<span class="co">#&gt;      T-&gt;C     T-&gt;CG      T-&gt;G </span>
+<span class="co">#&gt;       997         1       914</span></code></pre></div>
 <p>Instead of using DNA information from the reference FASTA sequence via column “ref,” we could use the actual data from condition 1 / DNA.</p>
-<p>Robust requires observations (here base calls) to be present in all replicates of at least one condition.</p>
+<p>Robust requires observations (here base calls) to be present in all replicates of at least condition.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cond1_ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/base_call.html">base_call</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">$</span><span class="va">bases</span><span class="op">$</span><span class="va">cond1</span><span class="op">$</span><span class="va">rep1</span><span class="op">)</span>
 <span class="va">dna2rna</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/base_sub.html">base_sub</a></span><span class="op">(</span><span class="va">rna_bases</span>, <span class="va">filtered</span><span class="op">$</span><span class="va">ref</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">dna2rna</span><span class="op">)</span>
 <span class="co">#&gt; dna2rna</span>
-<span class="co">#&gt; A-&gt;C A-&gt;G A-&gt;T C-&gt;A C-&gt;G C-&gt;T G-&gt;A G-&gt;C G-&gt;T T-&gt;A T-&gt;C T-&gt;G </span>
-<span class="co">#&gt;    6  171    2    3    2    9   23    6    1    5   15    3</span></code></pre></div>
+<span class="co">#&gt;      A-&gt;C     A-&gt;CG      A-&gt;G      A-&gt;T      C-&gt;A     C-&gt;AG      C-&gt;G      C-&gt;T </span>
+<span class="co">#&gt;       170         1      4823       367       279         1       487       258 </span>
+<span class="co">#&gt;      G-&gt;A     G-&gt;AT      G-&gt;C     G-&gt;CT      G-&gt;T no change      T-&gt;A     T-&gt;AC </span>
+<span class="co">#&gt;       716         1        69         1        86         6       840         1 </span>
+<span class="co">#&gt;      T-&gt;C     T-&gt;CG      T-&gt;G </span>
+<span class="co">#&gt;       997         1       914</span></code></pre></div>
 <p>Using different sources of DNA to describe RRDs via <code>ref2rna</code> and <code>dna2rna</code> we can conclude that there are no polymorphic positions in <code>filtered</code> because <code>ref2rna</code> and <code>dna2rna</code> are identical.</p>
-</div>
 <div class="section level4">
 <h4 id="plot-base-substitutions">Plot base substitutions<a class="anchor" aria-label="anchor" href="#plot-base-substitutions"></a>
 </h4>
@@ -350,8 +435,7 @@
   <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">cond</span>, linetype <span class="op">=</span> <span class="va">repl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
     <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html" class="external-link">stat_ecdf</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"step"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Coverage"</span><span class="op">)</span></code></pre></div>
-<p><img src="JACUSA2helper_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
-<p>In order to improve the preliminary plot, we need to modify the following aspects:</p>
+<p><img src="JACUSA2helper_files/figure-html/unnamed-chunk-14-1.png" width="700"> –&gt; In order to improve the preliminary plot, we need to modify the following aspects:</p>
 <ul>
 <li>Merge legends,</li>
 <li>add descriptive plot labels (x = Coverage, y = Density),</li>
@@ -360,7 +444,7 @@
 </ul>
 <p>First, a data description is added to the result object:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gather_repl.html">gather_repl</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"cov"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gather_repl.html">gather_repl</a></span><span class="op">(</span><span class="va">rdd</span>, <span class="st">"cov"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>
     data_desc <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span>
       <span class="va">cond</span> <span class="op">==</span> <span class="st">"cond1"</span> <span class="op">~</span> <span class="st">"DNA"</span>,
@@ -413,7 +497,6 @@
 <li>number of observed bases.</li>
 </ul>
 </div>
-</div>
 <div class="section level3">
 <h3 id="arrest-events">Arrest events<a class="anchor" aria-label="anchor" href="#arrest-events"></a>
 </h3>
@@ -431,52 +514,50 @@
 </ul>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"HIVRT_rt_arrest"</span><span class="op">)</span>
+<span class="va">HIVRT_rt_arrest</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fu">JACUSA2helper</span><span class="fu">::</span><span class="fu"><a href="../reference/id.html">id</a></span><span class="op">(</span><span class="va">HIVRT_rt_arrest</span><span class="op">)</span>
 <span class="co"># column names of arrest data</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu">mcols</span><span class="op">(</span><span class="va">HIVRT_rt_arrest</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  [1] "name"         "pvalue"       "info"         "filter"       "ref"         </span>
 <span class="co">#&gt;  [6] "arrest"       "through"      "bases"        "arrest_rate"  "cov"         </span>
 <span class="co">#&gt; [11] "seq"          "arrest_score" "reset1"       "reset2"       "resetP"      </span>
-<span class="co">#&gt; [16] "backtrack1"   "backtrack2"   "backtrackP"   "ins"          "del"</span></code></pre></div>
+<span class="co">#&gt; [16] "backtrack1"   "backtrack2"   "backtrackP"   "ins"          "del"         </span>
+<span class="co">#&gt; [21] "id"</span></code></pre></div>
 <p>We investigate the strand specific coverage distribution of reads and discover that more reads are mapped to the “+” strand. The other mappings are probably artefacts. But this discussion is beyond the scope of this vignette.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">HIVRT_rt_arrest</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="va">cov</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">mutate</span><span class="op">(</span>total_cov <span class="op">=</span> <span class="fu"><a href="../reference/lapply_cond.html">lapply_cond</a></span><span class="op">(</span><span class="va">cov</span>, <span class="va">rowSums</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="va">rowSums</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">cov</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">total_cov</span>, colour <span class="op">=</span> <span class="va">strand</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html" class="external-link">geom_density</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span>
-      breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/trans_breaks.html" class="external-link">trans_breaks</a></span><span class="op">(</span><span class="st">"log10"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">10</span><span class="op">^</span><span class="va">x</span><span class="op">)</span>,
-      labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/trans_format.html" class="external-link">trans_format</a></span><span class="op">(</span><span class="st">"log10"</span>, <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_parse.html" class="external-link">math_format</a></span><span class="op">(</span><span class="fl">10</span><span class="op">^</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">position</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">HIVRT_rt_arrest</span>, <span class="va">id</span>, <span class="va">seqnames</span>, <span class="va">strand</span>, .drop_ranges <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">coverage</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gather_repl.html">gather_repl</a></span><span class="op">(</span><span class="va">HIVRT_rt_arrest</span>, <span class="st">"cov"</span><span class="op">)</span>
+
+<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">position</span>, <span class="va">coverage</span>, by <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">strand</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html" class="external-link">geom_density</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span>
+    breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/trans_breaks.html" class="external-link">trans_breaks</a></span><span class="op">(</span><span class="st">"log10"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">10</span><span class="op">^</span><span class="va">x</span><span class="op">)</span>,
+    labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/trans_format.html" class="external-link">trans_format</a></span><span class="op">(</span><span class="st">"log10"</span>, <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_parse.html" class="external-link">math_format</a></span><span class="op">(</span><span class="fl">10</span><span class="op">^</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span>
   <span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Coverage"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">seqnames</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span></code></pre></div>
+<span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Coverage"</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> 
+<span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">seqnames</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span></code></pre></div>
 <p><img src="JACUSA2helper_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
 <p>We filter by pvalue, coverage, strand, and only retain robust arrest events:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"BEFORE filtering"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "BEFORE filtering"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">HIVRT_rt_arrest</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">HIVRT_rt_arrest</span><span class="op">)</span>
 <span class="co">#&gt; [1] 12110</span>
-
 <span class="va">filtered</span> <span class="op">&lt;-</span> <span class="va">HIVRT_rt_arrest</span> <span class="op">%&gt;%</span> 
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">strand</span> <span class="op">==</span> <span class="st">"+"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pvalue</span> <span class="op">&lt;=</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/robust.html">robust</a></span><span class="op">(</span><span class="va">arrest</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"AFTER filtering"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "AFTER filtering"</span>
 <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span>
 <span class="co">#&gt; [1] 1204</span></code></pre></div>
 <p>We use <code><a href="../reference/gather_repl.html">gather_repl()</a></code> function to transform the filtered result object and plot the arrest rate from each condition in a scatter plot.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">filtered</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="va">arrest_rate</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>arrest_rate1 <span class="op">=</span> <span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond1</span><span class="op">$</span><span class="va">rep1</span>, arrest_rate2 <span class="op">=</span> <span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond2</span><span class="op">$</span><span class="va">rep1</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">arrest_rate</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>
+  contig <span class="op">=</span> <span class="fu">seqnames</span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span>,
+  arrest_rate1 <span class="op">=</span> <span class="va">filtered</span><span class="op">$</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond1</span><span class="op">$</span><span class="va">rep1</span>,
+  arrest_rate2 <span class="op">=</span> <span class="va">filtered</span><span class="op">$</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond2</span><span class="op">$</span><span class="va">rep1</span>
+<span class="op">)</span>
+<span class="va">df</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">arrest_rate1</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">arrest_rate2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>  
   <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">.</span> <span class="op">~</span> <span class="va">seqnames</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">.</span> <span class="op">~</span> <span class="va">contig</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"log2(+CMC arrest rate)"</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"log2(-CMC arrest rate)"</span><span class="op">)</span></code></pre></div>
@@ -488,6 +569,7 @@
 <h3 id="stranded-data">Stranded data<a class="anchor" aria-label="anchor" href="#stranded-data"></a>
 </h3>
 <p>When working with stranded RNA-Seq data, inverting base calls is not necessary because JACUSA2 will automatically invert Single End (SE) and Paired End (PE) depending on the provided library type option “-P” UNSTRANDED|FR_FIRSTSTRAND|RF_SECONDSTRAND”.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="inputoutput">Input/Output<a class="anchor" aria-label="anchor" href="#inputoutput"></a>
@@ -518,81 +600,83 @@
 <li><code><a href="../reference/filter_artefact.html">filter_artefact()</a></code></li>
 <li><code>All(), Any()</code></li>
 </ul>
+</div>
+<div class="section level2">
+<h2 id="variant-tagging">Variant tagging<a class="anchor" aria-label="anchor" href="#variant-tagging"></a>
+</h2>
+<p>Variant tagging allows to group data based on base substitutions on reads, called tags. Running JACUSA2 with <code>-B "A2G"</code> will tag all reads that have a “A-&gt;G” base substitution. Where available, each observations for each site (=contig, start, stop, strand) from tagged and all reads will be provided and distinguished by “tag=A2G” or “tag=*” in the info column, respectively. Use <code>result$tag &lt;- clean_tag(result$tag)</code> to convert base substitutions such as “A2G” to “A-&gt;G.”</p>
 <!--
-## Variant tagging
-Variant tagging allows to group data based on base substitutions on reads, called tags.
-Running JACUSA2 with `-B "A2G"` will tag all reads that have a "A->G" base substitution.
-Where available, each observations for each site (=contig, start, stop, strand) from tagged and all reads will be provided and
-distinguished by "tag=A2G" or "tag=*" in the info column, respectively.
-Use `result$tag <- clean_tag(result$tag)` to convert base substitutions such as "A2G" to "A->G".
-
 #```{r}
-# load data
-data(APOBEC1)
-result <- APOBEC1
-barplot(table(result$tag), ylab="# of sites", main="Distribution of tagged sites")
+## load data
+#data(APOBEC1)
+#result <- APOBEC1
+#barplot(table(result$tag), ylab="# of sites", main="Distribution of tagged sites")
 #```
-We calculate the total base call count with `lapply_cond` and `Reduce("+")`.
+#We calculate the total base call count with `lapply_cond` and `Reduce("+")`.
 
 #```{r}
-# sum base call counts of conditions and replicates
-result$total_bases <- lapply_cond(
-  result$bases, function(bases) { Reduce("+", bases) } 
-) %>% Reduce("+", .)
+## sum base call counts of conditions and replicates
+#result$total_bases <- lapply_cond(
+#  result$bases, function(bases) { Reduce("+", bases) } 
+#) %>% Reduce("+", .)
 #```
 
 
 #```{r}
-# mark "valid" sites 
-result <- result %>%
-  dplyr::mutate(
-    keep = (
-      # restrict to total reads
-      tag == "*" & 
-      # require less than 2 different base calls
-      base_count(total_bases, ref) <= 2 & 
-      # require 10 reads for each replicate of each condition
-      All(cov$cond1 >= 10) & All(cov$cond2 >= 10) &
-      score >= 2 &
-      robust(bases)
-    )
-  )
-# raw data
-# add structured columns: tagged_bases and not_tagged_bases
-expanded <- expand_tag(result)
-filtered <- dplyr::filter(expanded, keep == TRUE)
+## mark "valid" sites 
+#result <- result %>%
+#  dplyr::mutate(
+#    keep = (
+#      # restrict to total reads
+#      tag == "*" & 
+#      # require less than 2 different base calls
+#      base_count(total_bases, ref) <= 2 & 
+#      # require 10 reads for each replicate of each condition
+#      All(cov$cond1 >= 10) & All(cov$cond2 >= 10) &
+#      score >= 2 &
+#      robust(bases)
+#    )
+#  )
+## raw data
+## add structured columns: tagged_bases and not_tagged_bases
+#expanded <- expand_tag(result)
+#filtered <- dplyr::filter(expanded, keep == TRUE)
 #```
 
 #```{r}
-# plot
-count <- c(nrow(result), nrow(expanded), nrow(filtered))
-b <- barplot(count, names.arg = c("raw", "expaded", "filtered"), ylim=c(0, max(count) + max(count) * 15 / 100))
-text(b, count + count * 10 / 100, count)
+## plot
+#count <- c(nrow(result), nrow(expanded), nrow(filtered))
+#b <- barplot(count, names.arg = c("raw", "expaded", "filtered"), ylim=c(0, max(count) + max(count) * 15 / 100))
+#text(b, count + count * 10 / 100, count)
 #```
 
 #```{r} 
-# add observed non reference base substitution, e.g.: A->G
-filtered[["base_sub"]] <- base_sub(filtered$total_bases, filtered$ref)
-# ratio of non reference base calls
-filtered[["non_ref_ratio"]] <- lapply_repl(filtered$bases, function(cond) non_ref_ratio(cond, filtered$ref))
-
-# tag specific base substitution for each condition
-filtered[["tagged_base_sub"]] <- lapply_cond(filtered$tagged_bases, function(bases) { Reduce("+", bases) %>% base_sub(filtered$ref)} )
-filtered[["tagged_non_ref_ratio"]] <- lapply_repl(filtered$tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
-
-filtered[["not_tagged_base_sub"]] <- lapply_cond(filtered$not_tagged_bases, function(bases) { Reduce("+", bases) %>% #base_sub(filtered$ref)} )
-filtered[["not_tagged_non_ref_ratio"]] <- lapply_repl(filtered$not_tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
+## add observed non reference base substitution, e.g.: A->G
+#filtered[["base_sub"]] <- base_sub(filtered$total_bases, filtered$ref)
+## ratio of non reference base calls
+#filtered[["non_ref_ratio"]] <- lapply_repl(filtered$bases, function(cond) non_ref_ratio(cond, filtered$ref))
+#
+## tag specific base substitution for each condition
+#filtered[["tagged_base_sub"]] <- lapply_cond(filtered$tagged_bases, function(bases) { Reduce("+", bases) %>% base_sub(filtered$ref)} )
+#filtered[["tagged_non_ref_ratio"]] <- lapply_repl(filtered$tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
+#
+#filtered[["not_tagged_base_sub"]] <- lapply_cond(filtered$not_tagged_bases, function(bases) { Reduce("+", bases) %>% #base_sub(filtered$ref)} )
+#filtered[["not_tagged_non_ref_ratio"]] <- lapply_repl(filtered$not_tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
 #```
-
---><!--
+-->
+<!--
 # Experimental features
 * *lrt-arrest*
---><div class="section level3">
+-->
+<div class="section level3">
 <h3 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Piechotta2017" class="csl-entry">
 Piechotta, Michael, Emanuel Wyler, Uwe Ohler, Markus Landthaler, and Christoph Dieterich. 2017. <span>“<span>JACUSA</span>: Site-Specific Identification of <span>RNA</span> Editing Events from Replicate Sequencing Data.”</span> <em><span>BMC</span> Bioinformatics</em> 18 (1). <a href="https://doi.org/10.1186/s12859-016-1432-8" class="external-link">https://doi.org/10.1186/s12859-016-1432-8</a>.
+</div>
+<div id="ref-Wickham2014" class="csl-entry">
+Wickham, Hadley. 2014. <span>“Tidy Data.”</span> <em>The Journal of Statistical Software</em> 59. <a href="http://www.jstatsoft.org/v59/i10/" class="external-link">http://www.jstatsoft.org/v59/i10/</a>.
 </div>
 <div id="ref-Zhou2018" class="csl-entry">
 Zhou, Katherine I., Wesley C. Clark, David W. Pan, Matthew J. Eckwahl, Qing Dai, and Tao Pan. 2018. <span>“Pseudouridines Have Context-Dependent Mutation and Stop Rates in High-Throughput Sequencing.”</span> <em><span>RNA</span> Biology</em> 15 (7): 892–900. <a href="https://doi.org/10.1080/15476286.2018.1462654" class="external-link">https://doi.org/10.1080/15476286.2018.1462654</a>.
