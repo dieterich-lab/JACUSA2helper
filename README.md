@@ -24,4 +24,5 @@ Check vignettes:
 * `vignette("Introduction to JACUSA2helper")`
 * `vignette("Analysis of DART-seq with JACUSA2helper")`
 * `vignette("Analysis of m6A mapping by MazF with JACUSA2helper")`
-# * `vignette("Introduction to meta conditions with JACUSA2helper")`
+* `vignette("Introduction to meta conditions with JACUSA2helper")`
+* [Nanopore analysis](https://dieterich-lab.github.io/JACUSA2helper/articles/web_only/JACUSA2helper-nanopore.html)
