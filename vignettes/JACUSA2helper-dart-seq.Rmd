@@ -73,7 +73,7 @@ We observe a lot more C-to-U transitions in the active YTH binding domain as com
 
 ```{r}
 tidyr::tibble(
-  base_sub = c(ref2YTH,ref2YTHmut), 
+  base_sub = c(ref2YTH, ref2YTHmut), 
   Source = c(
     rep("YTH",length(ref2YTH)),
     rep("YTHmut",length(ref2YTHmut)))

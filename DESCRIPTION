@@ -1,14 +1,14 @@
 Package: JACUSA2helper
 Type: Package
 Title: Post-processing for JACUSA2 output
-Version: 1.9.9.9100
+Version: 1.9.9.9200
 Depends: R (>= 3.5)
-Date: 2022-01-26
+Date: 2022-02-11
 Authors@R: c(person("Michael", "Piechotta", email = "michael.piechotta@gmail.com", role = c("aut", "cre")),
          person("Qi", "Wang", role = c("ctb")),
          person("Christoph", "Dieterich", role = c("ctb")),
          person("Dieterich Lab", role = c("fnd")))
-Description: This package enables post-processing of JACUSA2 output: read, filter, plot, write.
+Description: This package enables post-processing of JACUSA2 output: read, filter, and plot.
 URL: https://github.com/dieterich-lab/JACUSA2helper, https://dieterich-lab.github.io/JACUSA2helper/
 BugReports: https://github.com/dieterich-lab/JACUSA2helper/issues
 License: GPL-3 + file LICENSE
@@ -18,27 +18,25 @@ LazyData: true
 LazyDataCompression: bzip2
 biocViews:
 Imports: 
+  curl,
   data.table, 
   tibble,
   tidyr,
   dplyr, 
-  rlang, 
   magrittr,
-  stringr,
   Rcpp,
   GenomicRanges,
   IRanges,
-  plyranges,
-  methods
+  plyranges
 Suggests: 
   ggplot2, 
   scales,
   Rsamtools,
   testthat (>= 2.1.0),
   knitr,
+  VennDiagram,
   reshape2,
   rmarkdown,
-  markdown,
   NMF,
   BSgenome,
   BSgenome.Hsapiens.NCBI.GRCh38

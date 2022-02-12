@@ -24,10 +24,11 @@ A typical workflow for analyzing [JACUSA2](https://github.com/dieterich-lab/JACU
 output file(s) with [JACUSA2helper](https://github.com/dieterich-lab/JACUSA2helper) 
 consists of:
 
-* Read JACUSA2 output file(s) into result object - currently represented as `GenomicRanges::GRanges`.
+* Read JACUSA2 output file(s) into result object.
 * Add optional data, e.g.: `base_sub()` - add base substitution.
 * Filter result object by some criteria, e.g.: `dplyr::filter(All(cov$cond1 >= 10))` - 
-  retain sites with read coverage >= 10, and use `All()` or `Any` on columns with data for conditions and replicates.
+  retain sites with read coverage >= 10, and use `All()` or `Any` on structured 
+  columns (conditions and replicates).
 * Plot filtered result object.
 
 JACUSA2helper supports the analysis of the following methods from JACUSA2: 
@@ -35,20 +36,13 @@ JACUSA2helper supports the analysis of the following methods from JACUSA2:
 Check the [JACUSA2 manual](https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf)
 for more details.
 
-The main data structure is the result object that is currently represented as `GenomicRanges::GRanges`.
-See [An Introduction to the GenomicRanges Package](https://bioconductor.org/packages/devel/bioc/vignettes/GenomicRanges/inst/doc/GenomicRangesIntroduction.html).
-
-In brief, JACUSA2 specific data is stored as metadata and can be accessed via `GenomicRanges::mcols`.
-
-[plyranges](https://www.bioconductor.org/packages/release/bioc/html/plyranges.html) enables to use `GenomicRanges` within [dplyr](https://github.com/tidyverse/dplyr) and [ggplot2](https://github.com/tidyverse/ggplot2).
+The main data structure is the result object that is implemented by following 
+the tidy data approach from @Wickham2014 to feature easy interaction with 
+[dplyr](https://github.com/tidyverse/dplyr) and [ggplot2](https://github.com/tidyverse/ggplot2).
 
 In the following, we will focus on single pairwise comparisons of two conditions 
 of one output file. If you want to analyze multiple files with similar pairwise 
-comparisons, read `vignette("Introduction to meta conditions with JACUSA2helper")`. 
-Expect increased memory requirements when using multiple JACUSA2 output with `read_results`.
-Make sure all JACUSA2 output files have the same number of conditions and replicates when using `read_results`.
-
-Reading files serially with `read_result` is much more memory efficient and allows for file specific filtering.
+comparisons, read `vignette("JACUSA2helper-meta-conditions")`. 
 
 ## Multi site and new features
 While previously in JACUSA*1*, a site could be uniquely identified as one line 
@@ -71,17 +65,17 @@ library(JACUSA2helper)
 data(rdd)
 ```
 
-Note that `rdd` is a `GenomicRanges:GRanges` object - check [An Introduction to the GenomicRanges Package](https://bioconductor.org/packages/devel/bioc/vignettes/GenomicRanges/inst/doc/GenomicRangesIntroduction.html) for 
+Note that `rdd` is a tibble - check [tibble](http://tibble.tidyverse.org) for 
 more details. 
 
 Use dplyr to manipulate the result object `rdd`. Check details on 
 [dplyr](https://github.com/tidyverse/dplyr) and [plyranges](https://www.bioconductor.org/packages/release/bioc/html/plyranges.html).
 
-### Structured columns
+### Structured column
 JACUSA2 features structured columns (nested tibbles) where condition and replicate 
-specific data is stored, e.g.: "bases", "cov", etc.
+specific data is stored, e.g.: bases, cov, etc.
 ```{r}
-str(mcols(rdd)[c("bases", "cov")])
+str(rdd[, c("bases", "cov")])
 ```
 
 Check structure of column with:
@@ -120,15 +114,15 @@ base_calls$cond2
 ```
 
 ### Filtering with `dplyr::filter()`
-[dplyr](https://github.com/tidyverse/dplyr) and `%>%` from [magrittr](https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html) allow to formulate compact analysis pipelines. 
+dplyr and `%>%` from magrittr allow to formulate compact analysis pipelines. 
 
 In a first step, we will retain sites with score >= 2.
 
 ```{r}
-print("BEFORE filtering")
+# before filtering
 length(rdd)
 result <- dplyr::filter(rdd, score >= 2)
-print("AFTER filtering")
+print("After filtering")
 # after filtering
 length(result)
 ```
@@ -156,16 +150,11 @@ In the following, we will:
 * Finally, we compute the base substitution (here RNA editing sites against FASTA 
   reference) per replicate.
 
-
+# TODO
 ```{r}
 filtered <- rdd
-
-# calculate how many different base calls are present at site across conditions and replicates
-GenomicRanges::mcols(filtered)["bc"] <- lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ) %>% 
-  Reduce("+", .) %>% base_count()
-
-# filter
-filtered <- filtered %>%
+filtered$bc <- lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ) %>% Reduce("+", .) %>% base_count()
+filtered %>%
   dplyr::filter(score >= 2) %>%
   dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 > 10)) %>%
   dplyr::filter(bc <= 2) %>%
@@ -178,12 +167,13 @@ rna_bases <- Reduce("+", filtered$bases$cond2)
 # conditions - only condition 2 / RNA
 ref2rna <- base_sub(rna_bases, filtered$ref)
 table(ref2rna)
+
 ```
 
 Instead of using DNA information from the reference FASTA sequence via column "ref",
 we could use the actual data from condition 1 / DNA.
 
-Robust requires observations (here base calls) to be present in all replicates of at least one condition.
+Robust requires observations (here base calls) to be present in all replicates of at least condition.
 
 ```{r}
 cond1_ref <- base_call(filtered$bases$cond1$rep1)
@@ -213,13 +203,14 @@ tidyr::tibble(base_sub = dna2rna) %>% # ggplot requires a data frame
 
 To compare the coverage distribution of each data sample, we create a simple plot of the empirical coverage distribution, where we map cond(ition) to `colour` and repl(icate) to `linetype`.
 
+
 ```{r}
 gather_repl(result, "cov") %>%
   ggplot2::ggplot(ggplot2::aes(x = value, colour = cond, linetype = repl)) + 
     ggplot2::stat_ecdf(geom = "step") +
     ggplot2::xlab("Coverage")
 ```
-
+-->
 In order to improve the preliminary plot, we need to modify the following aspects:
 
 * Merge legends,
@@ -230,7 +221,7 @@ In order to improve the preliminary plot, we need to modify the following aspect
 First, a data description is added to the result object:
 
 ```{r}
-result <- gather_repl(result, "cov") %>%
+result <- gather_repl(rdd, "cov") %>%
   dplyr::mutate(
     data_desc = dplyr::case_when(
       cond == "cond1" ~ "DNA",
@@ -314,6 +305,7 @@ structured/nested columns:
 
 ```{r}
 data("HIVRT_rt_arrest")
+HIVRT_rt_arrest$id <- JACUSA2helper::id(HIVRT_rt_arrest)
 # column names of arrest data
 names(GenomicRanges::mcols(HIVRT_rt_arrest))
 ```
@@ -322,46 +314,43 @@ We investigate the strand specific coverage distribution of reads and discover t
 The other mappings are probably artefacts. But this discussion is beyond the scope of this vignette.
 
 ```{r}
-HIVRT_rt_arrest %>% select(cov) %>% 
-  mutate(total_cov = lapply_cond(cov, rowSums) %>% rowSums) %>% 
-  select(-cov) %>% 
-  as.data.frame() %>%
-  ggplot2::ggplot(ggplot2::aes(x = total_cov, colour = strand)) + 
-    ggplot2::geom_density() + ggplot2::scale_x_log10(
-      breaks = scales::trans_breaks("log10", function(x) 10^x),
-      labels = scales::trans_format("log10", scales::math_format(10^.x))
-  ) +
-  ggplot2::xlab("Coverage") +
-  ggplot2::theme(legend.position = "bottom") + 
-  ggplot2::facet_grid(seqnames ~ .)
-```
+position <- dplyr::select(HIVRT_rt_arrest, id, seqnames, strand, .drop_ranges = TRUE) %>% dplyr::as_tibble()
+coverage <- gather_repl(HIVRT_rt_arrest, "cov")
 
+dplyr::inner_join(position, coverage, by = "id") %>%
+ggplot2::ggplot(ggplot2::aes(x = value, colour = strand)) + 
+  ggplot2::geom_density() + ggplot2::scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+ggplot2::xlab("Coverage") +
+ggplot2::theme(legend.position = "bottom") + 
+ggplot2::facet_grid(seqnames ~ .)
+```
 
 We filter by pvalue, coverage, strand, and only retain robust arrest events:
 
 ```{r}
-print("BEFORE filtering")
 length(HIVRT_rt_arrest)
-
 filtered <- HIVRT_rt_arrest %>% 
   dplyr::filter(strand == "+") %>%
   dplyr::filter(pvalue <= 0.01) %>% 
   dplyr::filter(robust(arrest))
-
-print("AFTER filtering")
 length(filtered)
 ```
 We use `gather_repl()` function to transform the filtered result object and 
 plot the arrest rate from each condition in a scatter plot.
 
 ```{r}
-filtered %>% select(arrest_rate) %>%
-  mutate(arrest_rate1 = arrest_rate$cond1$rep1, arrest_rate2 = arrest_rate$cond2$rep1) %>%
-  select(-arrest_rate) %>%
-  as.data.frame() %>%
+df <- data.frame(
+  contig = seqnames(filtered),
+  arrest_rate1 = filtered$arrest_rate$cond1$rep1,
+  arrest_rate2 = filtered$arrest_rate$cond2$rep1
+)
+df %>%
   ggplot2::ggplot(ggplot2::aes(x = log2(arrest_rate1), y = log2(arrest_rate2))) +  
   ggplot2::geom_point() + 
-  ggplot2::facet_grid(. ~ seqnames) + 
+  ggplot2::facet_grid(. ~ contig) + 
   ggplot2::geom_abline(colour = "red") +
   ggplot2::xlab("log2(+CMC arrest rate)") + 
   ggplot2::ylab("log2(-CMC arrest rate)")
@@ -403,72 +392,71 @@ In the following the core functions of JACUSA2helper are presented. Check the re
 * `filter_artefact()`
 * `All(), Any()`
 
-<!--
-## Variant tagging
+# Variant tagging
 Variant tagging allows to group data based on base substitutions on reads, called tags.
 Running JACUSA2 with `-B "A2G"` will tag all reads that have a "A->G" base substitution.
 Where available, each observations for each site (=contig, start, stop, strand) from tagged and all reads will be provided and
 distinguished by "tag=A2G" or "tag=*" in the info column, respectively.
 Use `result$tag <- clean_tag(result$tag)` to convert base substitutions such as "A2G" to "A->G".
 
+<!--
 #```{r}
-# load data
-data(APOBEC1)
-result <- APOBEC1
-barplot(table(result$tag), ylab="# of sites", main="Distribution of tagged sites")
+## load data
+#data(APOBEC1)
+#result <- APOBEC1
+#barplot(table(result$tag), ylab="# of sites", main="Distribution of tagged sites")
 #```
-We calculate the total base call count with `lapply_cond` and `Reduce("+")`.
+#We calculate the total base call count with `lapply_cond` and `Reduce("+")`.
 
 #```{r}
-# sum base call counts of conditions and replicates
-result$total_bases <- lapply_cond(
-  result$bases, function(bases) { Reduce("+", bases) } 
-) %>% Reduce("+", .)
-#```
-
-
-#```{r}
-# mark "valid" sites 
-result <- result %>%
-  dplyr::mutate(
-    keep = (
-      # restrict to total reads
-      tag == "*" & 
-      # require less than 2 different base calls
-      base_count(total_bases, ref) <= 2 & 
-      # require 10 reads for each replicate of each condition
-      All(cov$cond1 >= 10) & All(cov$cond2 >= 10) &
-      score >= 2 &
-      robust(bases)
-    )
-  )
-# raw data
-# add structured columns: tagged_bases and not_tagged_bases
-expanded <- expand_tag(result)
-filtered <- dplyr::filter(expanded, keep == TRUE)
+## sum base call counts of conditions and replicates
+#result$total_bases <- lapply_cond(
+#  result$bases, function(bases) { Reduce("+", bases) } 
+#) %>% Reduce("+", .)
 #```
 
+
 #```{r}
-# plot
-count <- c(nrow(result), nrow(expanded), nrow(filtered))
-b <- barplot(count, names.arg = c("raw", "expaded", "filtered"), ylim=c(0, max(count) + max(count) * 15 / 100))
-text(b, count + count * 10 / 100, count)
+## mark "valid" sites 
+#result <- result %>%
+#  dplyr::mutate(
+#    keep = (
+#      # restrict to total reads
+#      tag == "*" & 
+#      # require less than 2 different base calls
+#      base_count(total_bases, ref) <= 2 & 
+#      # require 10 reads for each replicate of each condition
+#      All(cov$cond1 >= 10) & All(cov$cond2 >= 10) &
+#      score >= 2 &
+#      robust(bases)
+#    )
+#  )
+## raw data
+## add structured columns: tagged_bases and not_tagged_bases
+#expanded <- expand_tag(result)
+#filtered <- dplyr::filter(expanded, keep == TRUE)
+#```
+
+#```{r}
+## plot
+#count <- c(nrow(result), nrow(expanded), nrow(filtered))
+#b <- barplot(count, names.arg = c("raw", "expaded", "filtered"), ylim=c(0, max(count) + max(count) * 15 / 100))
+#text(b, count + count * 10 / 100, count)
 #```
 
 #```{r} 
-# add observed non reference base substitution, e.g.: A->G
-filtered[["base_sub"]] <- base_sub(filtered$total_bases, filtered$ref)
-# ratio of non reference base calls
-filtered[["non_ref_ratio"]] <- lapply_repl(filtered$bases, function(cond) non_ref_ratio(cond, filtered$ref))
-
-# tag specific base substitution for each condition
-filtered[["tagged_base_sub"]] <- lapply_cond(filtered$tagged_bases, function(bases) { Reduce("+", bases) %>% base_sub(filtered$ref)} )
-filtered[["tagged_non_ref_ratio"]] <- lapply_repl(filtered$tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
-
-filtered[["not_tagged_base_sub"]] <- lapply_cond(filtered$not_tagged_bases, function(bases) { Reduce("+", bases) %>% #base_sub(filtered$ref)} )
-filtered[["not_tagged_non_ref_ratio"]] <- lapply_repl(filtered$not_tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
+## add observed non reference base substitution, e.g.: A->G
+#filtered[["base_sub"]] <- base_sub(filtered$total_bases, filtered$ref)
+## ratio of non reference base calls
+#filtered[["non_ref_ratio"]] <- lapply_repl(filtered$bases, function(cond) non_ref_ratio(cond, filtered$ref))
+#
+## tag specific base substitution for each condition
+#filtered[["tagged_base_sub"]] <- lapply_cond(filtered$tagged_bases, function(bases) { Reduce("+", bases) %>% base_sub(filtered$ref)} )
+#filtered[["tagged_non_ref_ratio"]] <- lapply_repl(filtered$tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
+#
+#filtered[["not_tagged_base_sub"]] <- lapply_cond(filtered$not_tagged_bases, function(bases) { Reduce("+", bases) %>% #base_sub(filtered$ref)} )
+#filtered[["not_tagged_non_ref_ratio"]] <- lapply_repl(filtered$not_tagged_bases, function(cond) non_ref_ratio(cond, filtered$ref))
 #```
-
 -->
 
 <!--
