@@ -95,24 +95,25 @@
 </h2>
 <p>Install JACUSA2helper by either downloading a specific <a href="https://github.com/dieterich-lab/JACUSA2helper/releases" class="external-link">release</a> or install it directly from the repository via <a href="https://www.r-project.org/nosvn/pandoc/devtools.html" class="external-link">devtools</a>.</p>
 <div class="section level3">
-<h3 id="download">Download<a class="anchor" aria-label="anchor" href="#download"></a>
+<h3 id="devtools-local">devtools (local)<a class="anchor" aria-label="anchor" href="#devtools-local"></a>
 </h3>
 <ol style="list-style-type: decimal">
+<li>Make sure, <a href="https://www.r-project.org/nosvn/pandoc/devtools.html" class="external-link">devtools</a> is installed</li>
 <li>Download JACUSA2helper from <a href="https://github.com/dieterich-lab/JACUSA2helper/releases" class="external-link">releases</a>
 </li>
 <li>Change to directory where JACUSA2helper was saved</li>
 <li>Start R</li>
-<li>Install downloaded package by running: <code>install.packages("&lt;DOWNLOADED-FILE&gt;")</code>
+<li>Install downloaded package by running: <code>devtools::install_local("&lt;DOWNLOADED-FILE&gt;", dependencies = TRUE, build_vignettes = TRUE)</code>
 </li>
 </ol>
 </div>
 <div class="section level3">
-<h3 id="devtools">devtools<a class="anchor" aria-label="anchor" href="#devtools"></a>
+<h3 id="devtools-github">devtools (github)<a class="anchor" aria-label="anchor" href="#devtools-github"></a>
 </h3>
 <ol style="list-style-type: decimal">
 <li>Make sure, <a href="https://www.r-project.org/nosvn/pandoc/devtools.html" class="external-link">devtools</a> is installed</li>
 <li>Start R</li>
-<li>Run <code>install_github("dieterich-lab/JACUSA2helper", build_vignettes = TRUE)</code>
+<li>Run <code>install_github("dieterich-lab/JACUSA2helper", dependencies = TRUE, build_vignettes = TRUE)</code>
 </li>
 </ol>
 </div>
@@ -124,9 +125,9 @@
 <ul>
 <li><code>vignette("Introduction to JACUSA2helper")</code></li>
 <li><code>vignette("Analysis of DART-seq with JACUSA2helper")</code></li>
-<li>
-<code>vignette("Analysis of m6A mapping by MazF with JACUSA2helper")</code> # * <code>vignette("Introduction to meta conditions with JACUSA2helper")</code>
-</li>
+<li><code>vignette("Analysis of m6A mapping by MazF with JACUSA2helper")</code></li>
+<li><code>vignette("Introduction to meta conditions with JACUSA2helper")</code></li>
+<li><a href="https://dieterich-lab.github.io/JACUSA2helper/articles/web_only/JACUSA2helper-nanopore.html" class="external-link">Nanopore analysis</a></li>
 </ul>
 </div>
 </div>

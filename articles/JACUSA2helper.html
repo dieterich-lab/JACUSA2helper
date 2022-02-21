@@ -90,7 +90,7 @@
       <h1 data-toc-skip>Introduction to JACUSA2helper</h1>
                         <h4 data-toc-skip class="author">Michael Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-02-12</h4>
+            <h4 data-toc-skip class="date">2022-02-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper.Rmd" class="external-link"><code>vignettes/JACUSA2helper.Rmd</code></a></small>
       <div class="hidden name"><code>JACUSA2helper.Rmd</code></div>
@@ -107,17 +107,17 @@
 <li>Plot filtered result object.</li>
 </ul>
 <p>JACUSA2helper supports the analysis of the following methods from JACUSA2: <em>call-{1,2}</em>, <em>pileup</em>, <em>rt-arrest</em>, and <em>lrt-arrest</em>(experimental). Check the <a href="https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf" class="external-link">JACUSA2 manual</a> for more details.</p>
-<p>The main data structure is the result object that is implemented by following the tidy data approach from <span class="citation"><a href="#ref-Wickham2014" role="doc-biblioref">Wickham</a> (<a href="#ref-Wickham2014" role="doc-biblioref">2014</a>)</span> to feature easy interaction with <a href="https://github.com/tidyverse/dplyr" class="external-link">dplyr</a> and <a href="https://github.com/tidyverse/ggplot2" class="external-link">ggplot2</a>.</p>
+<p>The main data structure is the result object that is implemented by following the tidy data approach from <span class="citation">Wickham (<a href="#ref-Wickham2014" role="doc-biblioref">2014</a>)</span> to feature easy interaction with <a href="https://github.com/tidyverse/dplyr" class="external-link">dplyr</a> and <a href="https://github.com/tidyverse/ggplot2" class="external-link">ggplot2</a>.</p>
 <p>In the following, we will focus on single pairwise comparisons of two conditions of one output file. If you want to analyze multiple files with similar pairwise comparisons, read <code>vignette("JACUSA2helper-meta-conditions")</code>.</p>
 <div class="section level3">
 <h3 id="multi-site-and-new-features">Multi site and new features<a class="anchor" aria-label="anchor" href="#multi-site-and-new-features"></a>
 </h3>
-<p>While previously in JACUSA<em>1</em>, a site could be uniquely identified as one line in the output by the coordinate columns: ‘contig,’ ‘start,’ ‘end,’ and ‘strand,’ JACUSA<em>2</em> features more complex data structures to store new features such as arrest positions of arrest events, variant tagging, and INDEL counts. Therefore, sites can now cover multiple lines of output - check Section “Introduction” of <a href="https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf" class="external-link">JACUSA2 manual</a> for details.</p>
+<p>While previously in JACUSA<em>1</em>, a site could be uniquely identified as one line in the output by the coordinate columns: ‘contig’, ‘start’, ‘end’, and ‘strand’, JACUSA<em>2</em> features more complex data structures to store new features such as arrest positions of arrest events, variant tagging, and INDEL counts. Therefore, sites can now cover multiple lines of output - check Section “Introduction” of <a href="https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf" class="external-link">JACUSA2 manual</a> for details.</p>
 </div>
 <div class="section level3">
 <h3 id="variant-calling---data-rdd-rna-dna-differences">Variant calling - Data: rdd (RNA-DNA-differences)<a class="anchor" aria-label="anchor" href="#variant-calling---data-rdd-rna-dna-differences"></a>
 </h3>
-<p>To introduce the basic verbs for manipulating JAUCSA2 output, we’ll use <code>JACUSA2helper:rdd</code>. This data set contains a subset from <span class="citation"><a href="#ref-Piechotta2017" role="doc-biblioref">Piechotta et al.</a> (<a href="#ref-Piechotta2017" role="doc-biblioref">2017</a>)</span> and is documented in <code><a href="../reference/rdd.html">?rdd</a></code>. In brief, the sample data set consists of 10.000 sites of 1x DNA and 2x stranded RNA sequencing libraries that allow to define RNA-DNA-differences (RDDs).</p>
+<p>To introduce the basic verbs for manipulating JAUCSA2 output, we’ll use <code>JACUSA2helper:rdd</code>. This data set contains a subset from <span class="citation">Piechotta et al. (<a href="#ref-Piechotta2017" role="doc-biblioref">2017</a>)</span> and is documented in <code><a href="../reference/rdd.html">?rdd</a></code>. In brief, the sample data set consists of 10.000 sites of 1x DNA and 2x stranded RNA sequencing libraries that allow to define RNA-DNA-differences (RDDs).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dieterich-lab/JACUSA2helper" class="external-link">JACUSA2helper</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">rdd</span><span class="op">)</span></code></pre></div>
@@ -397,7 +397,7 @@
 <span class="co">#&gt;       716         1        69         1        86         6       840         1 </span>
 <span class="co">#&gt;      T-&gt;C     T-&gt;CG      T-&gt;G </span>
 <span class="co">#&gt;       997         1       914</span></code></pre></div>
-<p>Instead of using DNA information from the reference FASTA sequence via column “ref,” we could use the actual data from condition 1 / DNA.</p>
+<p>Instead of using DNA information from the reference FASTA sequence via column “ref”, we could use the actual data from condition 1 / DNA.</p>
 <p>Robust requires observations (here base calls) to be present in all replicates of at least condition.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cond1_ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/base_call.html">base_call</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">$</span><span class="va">bases</span><span class="op">$</span><span class="va">cond1</span><span class="op">$</span><span class="va">rep1</span><span class="op">)</span>
@@ -500,7 +500,7 @@
 <div class="section level3">
 <h3 id="arrest-events">Arrest events<a class="anchor" aria-label="anchor" href="#arrest-events"></a>
 </h3>
-<p>In <span class="citation"><a href="#ref-Zhou2018" role="doc-biblioref">Zhou et al.</a> (<a href="#ref-Zhou2018" role="doc-biblioref">2018</a>)</span> the authors map RNA modification of pseudouridine (<span class="math inline">\(\Psi\)</span>) by chemically modifying pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse transcription stops in high-throughput sequencing under 3 different conditions: HIVRT, SIIIRTMn, and SIIIRTMg. The result of JACUSA2 are available by using <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>. Read <a href="https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf" class="external-link">JACUSA2 manual</a> for details on how data has been processed from the original publication by <span class="citation"><a href="#ref-Zhou2018" role="doc-biblioref">Zhou et al.</a> (<a href="#ref-Zhou2018" role="doc-biblioref">2018</a>)</span>. In brief, the data has been filtered to contain the following rRNAs: RNA18SN5, RNA28SN5, and RNA5-8SN5.</p>
+<p>In <span class="citation">Zhou et al. (<a href="#ref-Zhou2018" role="doc-biblioref">2018</a>)</span> the authors map RNA modification of pseudouridine (<span class="math inline">\(\Psi\)</span>) by chemically modifying pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse transcription stops in high-throughput sequencing under 3 different conditions: HIVRT, SIIIRTMn, and SIIIRTMg. The result of JACUSA2 are available by using <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>. Read <a href="https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf" class="external-link">JACUSA2 manual</a> for details on how data has been processed from the original publication by <span class="citation">Zhou et al. (<a href="#ref-Zhou2018" role="doc-biblioref">2018</a>)</span>. In brief, the data has been filtered to contain the following rRNAs: RNA18SN5, RNA28SN5, and RNA5-8SN5.</p>
 <p>In the following, we will be looking at the results for <code>data(HIVRT_rt_arrest)</code>. By default JACUSA2 output from <em>rt-arrest</em> will contain the following structured/nested columns:</p>
 <ul>
 <li>
@@ -604,7 +604,7 @@
 <div class="section level2">
 <h2 id="variant-tagging">Variant tagging<a class="anchor" aria-label="anchor" href="#variant-tagging"></a>
 </h2>
-<p>Variant tagging allows to group data based on base substitutions on reads, called tags. Running JACUSA2 with <code>-B "A2G"</code> will tag all reads that have a “A-&gt;G” base substitution. Where available, each observations for each site (=contig, start, stop, strand) from tagged and all reads will be provided and distinguished by “tag=A2G” or “tag=*” in the info column, respectively. Use <code>result$tag &lt;- clean_tag(result$tag)</code> to convert base substitutions such as “A2G” to “A-&gt;G.”</p>
+<p>Variant tagging allows to group data based on base substitutions on reads, called tags. Running JACUSA2 with <code>-B "A2G"</code> will tag all reads that have a “A-&gt;G” base substitution. Where available, each observations for each site (=contig, start, stop, strand) from tagged and all reads will be provided and distinguished by “tag=A2G” or “tag=*” in the info column, respectively. Use <code>result$tag &lt;- clean_tag(result$tag)</code> to convert base substitutions such as “A2G” to “A-&gt;G”.</p>
 <!--
 #```{r}
 ## load data

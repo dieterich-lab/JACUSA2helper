@@ -90,7 +90,7 @@
       <h1 data-toc-skip>Analysis of Nanopore HEK293 with JACUSA2helper</h1>
                         <h4 data-toc-skip class="author">Christoph Dieterich, Michael Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-02-12</h4>
+            <h4 data-toc-skip class="date">2022-02-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/web_only/JACUSA2helper-nanopore.Rmd" class="external-link"><code>vignettes/web_only/JACUSA2helper-nanopore.Rmd</code></a></small>
       <div class="hidden name"><code>JACUSA2helper-nanopore.Rmd</code></div>
@@ -101,10 +101,19 @@
     
 <p>In the following, the workflow for use case 3 from <span class="citation">(<a href="#ref-Piechotta20221" role="doc-biblioref"><strong>Piechotta20221?</strong></a>)</span> is presented. Data for <a href="https://zenodo.org/record/5930729#.YfmTDFvMIUG" class="external-link">use cases 1-3</a> can be downloaded to repeat the analysis.</p>
 <div class="section level2">
+<h2 id="non-negative-matrix-factorization">Non-negative Matrix Factorization<a class="anchor" aria-label="anchor" href="#non-negative-matrix-factorization"></a>
+</h2>
+<p>Here, we briefly introduce Non-negative Matrix Factorization (NMF). This section uses the notation from <a href="https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf" class="external-link">NMF vignette</a>.</p>
+<p>Non-negative Matrix Factorization tries to find an approximation of: <span class="math display">\[X \approx W H\]</span>, where * <span class="math inline">\(X\)</span> is a non-negative <span class="math inline">\(n \times p\)</span> matrix, * <span class="math inline">\(W\)</span> is a non-negative <span class="math inline">\(n \times r\)</span> matrix (basis matrix), and * <span class="math inline">\(H\)</span> is a non-negative <span class="math inline">\(r \times p\)</span> matrix (coefficient matrix).</p>
+<p><span class="math inline">\(r\)</span> is called the factorization rank.</p>
+<p>Check <a href="https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf" class="external-link">NMF vignette</a> for details on optimization and algorithms.</p>
+<p>In the following, we will explain how to convert JACUSA2 output to an appropriate matrix <span class="math inline">\(X\)</span> and perform NMF.</p>
+</div>
+<div class="section level2">
 <h2 id="general-workflow">General workflow<a class="anchor" aria-label="anchor" href="#general-workflow"></a>
 </h2>
 <p>Use <code>read_result</code> to read JACUSA2 output and filter the data set.</p>
-<p>To repeat the Nanopore analysis from <span class="citation"><a href="#ref-Piechotta2021" role="doc-biblioref">Piechotta et al.</a> (<a href="#ref-Piechotta2021" role="doc-biblioref">2021</a>)</span>, download the following data: * <a href="https://zenodo.org/record/5940218/files/WT100_vs_WT0_call2_result.out.gz?download=1" class="external-link">WT100 vs. WT0</a>. * <a href="https://zenodo.org/record/5940218/files/WT_vs_KO_call2_result.out.gz?download=1" class="external-link">WT vs. KO</a> and</p>
+<p>To repeat the Nanopore analysis from <span class="citation">Piechotta et al. (<a href="#ref-Piechotta2021" role="doc-biblioref">2021</a>)</span>, download the following data: * <a href="https://zenodo.org/record/5940218/files/WT100_vs_WT0_call2_result.out.gz?download=1" class="external-link">WT100 vs. WT0</a>. * <a href="https://zenodo.org/record/5940218/files/WT_vs_KO_call2_result.out.gz?download=1" class="external-link">WT vs. KO</a> and</p>
 <p>Depending on your bandwidth the Download might take some time. Make sure, you have approx. 20GB of main memory available.</p>
 <div class="section level3">
 <h3 id="pre-processing">Pre-processing<a class="anchor" aria-label="anchor" href="#pre-processing"></a>
@@ -141,7 +150,7 @@
 <dd>Select relevant data column.
 </dd>
 </dl>
-<p>We explain the pre-processing workflow for one file and generalize the to arbitrary number of files - here two.</p>
+<p>We explain the pre-processing workflow for one file and generalize to arbitrary number of files (here two).</p>
 <!-- TODO mention `read_results` 
 ### `read_results`
 
@@ -152,7 +161,7 @@ This approach will consume much more main memory. We recommend to read big data 
 <div class="section level4">
 <h4 id="read">Read<a class="anchor" aria-label="anchor" href="#read"></a>
 </h4>
-<p>The underlying function of <code>read_result</code> is <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">data.table::fread</a></code> - check the respective help page for details on further options. Depending on your machine increase the <code>nThreads</code> to increase the number of threads to parse the file.</p>
+<p>The underlying function of <code>read_result</code> is <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">data.table::fread</a></code> - check the respective help page for details on additional options. Depending on your machine increase <code>nThreads</code> to use more threads to parse a file.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">i</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># WT_vs_KO</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">files</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>
@@ -182,7 +191,7 @@ This approach will consume much more main memory. We recommend to read big data 
 <div class="section level4">
 <h4 id="add-meta-condition">Add meta condition<a class="anchor" aria-label="anchor" href="#add-meta-condition"></a>
 </h4>
-<p>We add a concise description of the file to each result object. This enables to distinguish concatenated results from multiple files later on in the analysis.</p>
+<p>We add a concise description of files to each result object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">wt_vs_ko_filtered</span><span class="op">$</span><span class="va">meta_cond</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">meta_conds</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">meta_conds</span><span class="op">)</span>
 
@@ -195,7 +204,7 @@ This approach will consume much more main memory. We recommend to read big data 
 <div class="section level4">
 <h4 id="add-specific-info">Add specific info<a class="anchor" aria-label="anchor" href="#add-specific-info"></a>
 </h4>
-<p>The “info” field contains meta information for sites, such as detailed INDEL statistics. To save memory, we manually unpack the “info” field and select the following keys: * “insertion_score” and * “deletion_score.” We will use these data during the model training.</p>
+<p>The “info” field contains meta information for sites, such as detailed INDEL statistics. To save memory, we manually unpack the “info” field and select the following keys: * “insertion_score” and * “deletion_score”. We will use these values during model training.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">unpacked_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/unpack_info.html">unpack_info</a></span><span class="op">(</span>
     <span class="va">wt_vs_ko_filtered</span><span class="op">$</span><span class="va">info</span>, 
@@ -203,8 +212,8 @@ This approach will consume much more main memory. We recommend to read big data 
     keys<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"insertion_score"</span>, <span class="st">"deletion_score"</span><span class="op">)</span>
   <span class="op">)</span>
 
-  <span class="co"># append specific info</span>
-  <span class="fu">mcols</span><span class="op">(</span><span class="va">wt_vs_ko_filtered</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">wt_vs_ko_filtered</span><span class="op">)</span>, <span class="va">unpacked_info</span><span class="op">)</span></code></pre></div>
+<span class="co"># append specific info</span>
+<span class="fu">mcols</span><span class="op">(</span><span class="va">wt_vs_ko_filtered</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">wt_vs_ko_filtered</span><span class="op">)</span>, <span class="va">unpacked_info</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="reduce">Reduce<a class="anchor" aria-label="anchor" href="#reduce"></a>
@@ -234,11 +243,11 @@ This approach will consume much more main memory. We recommend to read big data 
 <div class="section level4">
 <h4 id="generalize">Generalize<a class="anchor" aria-label="anchor" href="#generalize"></a>
 </h4>
-<p>So far we have shown a detailed description of pre-processing one file. In the following, we extend provide code for arbitrary number of results and meta conditions for pre-processing.</p>
+<p>So far, we have shown a detailed description of pre-processing one file. In the following, we provide code for arbitrary number of results and meta conditions:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># pre-processing workflow for arbitrary number of files and meta conditions</span>
 <span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">file</span>, <span class="va">meta_cond</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/read_result.html">read_result</a></span><span class="op">(</span><span class="va">file</span>, nThread <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/read_result.html">read_result</a></span><span class="op">(</span><span class="va">file</span>, nThread <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span>
       <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span>
         <span class="va">ref</span> <span class="op">==</span> <span class="st">"A"</span>,
         <span class="op">!</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Y"</span>, <span class="va">filter</span>, fixed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
@@ -264,7 +273,7 @@ This approach will consume much more main memory. We recommend to read big data 
   <span class="op">}</span>, <span class="va">files</span>, <span class="va">meta_conds</span>, SIMPLIFY <span class="op">=</span> <span class="cn">FALSE</span>, USE.NAMES <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
 <span class="co"># convert and concatenate GenomicRanges</span>
-<span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span><span class="op">)</span>
+<span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu">GRangesList</span><span class="op">(</span><span class="va">results</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># filtered sites per file / meta condition</span>
 <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">meta_cond</span><span class="op">)</span>
@@ -273,20 +282,22 @@ This approach will consume much more main memory. We recommend to read big data 
 <span class="co">#&gt;      2015555      2544255</span></code></pre></div>
 <p><code>results</code> now consists of locations and scores for sites from all <code>files</code> and <code>meta_conds</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">results</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fu">JACUSA2helper</span><span class="fu">::</span><span class="fu"><a href="../../reference/id.html">id</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co"># add unique ID for a site: contig:start-end:strand</span>
+<span class="va">results</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="fu">JACUSA2helper</span><span class="fu">::</span><span class="fu"><a href="../../reference/id.html">id</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span>
 
-<span class="va">plt</span> <span class="op">&lt;-</span> <span class="fu">venn.diagram</span><span class="op">(</span>
+<span class="co"># venndiagram of sites shared betwen files</span>
+<span class="va">meta_cond_plt</span> <span class="op">&lt;-</span> <span class="fu">venn.diagram</span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">id</span>, <span class="va">results</span><span class="op">$</span><span class="va">meta_cond</span>, <span class="va">c</span><span class="op">)</span>,
   filename <span class="op">=</span> <span class="cn">NULL</span>,
   lwd <span class="op">=</span> <span class="fl">1</span>,
   cex <span class="op">=</span> <span class="fl">0.5</span>,
   fontfamily <span class="op">=</span> <span class="st">"sans"</span>,
-  cat.cex <span class="op">=</span> <span class="fl">0.3</span>,
+  cat.cex <span class="op">=</span> <span class="fl">0.9</span>,
   cat.default.pos <span class="op">=</span> <span class="st">"outer"</span>,
   cat.fontfamily <span class="op">=</span> <span class="st">"sans"</span>,
 <span class="op">)</span>
 <span class="fu">grid.newpage</span><span class="op">(</span><span class="op">)</span>
-<span class="fu">grid.draw</span><span class="op">(</span><span class="va">plt</span><span class="op">)</span></code></pre></div>
+<span class="fu">grid.draw</span><span class="op">(</span><span class="va">meta_cond_plt</span><span class="op">)</span></code></pre></div>
 <p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
 </div>
 </div>
@@ -298,7 +309,7 @@ This approach will consume much more main memory. We recommend to read big data 
 <code class="sourceCode R"><span class="va">extended_sites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/extend.html">extend</a></span><span class="op">(</span><span class="va">results</span>, left<span class="op">=</span><span class="fl">2</span>, right<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
 
 <span class="va">unique_regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">extended_sites</span><span class="op">)</span></code></pre></div>
-<p><code>unique_regions</code> consists now of 5nt wide coordinates around all sites with the site positioned in the middle (= position 3). We calculate the position of each site in overlapping <code>unique_regions</code>:</p>
+<p><code>unique_regions</code> consists now of 5nt wide coordinates around all sites with the site (-NN<strong>A</strong>NN-) positioned in the middle (= position 3). We calculate the position of each site in overlapping <code>unique_regions</code>:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># compute overlap</span>
 <span class="va">hits</span> <span class="op">&lt;-</span> <span class="fu">findOverlaps</span><span class="op">(</span><span class="va">results</span>, <span class="va">unique_regions</span><span class="op">)</span>
@@ -318,11 +329,16 @@ This approach will consume much more main memory. We recommend to read big data 
 <span class="co"># add site position within extended region</span>
 <span class="va">overlap_results</span><span class="op">$</span><span class="va">position</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/start.html" class="external-link">start</a></span><span class="op">(</span><span class="va">overlap_results</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/start.html" class="external-link">start</a></span><span class="op">(</span><span class="va">overlap_regions</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>
 
-<span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">overlap_results</span><span class="op">$</span><span class="va">position</span><span class="op">)</span>, xlab <span class="op">=</span> <span class="st">"position of site within a motif\n(original site position is 3)"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">overlap_results</span><span class="op">$</span><span class="va">position</span><span class="op">)</span>,
+  xlab <span class="op">=</span> <span class="st">"position of site within a motif\n(original site position is 3)"</span>,
+  ylab <span class="op">=</span> <span class="st">"Number of sites with score(s)"</span>,
+  names.arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1\n-N"</span>, <span class="st">"2\nN"</span>, <span class="st">"3\nA"</span>, <span class="st">"4\nN"</span>, <span class="st">"5\nN-"</span><span class="op">)</span>
+<span class="op">)</span></code></pre></div>
 <p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 </div>
 <div class="section level3">
-<h3 id="create-feature-matrix">Create feature matrix<a class="anchor" aria-label="anchor" href="#create-feature-matrix"></a>
+<h3 id="create-data-matrix">Create data matrix<a class="anchor" aria-label="anchor" href="#create-data-matrix"></a>
 </h3>
 <p>The pre-processing is almost done, the data frame should contain the following columns:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -354,9 +370,9 @@ This approach will consume much more main memory. We recommend to read big data 
 <span class="co">#&gt; 8458598 X:156025651-15602565.. X:156025649-15602565..         3</span>
 <span class="co">#&gt; 8458599 X:156025654-15602565.. X:156025652-15602565..         3</span>
 <span class="co">#&gt; 8458600 X:156025659-15602565.. X:156025657-15602566..         3</span></code></pre></div>
-<p>Use <code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">tidyr::pivot_wider</a></code> to create the feature matrix:</p>
+<p>Use <code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">tidyr::pivot_wider</a></code> to create a data matrix:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">feature_matrix</span> <span class="op">&lt;-</span> <span class="fu">mcols</span><span class="op">(</span><span class="va">overlap_results</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<code class="sourceCode R"><span class="va">data_matrix</span> <span class="op">&lt;-</span> <span class="fu">mcols</span><span class="op">(</span><span class="va">overlap_results</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>
     id_cols <span class="op">=</span> <span class="va">region</span>, 
@@ -364,8 +380,32 @@ This approach will consume much more main memory. We recommend to read big data 
     values_from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">call2_score</span>, <span class="va">insertion_score</span>, <span class="va">deletion_score</span><span class="op">)</span>, 
     names_glue <span class="op">=</span> <span class="st">"{meta_cond}_{.value}_{position}"</span>,
     names_sort <span class="op">=</span> <span class="cn">TRUE</span>,
-    values_fill <span class="op">=</span> <span class="fl">0.0</span>,
-  <span class="op">)</span></code></pre></div>
+    values_fill <span class="op">=</span> <span class="fl">0.0</span>
+  <span class="op">)</span>
+
+<span class="co"># set sensible defaults</span>
+<span class="va">data_matrix</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">data_matrix</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>
+<span class="va">data_matrix</span><span class="op">[</span><span class="va">data_matrix</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_matrix</span><span class="op">)</span>
+<span class="co">#&gt;  [1] "region"                         "WT_vs_KO_call2_score_1"        </span>
+<span class="co">#&gt;  [3] "WT_vs_KO_call2_score_2"         "WT_vs_KO_call2_score_3"        </span>
+<span class="co">#&gt;  [5] "WT_vs_KO_call2_score_4"         "WT_vs_KO_call2_score_5"        </span>
+<span class="co">#&gt;  [7] "WT100_vs_WT0_call2_score_1"     "WT100_vs_WT0_call2_score_2"    </span>
+<span class="co">#&gt;  [9] "WT100_vs_WT0_call2_score_3"     "WT100_vs_WT0_call2_score_4"    </span>
+<span class="co">#&gt; [11] "WT100_vs_WT0_call2_score_5"     "WT_vs_KO_insertion_score_1"    </span>
+<span class="co">#&gt; [13] "WT_vs_KO_insertion_score_2"     "WT_vs_KO_insertion_score_3"    </span>
+<span class="co">#&gt; [15] "WT_vs_KO_insertion_score_4"     "WT_vs_KO_insertion_score_5"    </span>
+<span class="co">#&gt; [17] "WT100_vs_WT0_insertion_score_1" "WT100_vs_WT0_insertion_score_2"</span>
+<span class="co">#&gt; [19] "WT100_vs_WT0_insertion_score_3" "WT100_vs_WT0_insertion_score_4"</span>
+<span class="co">#&gt; [21] "WT100_vs_WT0_insertion_score_5" "WT_vs_KO_deletion_score_1"     </span>
+<span class="co">#&gt; [23] "WT_vs_KO_deletion_score_2"      "WT_vs_KO_deletion_score_3"     </span>
+<span class="co">#&gt; [25] "WT_vs_KO_deletion_score_4"      "WT_vs_KO_deletion_score_5"     </span>
+<span class="co">#&gt; [27] "WT100_vs_WT0_deletion_score_1"  "WT100_vs_WT0_deletion_score_2" </span>
+<span class="co">#&gt; [29] "WT100_vs_WT0_deletion_score_3"  "WT100_vs_WT0_deletion_score_4" </span>
+<span class="co">#&gt; [31] "WT100_vs_WT0_deletion_score_5"</span></code></pre></div>
+<p>The columns of the data matrix correspond to scores for each meta condition and corresponding position in the motif, e.g. “WT_vs_KO_call2_score_4”: WT_vs_KO : Meta condition. call2_score : score that indicates if base composition between condition is different. 4 : Position within motif</p>
+<p>We will continue adding meta information to the data matrix.</p>
 <div class="section level4">
 <h4 id="add-sequence">Add sequence<a class="anchor" aria-label="anchor" href="#add-sequence"></a>
 </h4>
@@ -375,34 +415,45 @@ This approach will consume much more main memory. We recommend to read big data 
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"BSgenome.Hsapiens.NCBI.GRCh38"</span><span class="op">)</span>
 
 <span class="co"># retrieve sequence and convert to character vector</span>
-<span class="va">feature_matrix</span><span class="op">$</span><span class="va">motif</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BSgenome/man/getSeq-methods.html" class="external-link">getSeq</a></span><span class="op">(</span><span class="va">BSgenome.Hsapiens.NCBI.GRCh38</span>, <span class="fu">GRanges</span><span class="op">(</span><span class="va">feature_matrix</span><span class="op">$</span><span class="va">region</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<span class="va">data_matrix</span><span class="op">$</span><span class="va">motif</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BSgenome/man/getSeq-methods.html" class="external-link">getSeq</a></span><span class="op">(</span><span class="va">BSgenome.Hsapiens.NCBI.GRCh38</span>, <span class="fu">GRanges</span><span class="op">(</span><span class="va">data_matrix</span><span class="op">$</span><span class="va">region</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># number of top 10 motifs</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">feature_matrix</span><span class="op">$</span><span class="va">motif</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">data_matrix</span><span class="op">$</span><span class="va">motif</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; CCAGC GCAGC CCAGG CCACC AGAAG GGAGG GCAGG TGAAG CCAAG GGAAG </span>
 <span class="co">#&gt; 38599 37070 30079 29300 28150 27785 27177 25850 25499 24483</span></code></pre></div>
 <p>Next, we add an indicator variable if the DRACH motif ([AGT][AG]AC[ACT]) is present:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">feature_matrix</span><span class="op">$</span><span class="va">DRACH</span> <span class="op">&lt;-</span> <span class="fl">0</span>
-<span class="va">feature_matrix</span><span class="op">$</span><span class="va">DRACH</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"[AGT][AG]AC[ACT]"</span>, <span class="va">feature_matrix</span><span class="op">$</span><span class="va">motif</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span>
+<code class="sourceCode R"><span class="va">data_matrix</span><span class="op">$</span><span class="va">DRACH</span> <span class="op">&lt;-</span> <span class="fl">0</span>
+<span class="va">data_matrix</span><span class="op">$</span><span class="va">DRACH</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"[AGT][AG]AC[ACT]"</span>, <span class="va">data_matrix</span><span class="op">$</span><span class="va">motif</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span>
 
-<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">feature_matrix</span><span class="op">$</span><span class="va">DRACH</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">recode</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"no"</span>, <span class="st">"1"</span> <span class="op">=</span> <span class="st">"yes"</span><span class="op">)</span>  <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">" ("</span>, <span class="va">tbl</span>, <span class="st">")"</span><span class="op">)</span>
+<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">data_matrix</span><span class="op">$</span><span class="va">DRACH</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">recode</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"no"</span>, <span class="st">"1"</span> <span class="op">=</span> <span class="st">"yes"</span><span class="op">)</span>  <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>
+    <span class="st">" ("</span>, 
+    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>
+      <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_number.html" class="external-link">label_comma</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span><span class="op">)</span>, 
+      <span class="st">"; "</span>, 
+      <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html" class="external-link">percent_format</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">tbl</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+    <span class="op">)</span>, 
+    <span class="st">")"</span>
+  <span class="op">)</span>
+
+<span class="co"># plot distribution of DRACH motifs</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/pie.html" class="external-link">pie</a></span><span class="op">(</span><span class="va">tbl</span>, main<span class="op">=</span><span class="st">"DRACH motif present"</span><span class="op">)</span></code></pre></div>
 <p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
-<p>Use <code>saveRDS(feature_matrix, file = "feature_matrix.rds")</code> to store the current state. Use <code>feature_matrix &lt;- readRDS("feature_matrix.rds")</code> to restore previous state.</p>
+<p>Use <code>saveRDS(data_matrix, file = "data_matrix")</code> to store the current state. Use <code>data_matrix &lt;- readRDS("data_matrix")</code> to restore previous state.</p>
 </div>
 </div>
 </div>
 <div class="section level2">
-<h2 id="estimation">Estimation<a class="anchor" aria-label="anchor" href="#estimation"></a>
+<h2 id="use-nmf-on-nanopore-data">Use NMF on Nanopore data<a class="anchor" aria-label="anchor" href="#use-nmf-on-nanopore-data"></a>
 </h2>
 <div class="section level3">
-<h3 id="learn-from-miclip-data">Learn from miCLIP Data<a class="anchor" aria-label="anchor" href="#learn-from-miclip-data"></a>
+<h3 id="overlap-with-miclip-data">Overlap with miCLIP data<a class="anchor" aria-label="anchor" href="#overlap-with-miclip-data"></a>
 </h3>
-<p>Next, we need miCLIP data to train our model: * Boulias, * Koertel, and * Koh. We use sites that are present in all three data sets.</p>
+<p>Next, we need miCLIP data to extract m6A sites from the data matrix: * Boulias, * Koertel, and * Koh. We use sites that are present in all three data sets.</p>
 <p>The column “region” corresponds to the extended sites around identified miCLIP sites. Make sure that “region” is 1-indexed if you use your own annotation.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">miclip</span><span class="op">)</span>
@@ -413,98 +464,167 @@ This approach will consume much more main memory. We recommend to read big data 
 <span class="co">#&gt; 4      1 100022490 100022495     Boulias     0      + 1:100022491-100022495:+</span>
 <span class="co">#&gt; 5      1   1000246   1000251         Koh     0      -     1:1000247-1000251:-</span>
 <span class="co">#&gt; 6      1   1000520   1000525     Koertel     0      -     1:1000521-1000525:-</span></code></pre></div>
-<p>Intersect regions of feature matrix with miCLIP data (contained in all three data sets: Boulias,Koertel, and Koh):</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># dimensions of feature matrix BEFORE intersect with miCLIP</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Dimensions of feature matrix"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Dimensions of feature matrix"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">feature_matrix</span><span class="op">)</span>
-<span class="co">#&gt; [1] 2913729      33</span>
-
-<span class="co"># index vector of regions contained in miCLIP data</span>
-<span class="va">i</span> <span class="op">&lt;-</span> <span class="va">feature_matrix</span><span class="op">$</span><span class="va">region</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">miclip</span><span class="op">[</span><span class="va">miclip</span><span class="op">$</span><span class="va">overlap</span> <span class="op">==</span> <span class="st">"Boulias,Koertel,Koh"</span>, <span class="st">"region"</span><span class="op">]</span>
-<span class="co"># retain sites that overlap with miCLIP and remove non-numeric columns</span>
-<span class="va">nmf_matrix</span> <span class="op">&lt;-</span> <span class="va">feature_matrix</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co"># dimensions of feature matrix AFTER intersect with miCLIP</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Dimensions of nmf_matrix after processing"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Dimensions of nmf_matrix after processing"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">nmf_matrix</span><span class="op">)</span>
-<span class="co">#&gt; [1] 3190   33</span></code></pre></div>
-<p>The learning algorithm requires the matrix to consist only of numeric value. Remove non-numeric columns:</p>
+<code class="sourceCode R"><span class="co"># plot venn diagram of shared CLIP sites</span>
+<span class="va">miclip_plt</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate_rows.html" class="external-link">separate_rows</a></span><span class="op">(</span><span class="va">miclip</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"overlap"</span>, <span class="st">"region"</span><span class="op">)</span><span class="op">]</span>, <span class="va">overlap</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">region</span>, <span class="va">overlap</span>, <span class="va">list</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">venn.diagram</span><span class="op">(</span>
+    filename <span class="op">=</span> <span class="cn">NULL</span>,
+    lwd <span class="op">=</span> <span class="fl">1</span>,
+    cex <span class="op">=</span> <span class="fl">0.5</span>,
+    fontfamily <span class="op">=</span> <span class="st">"sans"</span>,
+    cat.cex <span class="op">=</span> <span class="fl">0.9</span>,
+    cat.default.pos <span class="op">=</span> <span class="st">"outer"</span>,
+    cat.fontfamily <span class="op">=</span> <span class="st">"sans"</span>,
+<span class="op">)</span>
+<span class="fu">grid.newpage</span><span class="op">(</span><span class="op">)</span>
+<span class="fu">grid.draw</span><span class="op">(</span><span class="va">miclip_plt</span><span class="op">)</span></code></pre></div>
+<p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
+<p>Intersect regions and create feature matrix (corresponds to <span class="math inline">\(X\)</span> in <span class="math inline">\(N \approx W H\)</span>) of sites that are contained in all three data sets: Boulias, Koertel, and Koh. NMF requires the matrix to consist only of numeric and non-negative values:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># dimensions of feature matrix BEFORE intersect with miCLIP</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Dimensions of feature matrix BEFORE processing"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Dimensions of feature matrix BEFORE processing"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">nmf_matrix</span><span class="op">)</span>
-<span class="co">#&gt; [1] 3190   33</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">nmf_matrix</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">nmf_matrix</span><span class="op">$</span><span class="va">region</span>
+<code class="sourceCode R"><span class="co"># retain sites that overlap with miCLIP and remove non-numeric columns</span>
+<span class="va">feature_matrix</span> <span class="op">&lt;-</span> <span class="va">data_matrix</span><span class="op">[</span><span class="va">data_matrix</span><span class="op">$</span><span class="va">region</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">miclip</span><span class="op">[</span><span class="va">miclip</span><span class="op">$</span><span class="va">overlap</span> <span class="op">==</span> <span class="st">"Boulias,Koertel,Koh"</span>, <span class="st">"region"</span><span class="op">]</span>, <span class="op">]</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">feature_matrix</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">feature_matrix</span><span class="op">$</span><span class="va">region</span>
 
 <span class="co"># remove non-numeric columns</span>
-<span class="va">nmf_matrix</span> <span class="op">&lt;-</span> <span class="va">nmf_matrix</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">region</span>, <span class="op">-</span><span class="va">motif</span><span class="op">)</span>
+<span class="va">feature_matrix</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">feature_matrix</span>, <span class="op">-</span><span class="va">region</span>, <span class="op">-</span><span class="va">motif</span>, <span class="op">-</span><span class="va">DRACH</span><span class="op">)</span>
 
-<span class="co"># set sensible defaults</span>
-<span class="va">nmf_matrix</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">nmf_matrix</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>
-<span class="va">nmf_matrix</span><span class="op">[</span><span class="va">nmf_matrix</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>
-
-<span class="co"># dimensions of feature matrix AFTER intersect with miCLIP</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Dimensions of feature matrix AFTER processing"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Dimensions of feature matrix AFTER processing"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">nmf_matrix</span><span class="op">)</span>
-<span class="co">#&gt; [1] 3190   31</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">feature_matrix</span><span class="op">)</span>
+<span class="co">#&gt;                     WT_vs_KO_call2_score_1 WT_vs_KO_call2_score_2</span>
+<span class="co">#&gt; 1:924692-924696:+                        0                      0</span>
+<span class="co">#&gt; 1:942769-942773:+                        0                      0</span>
+<span class="co">#&gt; 1:1217108-1217112:-                      0                      0</span>
+<span class="co">#&gt; 1:1217452-1217456:-                      0                      0</span>
+<span class="co">#&gt; 1:1232629-1232633:+                      0                      0</span>
+<span class="co">#&gt; 1:1233130-1233134:+                      0                      0</span>
+<span class="co">#&gt;                     WT_vs_KO_call2_score_3 WT_vs_KO_call2_score_4</span>
+<span class="co">#&gt; 1:924692-924696:+                4.4050409               0.000000</span>
+<span class="co">#&gt; 1:942769-942773:+                2.8667036               0.000000</span>
+<span class="co">#&gt; 1:1217108-1217112:-              1.4836637               1.198658</span>
+<span class="co">#&gt; 1:1217452-1217456:-              0.8283465               0.000000</span>
+<span class="co">#&gt; 1:1232629-1232633:+              6.9350419               0.000000</span>
+<span class="co">#&gt; 1:1233130-1233134:+             14.9762378               0.000000</span>
+<span class="co">#&gt;                     WT_vs_KO_call2_score_5 WT100_vs_WT0_call2_score_1</span>
+<span class="co">#&gt; 1:924692-924696:+                0.0000000                          0</span>
+<span class="co">#&gt; 1:942769-942773:+                0.0000000                          0</span>
+<span class="co">#&gt; 1:1217108-1217112:-              0.1701674                          0</span>
+<span class="co">#&gt; 1:1217452-1217456:-              0.0000000                          0</span>
+<span class="co">#&gt; 1:1232629-1232633:+              0.0000000                          0</span>
+<span class="co">#&gt; 1:1233130-1233134:+              6.8826910                          0</span>
+<span class="co">#&gt;                     WT100_vs_WT0_call2_score_2 WT100_vs_WT0_call2_score_3</span>
+<span class="co">#&gt; 1:924692-924696:+                            0                   6.097167</span>
+<span class="co">#&gt; 1:942769-942773:+                            0                   0.698221</span>
+<span class="co">#&gt; 1:1217108-1217112:-                          0                   1.596011</span>
+<span class="co">#&gt; 1:1217452-1217456:-                          0                   2.713407</span>
+<span class="co">#&gt; 1:1232629-1232633:+                          0                   5.644694</span>
+<span class="co">#&gt; 1:1233130-1233134:+                          0                  15.168060</span>
+<span class="co">#&gt;                     WT100_vs_WT0_call2_score_4 WT100_vs_WT0_call2_score_5</span>
+<span class="co">#&gt; 1:924692-924696:+                    0.0000000                  0.0000000</span>
+<span class="co">#&gt; 1:942769-942773:+                    0.0000000                  0.0000000</span>
+<span class="co">#&gt; 1:1217108-1217112:-                  0.6437811                  0.7983573</span>
+<span class="co">#&gt; 1:1217452-1217456:-                  0.0000000                  0.0000000</span>
+<span class="co">#&gt; 1:1232629-1232633:+                  0.0000000                  0.0000000</span>
+<span class="co">#&gt; 1:1233130-1233134:+                  0.0000000                  5.0895374</span>
+<span class="co">#&gt;                     WT_vs_KO_insertion_score_1 WT_vs_KO_insertion_score_2</span>
+<span class="co">#&gt; 1:924692-924696:+                            0                          0</span>
+<span class="co">#&gt; 1:942769-942773:+                            0                          0</span>
+<span class="co">#&gt; 1:1217108-1217112:-                          0                          0</span>
+<span class="co">#&gt; 1:1217452-1217456:-                          0                          0</span>
+<span class="co">#&gt; 1:1232629-1232633:+                          0                          0</span>
+<span class="co">#&gt; 1:1233130-1233134:+                          0                          0</span>
+<span class="co">#&gt;                     WT_vs_KO_insertion_score_3 WT_vs_KO_insertion_score_4</span>
+<span class="co">#&gt; 1:924692-924696:+                    1.9089064                   0.000000</span>
+<span class="co">#&gt; 1:942769-942773:+                    3.0406167                   0.000000</span>
+<span class="co">#&gt; 1:1217108-1217112:-                  0.0000000                   5.911752</span>
+<span class="co">#&gt; 1:1217452-1217456:-                  0.2143132                   0.000000</span>
+<span class="co">#&gt; 1:1232629-1232633:+                  2.1975648                   0.000000</span>
+<span class="co">#&gt; 1:1233130-1233134:+                  2.8541825                   0.000000</span>
+<span class="co">#&gt;                     WT_vs_KO_insertion_score_5 WT100_vs_WT0_insertion_score_1</span>
+<span class="co">#&gt; 1:924692-924696:+                   0.00000000                              0</span>
+<span class="co">#&gt; 1:942769-942773:+                   0.00000000                              0</span>
+<span class="co">#&gt; 1:1217108-1217112:-                 4.26186947                              0</span>
+<span class="co">#&gt; 1:1217452-1217456:-                 0.00000000                              0</span>
+<span class="co">#&gt; 1:1232629-1232633:+                 0.00000000                              0</span>
+<span class="co">#&gt; 1:1233130-1233134:+                 0.04828947                              0</span>
+<span class="co">#&gt;                     WT100_vs_WT0_insertion_score_2</span>
+<span class="co">#&gt; 1:924692-924696:+                                0</span>
+<span class="co">#&gt; 1:942769-942773:+                                0</span>
+<span class="co">#&gt; 1:1217108-1217112:-                              0</span>
+<span class="co">#&gt; 1:1217452-1217456:-                              0</span>
+<span class="co">#&gt; 1:1232629-1232633:+                              0</span>
+<span class="co">#&gt; 1:1233130-1233134:+                              0</span>
+<span class="co">#&gt;                     WT100_vs_WT0_insertion_score_3</span>
+<span class="co">#&gt; 1:924692-924696:+                       0.91035782</span>
+<span class="co">#&gt; 1:942769-942773:+                       0.06050655</span>
+<span class="co">#&gt; 1:1217108-1217112:-                     3.66811234</span>
+<span class="co">#&gt; 1:1217452-1217456:-                     1.81792363</span>
+<span class="co">#&gt; 1:1232629-1232633:+                     9.92893506</span>
+<span class="co">#&gt; 1:1233130-1233134:+                     8.96038738</span>
+<span class="co">#&gt;                     WT100_vs_WT0_insertion_score_4</span>
+<span class="co">#&gt; 1:924692-924696:+                         0.000000</span>
+<span class="co">#&gt; 1:942769-942773:+                         0.000000</span>
+<span class="co">#&gt; 1:1217108-1217112:-                       3.657584</span>
+<span class="co">#&gt; 1:1217452-1217456:-                       0.000000</span>
+<span class="co">#&gt; 1:1232629-1232633:+                       0.000000</span>
+<span class="co">#&gt; 1:1233130-1233134:+                       0.000000</span>
+<span class="co">#&gt;                     WT100_vs_WT0_insertion_score_5 WT_vs_KO_deletion_score_1</span>
+<span class="co">#&gt; 1:924692-924696:+                        0.0000000                         0</span>
+<span class="co">#&gt; 1:942769-942773:+                        0.0000000                         0</span>
+<span class="co">#&gt; 1:1217108-1217112:-                      0.0000000                         0</span>
+<span class="co">#&gt; 1:1217452-1217456:-                      0.0000000                         0</span>
+<span class="co">#&gt; 1:1232629-1232633:+                      0.0000000                         0</span>
+<span class="co">#&gt; 1:1233130-1233134:+                      0.0233918                         0</span>
+<span class="co">#&gt;                     WT_vs_KO_deletion_score_2 WT_vs_KO_deletion_score_3</span>
+<span class="co">#&gt; 1:924692-924696:+                           0                 6.2617313</span>
+<span class="co">#&gt; 1:942769-942773:+                           0                11.1610092</span>
+<span class="co">#&gt; 1:1217108-1217112:-                         0                 6.7715961</span>
+<span class="co">#&gt; 1:1217452-1217456:-                         0                 0.5243894</span>
+<span class="co">#&gt; 1:1232629-1232633:+                         0                 2.1037304</span>
+<span class="co">#&gt; 1:1233130-1233134:+                         0                 1.4370143</span>
+<span class="co">#&gt;                     WT_vs_KO_deletion_score_4 WT_vs_KO_deletion_score_5</span>
+<span class="co">#&gt; 1:924692-924696:+                    0.000000                 0.0000000</span>
+<span class="co">#&gt; 1:942769-942773:+                    0.000000                 0.0000000</span>
+<span class="co">#&gt; 1:1217108-1217112:-                  4.966816                 0.2502575</span>
+<span class="co">#&gt; 1:1217452-1217456:-                  0.000000                 0.0000000</span>
+<span class="co">#&gt; 1:1232629-1232633:+                  0.000000                 0.0000000</span>
+<span class="co">#&gt; 1:1233130-1233134:+                  0.000000                 4.4948213</span>
+<span class="co">#&gt;                     WT100_vs_WT0_deletion_score_1 WT100_vs_WT0_deletion_score_2</span>
+<span class="co">#&gt; 1:924692-924696:+                               0                             0</span>
+<span class="co">#&gt; 1:942769-942773:+                               0                             0</span>
+<span class="co">#&gt; 1:1217108-1217112:-                             0                             0</span>
+<span class="co">#&gt; 1:1217452-1217456:-                             0                             0</span>
+<span class="co">#&gt; 1:1232629-1232633:+                             0                             0</span>
+<span class="co">#&gt; 1:1233130-1233134:+                             0                             0</span>
+<span class="co">#&gt;                     WT100_vs_WT0_deletion_score_3 WT100_vs_WT0_deletion_score_4</span>
+<span class="co">#&gt; 1:924692-924696:+                       5.3259626                       0.00000</span>
+<span class="co">#&gt; 1:942769-942773:+                       9.0640142                       0.00000</span>
+<span class="co">#&gt; 1:1217108-1217112:-                    14.5902283                       2.56059</span>
+<span class="co">#&gt; 1:1217452-1217456:-                     0.0127461                       0.00000</span>
+<span class="co">#&gt; 1:1232629-1232633:+                     4.5645675                       0.00000</span>
+<span class="co">#&gt; 1:1233130-1233134:+                     9.5525401                       0.00000</span>
+<span class="co">#&gt;                     WT100_vs_WT0_deletion_score_5</span>
+<span class="co">#&gt; 1:924692-924696:+                     0.000000000</span>
+<span class="co">#&gt; 1:942769-942773:+                     0.000000000</span>
+<span class="co">#&gt; 1:1217108-1217112:-                   0.007306643</span>
+<span class="co">#&gt; 1:1217452-1217456:-                   0.000000000</span>
+<span class="co">#&gt; 1:1232629-1232633:+                   0.000000000</span>
+<span class="co">#&gt; 1:1233130-1233134:+                   1.400090523</span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="estimate-parameters">Estimate parameters<a class="anchor" aria-label="anchor" href="#estimate-parameters"></a>
+<h3 id="compute-factorizaion-ranks">Compute factorizaion rank(s)<a class="anchor" aria-label="anchor" href="#compute-factorizaion-ranks"></a>
 </h3>
-<p>Make sure to remove columns such as: “motif” and “region” before you start the learning algorithm.</p>
+<p>An important parameter in NMF is the factorization rank <span class="math inline">\(r\)</span> that defines the number of features to approximate <span class="math inline">\(X\)</span> - a similar parameter like the number of clusters in the k-means algorithm. We will compute multiple factorizations with different values for <span class="math inline">\(r\)</span> and use a surrogate measure to find an appropriate value.</p>
+<p>Make sure that the feature matrix (<span class="math inline">\(X\)</span>) contains only numeric values before you start the factorization of <span class="math inline">\(X\)</span> to <span class="math inline">\(W H\)</span>. Check <a href="https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf" class="external-link">NMF vignette</a> for details on parameters. For example argument <code>.opt=pv3</code> insructs to use for 3 cores - adjust the number according to your machine.</p>
+<p>Here, we will compute factorizations for <span class="math inline">\(r \in {2, ..., 10}\)</span>:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://renozao.github.io/NMF" class="external-link">NMF</a></span><span class="op">)</span>
-<span class="co">#&gt; Loading required package: pkgmaker</span>
-<span class="co">#&gt; Loading required package: registry</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'pkgmaker'</span>
-<span class="co">#&gt; The following object is masked from 'package:S4Vectors':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     new2</span>
-<span class="co">#&gt; Loading required package: rngtools</span>
-<span class="co">#&gt; Loading required package: cluster</span>
-<span class="co">#&gt; NMF - BioConductor layer [OK] | Shared memory capabilities [NO: bigmemory] | Cores 31/32</span>
-<span class="co">#&gt;   To enable shared memory capabilities, try: install.extras('</span>
-<span class="co">#&gt; NMF</span>
-<span class="co">#&gt; ')</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'NMF'</span>
-<span class="co">#&gt; The following object is masked from 'package:S4Vectors':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     nrun</span>
 <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/nmfSeed.html" class="external-link">nmfSeed</a></span><span class="op">(</span><span class="st">'nndsvd'</span><span class="op">)</span>
 <span class="co">#&gt; &lt;object of class:  NMFSeed &gt;</span>
 <span class="co">#&gt; name:     nndsvd </span>
 <span class="co">#&gt; method:   &lt;function&gt;</span>
-<span class="va">meth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/nmfAlgorithm.html" class="external-link">nmfAlgorithm</a></span><span class="op">(</span>version<span class="op">=</span><span class="st">'R'</span><span class="op">)</span>
-<span class="va">meth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">meth</span><span class="op">)</span>, <span class="va">meth</span><span class="op">)</span>
 
-<span class="va">small_nmf_matrix</span> <span class="op">&lt;-</span> <span class="va">nmf_matrix</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"WT_vs_KO"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">nmf_matrix</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
-<span class="co"># filter zero value rows</span>
-<span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">small_nmf_matrix</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>
-<span class="va">small_nmf_matrix</span> <span class="op">&lt;-</span> <span class="va">small_nmf_matrix</span><span class="op">[</span><span class="op">!</span><span class="va">i</span>, <span class="op">]</span>
-
-<span class="va">estim.r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/nmf.html" class="external-link">nmf</a></span><span class="op">(</span><span class="va">small_nmf_matrix</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">10</span>, nrun <span class="op">=</span> <span class="fl">10</span>, seed <span class="op">=</span> <span class="fl">123456</span>, .opt <span class="op">=</span> <span class="st">'vp3'</span><span class="op">)</span>
-<span class="co">#&gt; Compute NMF rank= 2  ... + measures ... OK</span>
-<span class="co">#&gt; Compute NMF rank= 3  ... + measures ... OK</span>
-<span class="co">#&gt; Compute NMF rank= 4  ... + measures ... OK</span>
-<span class="co">#&gt; Compute NMF rank= 5  ... + measures ... OK</span>
-<span class="co">#&gt; Compute NMF rank= 6  ... + measures ... OK</span>
-<span class="co">#&gt; Compute NMF rank= 7  ... + measures ... OK</span>
-<span class="co">#&gt; Compute NMF rank= 8  ... + measures ... OK</span>
-<span class="co">#&gt; Compute NMF rank= 9  ... + measures ... OK</span>
-<span class="co">#&gt; Compute NMF rank= 10  ... + measures ... OK</span>
-<span class="va">V.random</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/randomize.html" class="external-link">randomize</a></span><span class="op">(</span><span class="va">small_nmf_matrix</span><span class="op">)</span></code></pre></div>
-<p>Estimate quality measures from the shuffled data (use default NMF algorithm):</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">estim.r.random</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/nmf.html" class="external-link">nmf</a></span><span class="op">(</span><span class="va">V.random</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">10</span>, nrun<span class="op">=</span><span class="fl">10</span>, seed<span class="op">=</span><span class="fl">123456</span>, .opt<span class="op">=</span><span class="st">'vp3'</span><span class="op">)</span>
+<span class="va">estim.r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/nmf.html" class="external-link">nmf</a></span><span class="op">(</span><span class="va">feature_matrix</span>, rank <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">10</span>, nrun <span class="op">=</span> <span class="fl">10</span>, seed <span class="op">=</span> <span class="fl">123456</span>, .opt <span class="op">=</span> <span class="st">'vp3'</span><span class="op">)</span>
 <span class="co">#&gt; Compute NMF rank= 2  ... + measures ... OK</span>
 <span class="co">#&gt; Compute NMF rank= 3  ... + measures ... OK</span>
 <span class="co">#&gt; Compute NMF rank= 4  ... + measures ... OK</span>
@@ -515,108 +635,223 @@ This approach will consume much more main memory. We recommend to read big data 
 <span class="co">#&gt; Compute NMF rank= 9  ... + measures ... OK</span>
 <span class="co">#&gt; Compute NMF rank= 10  ... + measures ... OK</span></code></pre></div>
 <div class="section level4">
-<h4 id="visualize-estimation">Visualize estimation<a class="anchor" aria-label="anchor" href="#visualize-estimation"></a>
+<h4 id="visualize-estimation-of-the-ranks">Visualize estimation of the ranks<a class="anchor" aria-label="anchor" href="#visualize-estimation-of-the-ranks"></a>
 </h4>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">estim.r</span>, <span class="va">estim.r.random</span><span class="op">)</span></code></pre></div>
-<p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
+<p>In the following, we will compare the results for different <span class="math inline">\(r\)</span> on our original and randomized data (use default NMF algorithm):</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># randomize original data</span>
+<span class="va">V.random</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/randomize.html" class="external-link">randomize</a></span><span class="op">(</span><span class="va">feature_matrix</span><span class="op">)</span>
+
+<span class="co"># calculate factorization on randomized data</span>
+<span class="va">estim.r.random</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/nmf.html" class="external-link">nmf</a></span><span class="op">(</span><span class="va">V.random</span>, rank <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">10</span>, nrun<span class="op">=</span><span class="fl">10</span>, seed <span class="op">=</span> <span class="fl">123456</span>, .opt<span class="op">=</span><span class="st">'vp3'</span><span class="op">)</span>
+<span class="co">#&gt; Compute NMF rank= 2  ... + measures ... OK</span>
+<span class="co">#&gt; Compute NMF rank= 3  ... + measures ... OK</span>
+<span class="co">#&gt; Compute NMF rank= 4  ... + measures ... OK</span>
+<span class="co">#&gt; Compute NMF rank= 5  ... + measures ... OK</span>
+<span class="co">#&gt; Compute NMF rank= 6  ... + measures ... OK</span>
+<span class="co">#&gt; Compute NMF rank= 7  ... + measures ... OK</span>
+<span class="co">#&gt; Compute NMF rank= 8  ... + measures ... OK</span>
+<span class="co">#&gt; Compute NMF rank= 9  ... + measures ... OK</span>
+<span class="co">#&gt; Compute NMF rank= 10  ... + measures ... OK</span>
+
+<span class="co"># compare factorization on original and randomized data</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">estim.r</span>, <span class="va">estim.r.random</span><span class="op">)</span></code></pre></div>
+<p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-20-1.png" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="choose-factorization-rank">Choose factorization rank<a class="anchor" aria-label="anchor" href="#choose-factorization-rank"></a>
 </h4>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">DeltaSil</span> <span class="op">&lt;-</span> <span class="va">estim.r</span><span class="op">$</span><span class="va">measures</span><span class="op">$</span><span class="va">silhouette.consensus</span> <span class="op">-</span> <span class="va">estim.r.random</span><span class="op">$</span><span class="va">measures</span><span class="op">$</span><span class="va">silhouette.consensus</span>
 <span class="va">DeltaCoph</span> <span class="op">&lt;-</span> <span class="va">estim.r</span><span class="op">$</span><span class="va">measures</span><span class="op">$</span><span class="va">cophenetic</span> <span class="op">-</span> <span class="va">estim.r.random</span><span class="op">$</span><span class="va">measures</span><span class="op">$</span><span class="va">cophenetic</span>
 
-<span class="co">#how can we select factorization rank ?</span>
+<span class="co"># how can we select factorization rank ?</span>
 <span class="va">ChoseRank</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">DeltaSil</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">DeltaSil</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>,
   <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">DeltaCoph</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">DeltaCoph</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>
 <span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<p>Plot distribution of surrogate scores to select an appropriate factorization range <span class="math inline">\(r\)</span>.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">val_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>, nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DeltaCoph</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="va">val_matrix</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">DeltaSil</span> 
-<span class="va">val_matrix</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">DeltaCoph</span>
+<span class="va">val_matrix</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">DeltaSil</span> 
+<span class="va">val_matrix</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">DeltaCoph</span>
 
-<span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">val_matrix</span><span class="op">)</span>, names.arg <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DeltaCoph</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span>, beside <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#009E73"</span>, <span class="st">"#D55E00"</span><span class="op">)</span>, legend.text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Silhouette"</span>, <span class="st">"Cophenetic"</span><span class="op">)</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">DeltaSil</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, xlab<span class="op">=</span><span class="st">"Rank"</span>, 
-        ylab<span class="op">=</span><span class="st">"Delta"</span>, main <span class="op">=</span> <span class="st">"Difference between original and randomized data"</span>,cex.names<span class="op">=</span><span class="fl">2</span>,cex.axis<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">DeltaSil</span><span class="op">)</span> , <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">DeltaCoph</span><span class="op">)</span><span class="op">)</span> , col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#009E73"</span>, <span class="st">"#D55E00"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-23-1.png" width="700"></p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>final_nmf_matrix <span class="ot">&lt;-</span> <span class="fu">nmf</span>(small_nmf_matrix, ChoseRank, <span class="at">nrun=</span><span class="dv">10</span>, <span class="at">seed=</span><span class="dv">123456</span>, <span class="at">.opt=</span><span class="st">'vp3'</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; NMF algorithm: 'brunet'</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Multiple runs: 10</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mode: parallel (3/32 core(s))</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|</span>                                                        </span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|</span>                                                        </span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; System time:</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  28.697   5.657  20.968</span></span></code></pre></div>
-<p>Use <code>saveRDS(final_nmf_matrix, file="final_nmf_matrix.rds")</code> to store final result.</p>
+<span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">val_matrix</span><span class="op">)</span>, 
+  names.arg <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DeltaCoph</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>, 
+  beside <span class="op">=</span> <span class="cn">TRUE</span>, 
+  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#009E73"</span>, <span class="st">"#D55E00"</span><span class="op">)</span>, 
+  legend.text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Silhouette"</span>, <span class="st">"Cophenetic"</span><span class="op">)</span>,
+  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">DeltaSil</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, 
+  xlab <span class="op">=</span> <span class="st">"Rank"</span>, 
+  ylab <span class="op">=</span> <span class="st">"Delta"</span>, 
+  main <span class="op">=</span> <span class="st">"Difference between original and randomized data"</span>,
+  cex.names<span class="op">=</span><span class="fl">2</span>,
+  cex.axis<span class="op">=</span><span class="fl">2</span>
+<span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">DeltaSil</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">DeltaCoph</span><span class="op">)</span><span class="op">)</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#009E73"</span>, <span class="st">"#D55E00"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
+<p>Compute factorization with chosen rank.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nmf_matrix <span class="ot">&lt;-</span> <span class="fu">nmf</span>(feature_matrix, ChoseRank, <span class="at">nrun=</span><span class="dv">10</span>, <span class="at">seed=</span><span class="dv">123456</span>, <span class="at">.opt=</span><span class="st">'vp3'</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|</span>                                                        </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|</span>                                                        </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; System time:</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  34.089   5.429  24.002</span></span></code></pre></div>
+<p>Use <code>saveRDS(nmf_matrix, file="nmf_matrix")</code> to store final result.</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="visualize-nmf">Visualize NMF<a class="anchor" aria-label="anchor" href="#visualize-nmf"></a>
 </h3>
+<div class="section level4">
+<h4 id="basis-components">Basis components<a class="anchor" aria-label="anchor" href="#basis-components"></a>
+</h4>
+<p>Plot properties of <span class="math inline">\(W\)</span>.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/NMF/man/heatmaps.html" class="external-link">basismap</a></span><span class="op">(</span><span class="va">nmf_matrix</span><span class="op">)</span></code></pre></div>
+<p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-24-1.png" width="700"> ### Mixture components</p>
+<p>Plot properties of <span class="math inline">\(H\)</span>.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># basis components</span>
-<span class="fu"><a href="https://rdrr.io/pkg/NMF/man/heatmaps.html" class="external-link">basismap</a></span><span class="op">(</span><span class="va">final_nmf_matrix</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/NMF/man/heatmaps.html" class="external-link">coefmap</a></span><span class="op">(</span><span class="va">nmf_matrix</span><span class="op">)</span></code></pre></div>
 <p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-25-1.png" width="700"></p>
-<p>#<code>{r} mixture coefficients coefmap(final_nmf_matrix) #</code></p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="visualize-patterns">Visualize patterns<a class="anchor" aria-label="anchor" href="#visualize-patterns"></a>
+</h3>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/basis-coef-methods.html" class="external-link">basis</a></span><span class="op">(</span><span class="va">final_nmf_matrix</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/basis-coef-methods.html" class="external-link">basis</a></span><span class="op">(</span><span class="va">nmf_matrix</span><span class="op">)</span>
 <span class="co"># Table of number of best hits for each pattern"</span>
-<span class="va">pattern_instances</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">w</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span> <span class="va">x</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">)</span> <span class="op">}</span> <span class="op">)</span><span class="op">)</span>
+<span class="va">pattern_instances</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">w</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">x</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span>
+<span class="op">)</span>
+<span class="va">pattern_instance_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">pattern_instances</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span>
-  height <span class="op">=</span> <span class="va">pattern_instances</span>,
-  names <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>,
-  main <span class="op">=</span> <span class="st">"NMF_Patterns_Scoring"</span>, 
+  height <span class="op">=</span> <span class="va">pattern_instance_tbl</span>,
+  names <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span>,
+  main <span class="op">=</span> <span class="st">"NMF Patterns Scoring"</span>, 
   xlab <span class="op">=</span> <span class="st">"Patterns"</span>, 
   ylab <span class="op">=</span> <span class="st">"Membership Score (basis matrix)"</span>,
-  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">pattern_instances</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">pattern_instance_tbl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 <p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-26-1.png" width="700"></p>
-<!--
-## Visualize patterns
+<p>Next, we visualize the sequence logos that correspond to calculated patterns in NMF.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/NMF/man/basis-coef-methods.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">nmf_matrix</span><span class="op">)</span>
 
-#```{r}
-color_palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-#```
+<span class="va">sequences</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">h</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">region_index</span> <span class="op">&lt;-</span> <span class="va">data_matrix</span><span class="op">$</span><span class="va">region</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">pattern_instances</span> <span class="op">==</span> <span class="va">k</span><span class="op">)</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">data_matrix</span><span class="op">[</span><span class="va">region_index</span>, <span class="st">"motif"</span><span class="op">]</span><span class="op">$</span><span class="va">motif</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">sequences</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Pattern "</span>, <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">h</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">ggseqlogo</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggseqlogo/man/ggseqlogo.html" class="external-link">ggseqlogo</a></span><span class="op">(</span><span class="va">sequences</span><span class="op">)</span></code></pre></div>
+<p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-27-1.png" width="700"></p>
+<p>Finally, we plot profiles for each pattern and experiment (meta condition):</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">h</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">mutate</span><span class="op">(</span>pattern <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>
+    <span class="op">-</span><span class="va">pattern</span>, 
+    names_to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Exp"</span>, <span class="st">"Score"</span>, <span class="st">"Pos"</span><span class="op">)</span>, 
+    names_pattern <span class="op">=</span> <span class="st">"(WT_vs_KO|WT100_vs_WT0)_(call2_score|deletion_score|insertion_score)_([1-5]+)"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">mutate</span><span class="op">(</span>score <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"_score$"</span>, <span class="st">""</span>, <span class="va">Score</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Pos</span>, y <span class="op">=</span> <span class="va">value</span>, fill <span class="op">=</span> <span class="va">Score</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">geom_bar</span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Position in motif\n-NN A NN-"</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">ylab</span><span class="op">(</span><span class="st">""</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_grid</span><span class="op">(</span><span class="va">Exp</span> <span class="op">~</span> <span class="va">pattern</span>, labeller <span class="op">=</span> <span class="va">label_both</span><span class="op">)</span></code></pre></div>
+<p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-28-1.png" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="prediction">Prediction<a class="anchor" aria-label="anchor" href="#prediction"></a>
+</h3>
+<p>We evaluate the factorization on miCLIP data from 3 experiments.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">score_matrix</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">data_matrix</span>, <span class="fu">starts_with</span><span class="op">(</span><span class="st">"WT_"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">score_matrix</span> <span class="op">&lt;-</span> <span class="va">score_matrix</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">h</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">score_matrix</span><span class="op">)</span>, <span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">score_matrix</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"NMF"</span>, <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">h</span><span class="op">)</span><span class="op">)</span>
 
-#```{r}
-w <- basis(final_nmf_matrix)
-h <- coef(final_nmf_matrix)
-h <- rbind(h, t(colSums(h)))
-#```
+<span class="va">score_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">score_matrix</span>, <span class="va">data_matrix</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"region"</span>, <span class="st">"motif"</span>, <span class="st">"DRACH"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">score_matrix</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">score_matrix</span><span class="op">$</span><span class="va">region</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="evaluation">Evaluation<a class="anchor" aria-label="anchor" href="#evaluation"></a>
+</h3>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># combine score and miCLIP data</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">score_matrix</span>, <span class="va">miclip</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"region"</span>, <span class="st">"overlap"</span><span class="op">)</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"region"</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
-#```{r}
-## add the combined patterns
-#for (pattern in list(c(1,2,4,6), c(1,2,3,4,6))) {
-#  h <- rbind(h, t(colSums(h[pattern, ])))
-#}
-#```
+<span class="va">data</span><span class="op">$</span><span class="va">clip</span> <span class="op">&lt;-</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">overlap</span> <span class="op">==</span> <span class="st">"Boulias,Koertel,Koh"</span>, <span class="st">"CLIP"</span>, <span class="st">"No Clip"</span><span class="op">)</span>
 
-#```{r}
-# barplots of patterns
-for (k in 1:nrow(h)){
-  rep1 <- matrix(h[k, ], ncol = 5, byrow = TRUE)[1:3, ]
-  rownames(rep1) <- c("Mismatch","Deletion","Insertion")
-  colnames(rep1) <- c("Pos1","Pos2","Pos3","Pos4","Pos5")
-  
-  barplot(
-    rep1,
-    main = paste0("NMF_Pattern_", k),
-    col = color_palette,
-    cex.names = 2,
-    cex.axis = 2,
-    legend = TRUE
-  )
-}
-```
--->
+<span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">clip</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;    CLIP No Clip </span>
+<span class="co">#&gt;    3190   32572</span></code></pre></div>
+<div class="section level4">
+<h4 id="empirical-distribution">Empirical distribution<a class="anchor" aria-label="anchor" href="#empirical-distribution"></a>
+</h4>
+<p>Plot empirical distribution of scores for each pattern</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html" class="external-link">gather</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">feature</span>, <span class="va">score</span>, <span class="fu">starts_with</span><span class="op">(</span><span class="st">"NMF"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">score</span>, color <span class="op">=</span> <span class="va">clip</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">stat_ecdf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>  
+    <span class="fu">ylab</span><span class="op">(</span><span class="st">""</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">scale_color_discrete</span><span class="op">(</span>name <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">theme</span><span class="op">(</span>
+      axis.title.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fu">rel</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>,
+      axis.title.y <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fu">rel</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>,
+      axis.text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fu">rel</span><span class="op">(</span><span class="fl">1.5</span><span class="op">)</span><span class="op">)</span>
+    <span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">feature</span><span class="op">)</span></code></pre></div>
+<p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-31-1.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="plot-positive-predictive-value">Plot positive predictive value<a class="anchor" aria-label="anchor" href="#plot-positive-predictive-value"></a>
+</h4>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">roc_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu">select</span><span class="op">(</span><span class="va">data</span>, <span class="fu">starts_with</span><span class="op">(</span><span class="st">"NMF"</span><span class="op">)</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span> 
+    <span class="fu">roc</span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">clip</span>, <span class="va">x</span><span class="op">)</span>
+  <span class="op">}</span>
+<span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span> 
+    <span class="va">coordinates</span> <span class="op">&lt;-</span> <span class="fu">coords</span><span class="op">(</span><span class="va">x</span>, x <span class="op">=</span> <span class="st">"all"</span>, input <span class="op">=</span> <span class="st">"threshold"</span>, ret <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"threshold"</span>, <span class="st">"ppv"</span>, <span class="st">"tpr"</span>, <span class="st">"tp"</span>, <span class="st">"tn"</span>, <span class="st">"fp"</span>, <span class="st">"fn"</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">coordinates</span><span class="op">$</span><span class="va">sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">coordinates</span><span class="op">$</span><span class="va">tp</span> <span class="op">+</span> <span class="va">coordinates</span><span class="op">$</span><span class="va">fp</span><span class="op">)</span>
+    <span class="va">coordinates</span><span class="op">$</span><span class="va">ppv</span> <span class="op">&lt;-</span> <span class="va">coordinates</span><span class="op">$</span><span class="va">ppv</span> <span class="op">*</span> <span class="fl">20</span>
+    
+    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">coordinates</span><span class="op">)</span>
+  <span class="op">}</span>
+<span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span>.id <span class="op">=</span> <span class="st">"feature"</span><span class="op">)</span>
+
+<span class="co"># plot</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">roc_values</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">threshold</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">sum</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span>, color <span class="op">=</span> <span class="st">"#009E73"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">ppv</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span>, color <span class="op">=</span> <span class="st">"#D55E00"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="co"># Features of the first axis</span>
+    name <span class="op">=</span> <span class="st">"Log2(#predictions)"</span>,
+    <span class="co"># Add a second axis and specify its features</span>
+    sec.axis <span class="op">=</span> <span class="fu">sec_axis</span><span class="op">(</span> <span class="op">~</span> <span class="va">.</span> <span class="op">*</span> <span class="fl">5</span>, name <span class="op">=</span> <span class="st">"Positive Predictive Value"</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>  
+  <span class="fu">scale_x_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Cutoff"</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">theme</span><span class="op">(</span>
+    axis.title.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fu">rel</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>,
+    axis.title.y <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#009E73"</span>, size <span class="op">=</span> <span class="fu">rel</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>,
+    axis.title.y.right <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#D55E00"</span>, size <span class="op">=</span> <span class="fu">rel</span><span class="op">(</span><span class="fl">0.9</span><span class="op">)</span><span class="op">)</span>,
+    axis.text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fu">rel</span><span class="op">(</span><span class="fl">1.5</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">feature</span><span class="op">)</span></code></pre></div>
+<p><img src="JACUSA2helper-nanopore_files/figure-html/unnamed-chunk-32-1.png" width="700"></p>
+</div>
 </div>
 </div>
 <div class="section level2">

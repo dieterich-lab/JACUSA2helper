@@ -90,7 +90,7 @@
       <h1 data-toc-skip>Analysis of DART-seq with JACUSA2helper</h1>
                         <h4 data-toc-skip class="author">Christoph Dieterich, Michael Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-02-12</h4>
+            <h4 data-toc-skip class="date">2022-02-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper-dart-seq.Rmd" class="external-link"><code>vignettes/JACUSA2helper-dart-seq.Rmd</code></a></small>
       <div class="hidden name"><code>JACUSA2helper-dart-seq.Rmd</code></div>
@@ -102,7 +102,7 @@
 <div class="section level3">
 <h3 id="an-example-on-dartseq">An example on DARTseq<a class="anchor" aria-label="anchor" href="#an-example-on-dartseq"></a>
 </h3>
-<p>A complementary genetic approach is an extension of the TRIBE technique called DART-seq <span class="citation"><a href="#ref-Meyer2019" role="doc-biblioref">Meyer</a> (<a href="#ref-Meyer2019" role="doc-biblioref">2019</a>)</span>. Meyer applied DART-seq on HEK293 cells where the APOBEC domain was fused to the YTH domain from human YTHDF2 (WT and mutated). In essence, new C-to-U editing events that are significantly enriched in the YTHDF2-WT, but not in the binding domain mutant are bona fide candidates for m6A RNA modification. JACUSA2helper supports the analysis of DARTseq data too (see below). Input is typically read in via <code>read_result</code>.</p>
+<p>A complementary genetic approach is an extension of the TRIBE technique called DART-seq <span class="citation">Meyer (<a href="#ref-Meyer2019" role="doc-biblioref">2019</a>)</span>. Meyer applied DART-seq on HEK293 cells where the APOBEC domain was fused to the YTH domain from human YTHDF2 (WT and mutated). In essence, new C-to-U editing events that are significantly enriched in the YTHDF2-WT, but not in the binding domain mutant are bona fide candidates for m6A RNA modification. JACUSA2helper supports the analysis of DARTseq data too (see below). Input is typically read in via <code>read_result</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"DARTseq"</span><span class="op">)</span>
 <span class="va">filtered</span> <span class="op">&lt;-</span> <span class="va">DARTseq</span>

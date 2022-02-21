@@ -90,7 +90,7 @@
       <h1 data-toc-skip>Introduction to meta conditions with JACUSA2helper</h1>
                         <h4 data-toc-skip class="author">Michael Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-02-12</h4>
+            <h4 data-toc-skip class="date">2022-02-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper-meta-condtions.Rmd" class="external-link"><code>vignettes/JACUSA2helper-meta-condtions.Rmd</code></a></small>
       <div class="hidden name"><code>JACUSA2helper-meta-condtions.Rmd</code></div>
@@ -105,7 +105,7 @@
 <h3 id="meta-condition">Meta condition<a class="anchor" aria-label="anchor" href="#meta-condition"></a>
 </h3>
 <p>JACUSA2helper supports the analysis of several related JACUSA2 result files via <code>results &lt;- read_results(files, meta_conds)</code> where <code>meta_conds</code> is a vector of strings that provides a descriptive name for each file in the vector of strings <code>files</code>.</p>
-<p>Here, we will use the the <span class="citation"><a href="#ref-Zhou2018" role="doc-biblioref">Zhou et al.</a> (<a href="#ref-Zhou2018" role="doc-biblioref">2018</a>)</span> data set, where the authors map RNA modification of pseudouridine (<span class="math inline">\(\Psi\)</span>) by chemically modifying pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and SIIIMg). All three data sets are available in JACUSA2helper via <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>. Additionally, we have compiled combined data sets <code>data(Zhou2018_call2)</code> and <code>data(Zhou2018_rt_arrest)</code> that utilizes meta conditions. Note, that this data has NO replicates!</p>
+<p>Here, we will use the the <span class="citation">Zhou et al. (<a href="#ref-Zhou2018" role="doc-biblioref">2018</a>)</span> data set, where the authors map RNA modification of pseudouridine (<span class="math inline">\(\Psi\)</span>) by chemically modifying pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and SIIIMg). All three data sets are available in JACUSA2helper via <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>. Additionally, we have compiled combined data sets <code>data(Zhou2018_call2)</code> and <code>data(Zhou2018_rt_arrest)</code> that utilizes meta conditions. Note, that this data has NO replicates!</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">$</span><span class="va">meta_cond</span><span class="op">)</span>
