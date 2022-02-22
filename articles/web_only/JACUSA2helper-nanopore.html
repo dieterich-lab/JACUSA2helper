@@ -90,7 +90,7 @@
       <h1 data-toc-skip>Analysis of Nanopore HEK293 with JACUSA2helper</h1>
                         <h4 data-toc-skip class="author">Christoph Dieterich, Michael Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-02-21</h4>
+            <h4 data-toc-skip class="date">2022-02-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/web_only/JACUSA2helper-nanopore.Rmd" class="external-link"><code>vignettes/web_only/JACUSA2helper-nanopore.Rmd</code></a></small>
       <div class="hidden name"><code>JACUSA2helper-nanopore.Rmd</code></div>
@@ -490,126 +490,22 @@ This approach will consume much more main memory. We recommend to read big data 
 <span class="co"># remove non-numeric columns</span>
 <span class="va">feature_matrix</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">feature_matrix</span>, <span class="op">-</span><span class="va">region</span>, <span class="op">-</span><span class="va">motif</span>, <span class="op">-</span><span class="va">DRACH</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">feature_matrix</span><span class="op">)</span>
-<span class="co">#&gt;                     WT_vs_KO_call2_score_1 WT_vs_KO_call2_score_2</span>
-<span class="co">#&gt; 1:924692-924696:+                        0                      0</span>
-<span class="co">#&gt; 1:942769-942773:+                        0                      0</span>
-<span class="co">#&gt; 1:1217108-1217112:-                      0                      0</span>
-<span class="co">#&gt; 1:1217452-1217456:-                      0                      0</span>
-<span class="co">#&gt; 1:1232629-1232633:+                      0                      0</span>
-<span class="co">#&gt; 1:1233130-1233134:+                      0                      0</span>
-<span class="co">#&gt;                     WT_vs_KO_call2_score_3 WT_vs_KO_call2_score_4</span>
-<span class="co">#&gt; 1:924692-924696:+                4.4050409               0.000000</span>
-<span class="co">#&gt; 1:942769-942773:+                2.8667036               0.000000</span>
-<span class="co">#&gt; 1:1217108-1217112:-              1.4836637               1.198658</span>
-<span class="co">#&gt; 1:1217452-1217456:-              0.8283465               0.000000</span>
-<span class="co">#&gt; 1:1232629-1232633:+              6.9350419               0.000000</span>
-<span class="co">#&gt; 1:1233130-1233134:+             14.9762378               0.000000</span>
-<span class="co">#&gt;                     WT_vs_KO_call2_score_5 WT100_vs_WT0_call2_score_1</span>
-<span class="co">#&gt; 1:924692-924696:+                0.0000000                          0</span>
-<span class="co">#&gt; 1:942769-942773:+                0.0000000                          0</span>
-<span class="co">#&gt; 1:1217108-1217112:-              0.1701674                          0</span>
-<span class="co">#&gt; 1:1217452-1217456:-              0.0000000                          0</span>
-<span class="co">#&gt; 1:1232629-1232633:+              0.0000000                          0</span>
-<span class="co">#&gt; 1:1233130-1233134:+              6.8826910                          0</span>
-<span class="co">#&gt;                     WT100_vs_WT0_call2_score_2 WT100_vs_WT0_call2_score_3</span>
-<span class="co">#&gt; 1:924692-924696:+                            0                   6.097167</span>
-<span class="co">#&gt; 1:942769-942773:+                            0                   0.698221</span>
-<span class="co">#&gt; 1:1217108-1217112:-                          0                   1.596011</span>
-<span class="co">#&gt; 1:1217452-1217456:-                          0                   2.713407</span>
-<span class="co">#&gt; 1:1232629-1232633:+                          0                   5.644694</span>
-<span class="co">#&gt; 1:1233130-1233134:+                          0                  15.168060</span>
-<span class="co">#&gt;                     WT100_vs_WT0_call2_score_4 WT100_vs_WT0_call2_score_5</span>
-<span class="co">#&gt; 1:924692-924696:+                    0.0000000                  0.0000000</span>
-<span class="co">#&gt; 1:942769-942773:+                    0.0000000                  0.0000000</span>
-<span class="co">#&gt; 1:1217108-1217112:-                  0.6437811                  0.7983573</span>
-<span class="co">#&gt; 1:1217452-1217456:-                  0.0000000                  0.0000000</span>
-<span class="co">#&gt; 1:1232629-1232633:+                  0.0000000                  0.0000000</span>
-<span class="co">#&gt; 1:1233130-1233134:+                  0.0000000                  5.0895374</span>
-<span class="co">#&gt;                     WT_vs_KO_insertion_score_1 WT_vs_KO_insertion_score_2</span>
-<span class="co">#&gt; 1:924692-924696:+                            0                          0</span>
-<span class="co">#&gt; 1:942769-942773:+                            0                          0</span>
-<span class="co">#&gt; 1:1217108-1217112:-                          0                          0</span>
-<span class="co">#&gt; 1:1217452-1217456:-                          0                          0</span>
-<span class="co">#&gt; 1:1232629-1232633:+                          0                          0</span>
-<span class="co">#&gt; 1:1233130-1233134:+                          0                          0</span>
-<span class="co">#&gt;                     WT_vs_KO_insertion_score_3 WT_vs_KO_insertion_score_4</span>
-<span class="co">#&gt; 1:924692-924696:+                    1.9089064                   0.000000</span>
-<span class="co">#&gt; 1:942769-942773:+                    3.0406167                   0.000000</span>
-<span class="co">#&gt; 1:1217108-1217112:-                  0.0000000                   5.911752</span>
-<span class="co">#&gt; 1:1217452-1217456:-                  0.2143132                   0.000000</span>
-<span class="co">#&gt; 1:1232629-1232633:+                  2.1975648                   0.000000</span>
-<span class="co">#&gt; 1:1233130-1233134:+                  2.8541825                   0.000000</span>
-<span class="co">#&gt;                     WT_vs_KO_insertion_score_5 WT100_vs_WT0_insertion_score_1</span>
-<span class="co">#&gt; 1:924692-924696:+                   0.00000000                              0</span>
-<span class="co">#&gt; 1:942769-942773:+                   0.00000000                              0</span>
-<span class="co">#&gt; 1:1217108-1217112:-                 4.26186947                              0</span>
-<span class="co">#&gt; 1:1217452-1217456:-                 0.00000000                              0</span>
-<span class="co">#&gt; 1:1232629-1232633:+                 0.00000000                              0</span>
-<span class="co">#&gt; 1:1233130-1233134:+                 0.04828947                              0</span>
-<span class="co">#&gt;                     WT100_vs_WT0_insertion_score_2</span>
-<span class="co">#&gt; 1:924692-924696:+                                0</span>
-<span class="co">#&gt; 1:942769-942773:+                                0</span>
-<span class="co">#&gt; 1:1217108-1217112:-                              0</span>
-<span class="co">#&gt; 1:1217452-1217456:-                              0</span>
-<span class="co">#&gt; 1:1232629-1232633:+                              0</span>
-<span class="co">#&gt; 1:1233130-1233134:+                              0</span>
-<span class="co">#&gt;                     WT100_vs_WT0_insertion_score_3</span>
-<span class="co">#&gt; 1:924692-924696:+                       0.91035782</span>
-<span class="co">#&gt; 1:942769-942773:+                       0.06050655</span>
-<span class="co">#&gt; 1:1217108-1217112:-                     3.66811234</span>
-<span class="co">#&gt; 1:1217452-1217456:-                     1.81792363</span>
-<span class="co">#&gt; 1:1232629-1232633:+                     9.92893506</span>
-<span class="co">#&gt; 1:1233130-1233134:+                     8.96038738</span>
-<span class="co">#&gt;                     WT100_vs_WT0_insertion_score_4</span>
-<span class="co">#&gt; 1:924692-924696:+                         0.000000</span>
-<span class="co">#&gt; 1:942769-942773:+                         0.000000</span>
-<span class="co">#&gt; 1:1217108-1217112:-                       3.657584</span>
-<span class="co">#&gt; 1:1217452-1217456:-                       0.000000</span>
-<span class="co">#&gt; 1:1232629-1232633:+                       0.000000</span>
-<span class="co">#&gt; 1:1233130-1233134:+                       0.000000</span>
-<span class="co">#&gt;                     WT100_vs_WT0_insertion_score_5 WT_vs_KO_deletion_score_1</span>
-<span class="co">#&gt; 1:924692-924696:+                        0.0000000                         0</span>
-<span class="co">#&gt; 1:942769-942773:+                        0.0000000                         0</span>
-<span class="co">#&gt; 1:1217108-1217112:-                      0.0000000                         0</span>
-<span class="co">#&gt; 1:1217452-1217456:-                      0.0000000                         0</span>
-<span class="co">#&gt; 1:1232629-1232633:+                      0.0000000                         0</span>
-<span class="co">#&gt; 1:1233130-1233134:+                      0.0233918                         0</span>
-<span class="co">#&gt;                     WT_vs_KO_deletion_score_2 WT_vs_KO_deletion_score_3</span>
-<span class="co">#&gt; 1:924692-924696:+                           0                 6.2617313</span>
-<span class="co">#&gt; 1:942769-942773:+                           0                11.1610092</span>
-<span class="co">#&gt; 1:1217108-1217112:-                         0                 6.7715961</span>
-<span class="co">#&gt; 1:1217452-1217456:-                         0                 0.5243894</span>
-<span class="co">#&gt; 1:1232629-1232633:+                         0                 2.1037304</span>
-<span class="co">#&gt; 1:1233130-1233134:+                         0                 1.4370143</span>
-<span class="co">#&gt;                     WT_vs_KO_deletion_score_4 WT_vs_KO_deletion_score_5</span>
-<span class="co">#&gt; 1:924692-924696:+                    0.000000                 0.0000000</span>
-<span class="co">#&gt; 1:942769-942773:+                    0.000000                 0.0000000</span>
-<span class="co">#&gt; 1:1217108-1217112:-                  4.966816                 0.2502575</span>
-<span class="co">#&gt; 1:1217452-1217456:-                  0.000000                 0.0000000</span>
-<span class="co">#&gt; 1:1232629-1232633:+                  0.000000                 0.0000000</span>
-<span class="co">#&gt; 1:1233130-1233134:+                  0.000000                 4.4948213</span>
-<span class="co">#&gt;                     WT100_vs_WT0_deletion_score_1 WT100_vs_WT0_deletion_score_2</span>
-<span class="co">#&gt; 1:924692-924696:+                               0                             0</span>
-<span class="co">#&gt; 1:942769-942773:+                               0                             0</span>
-<span class="co">#&gt; 1:1217108-1217112:-                             0                             0</span>
-<span class="co">#&gt; 1:1217452-1217456:-                             0                             0</span>
-<span class="co">#&gt; 1:1232629-1232633:+                             0                             0</span>
-<span class="co">#&gt; 1:1233130-1233134:+                             0                             0</span>
-<span class="co">#&gt;                     WT100_vs_WT0_deletion_score_3 WT100_vs_WT0_deletion_score_4</span>
-<span class="co">#&gt; 1:924692-924696:+                       5.3259626                       0.00000</span>
-<span class="co">#&gt; 1:942769-942773:+                       9.0640142                       0.00000</span>
-<span class="co">#&gt; 1:1217108-1217112:-                    14.5902283                       2.56059</span>
-<span class="co">#&gt; 1:1217452-1217456:-                     0.0127461                       0.00000</span>
-<span class="co">#&gt; 1:1232629-1232633:+                     4.5645675                       0.00000</span>
-<span class="co">#&gt; 1:1233130-1233134:+                     9.5525401                       0.00000</span>
-<span class="co">#&gt;                     WT100_vs_WT0_deletion_score_5</span>
-<span class="co">#&gt; 1:924692-924696:+                     0.000000000</span>
-<span class="co">#&gt; 1:942769-942773:+                     0.000000000</span>
-<span class="co">#&gt; 1:1217108-1217112:-                   0.007306643</span>
-<span class="co">#&gt; 1:1217452-1217456:-                   0.000000000</span>
-<span class="co">#&gt; 1:1232629-1232633:+                   0.000000000</span>
-<span class="co">#&gt; 1:1233130-1233134:+                   1.400090523</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">feature_matrix</span><span class="op">)</span>
+<span class="co">#&gt;  [1] "WT_vs_KO_call2_score_1"         "WT_vs_KO_call2_score_2"        </span>
+<span class="co">#&gt;  [3] "WT_vs_KO_call2_score_3"         "WT_vs_KO_call2_score_4"        </span>
+<span class="co">#&gt;  [5] "WT_vs_KO_call2_score_5"         "WT100_vs_WT0_call2_score_1"    </span>
+<span class="co">#&gt;  [7] "WT100_vs_WT0_call2_score_2"     "WT100_vs_WT0_call2_score_3"    </span>
+<span class="co">#&gt;  [9] "WT100_vs_WT0_call2_score_4"     "WT100_vs_WT0_call2_score_5"    </span>
+<span class="co">#&gt; [11] "WT_vs_KO_insertion_score_1"     "WT_vs_KO_insertion_score_2"    </span>
+<span class="co">#&gt; [13] "WT_vs_KO_insertion_score_3"     "WT_vs_KO_insertion_score_4"    </span>
+<span class="co">#&gt; [15] "WT_vs_KO_insertion_score_5"     "WT100_vs_WT0_insertion_score_1"</span>
+<span class="co">#&gt; [17] "WT100_vs_WT0_insertion_score_2" "WT100_vs_WT0_insertion_score_3"</span>
+<span class="co">#&gt; [19] "WT100_vs_WT0_insertion_score_4" "WT100_vs_WT0_insertion_score_5"</span>
+<span class="co">#&gt; [21] "WT_vs_KO_deletion_score_1"      "WT_vs_KO_deletion_score_2"     </span>
+<span class="co">#&gt; [23] "WT_vs_KO_deletion_score_3"      "WT_vs_KO_deletion_score_4"     </span>
+<span class="co">#&gt; [25] "WT_vs_KO_deletion_score_5"      "WT100_vs_WT0_deletion_score_1" </span>
+<span class="co">#&gt; [27] "WT100_vs_WT0_deletion_score_2"  "WT100_vs_WT0_deletion_score_3" </span>
+<span class="co">#&gt; [29] "WT100_vs_WT0_deletion_score_4"  "WT100_vs_WT0_deletion_score_5"</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="compute-factorizaion-ranks">Compute factorizaion rank(s)<a class="anchor" aria-label="anchor" href="#compute-factorizaion-ranks"></a>
@@ -701,7 +597,7 @@ This approach will consume much more main memory. We recommend to read big data 
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; System time:</span></span>
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  34.089   5.429  24.002</span></span></code></pre></div>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  32.783   4.923  23.173</span></span></code></pre></div>
 <p>Use <code>saveRDS(nmf_matrix, file="nmf_matrix")</code> to store final result.</p>
 </div>
 </div>
