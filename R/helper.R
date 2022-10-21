@@ -16,7 +16,7 @@
 .LRT_ARREST <- "lrt-arrest"
 
 .ATTR_TYPE <- "JACUSA2.type"
-.ATTR_HEADER <-"JACUSA2.header"
+.ATTR_HEADER <- "JACUSA2.header"
 .ATTR_COND_DESC <- "JACUSA2.cond_desc"
 
 
@@ -103,9 +103,9 @@ expand_tag <- function(result) {
   tagged <- result %>% dplyr::filter(tag != .EMPTY)
   matching <- match(tagged$id, total$id)
   
-  if (any(! is.na(matching))) {
-    tagged_bases <- tagged$bases[which(! is.na(matching)), ]
-    total$tagged_bases[matching[! is.na(matching)], ] <- tagged_bases
+  if (any(!is.na(matching))) {
+    tagged_bases <- tagged$bases[which(!is.na(matching)), ]
+    total$tagged_bases[matching[!is.na(matching)], ] <- tagged_bases
   }
   # untagged = total - tagged
   total$not_tagged_bases <- mapply_repl(
@@ -119,22 +119,56 @@ expand_tag <- function(result) {
   total
 }
 
-#' Extend region
+#' Extend site.
 #' 
-#' Extend region
+#' Extend site. Make sure `seqlengths` are set for `gr`.
+#' Otherwise, check `?GenomeInfoDb::seqlengths`.
 #' 
 #' @param gr object created by \code{read_result()} or \code{read_results()}.
+#' 
 #' @param left integer number of nucleotides to shift.
 #' @param right integer number of nucleotides to shift.
 #' @return Extended region
 #' @export
 extend <- function(gr, left = 0, right = 0) {
-  GenomicRanges::GRanges(
-    seqnames=GenomicRanges::seqnames(gr),
-    ranges=IRanges::IRanges(
-      start=GenomicRanges::start(gr) - left,
-      end=GenomicRanges::end(gr) + right
+  gr_new <- GenomicRanges::GRanges(
+    seqnames = GenomicRanges::seqnames(gr),
+    ranges = IRanges::IRanges(
+      start = GenomicRanges::start(gr) - left,
+      end = GenomicRanges::end(gr) + right
     ),
-    strand=GenomicRanges::strand(gr)
+    strand = GenomicRanges::strand(gr)
   )
+  
+  if (any(is.null(GenomicRanges::seqlengths(gr)))) {
+    warning(paste0("Some sequences in `gr` have no sequence length set.",
+                   "Check `?GenomeInfoDb::seqlengths`!",
+                   "Ranges might invalid!",
+                   sep = "\n")
+    )
+  }
+  
+  gr_new
+}
+
+#' Get sequence
+#' 
+#' Get the sequence in `gr` from `src` - respects strand information!
+#' 
+#' @param gr GRanges object.
+#' @param src BSgenome or XStringSet object.
+#' @return Vector of strings.
+get_motif <- function(gr, src) {
+  BSgenome::getSeq(src, gr) %>% 
+    as.character() %>% 
+    unname()
+}
+
+#' Check if DRACH motif.
+#' 
+#' 
+#' @param motif vector of strings.
+#' @return Vector of bools.
+is_DRACH <- function(motif) {
+  grep("[AGT][AG]AC[ACT]", motif)
 }
