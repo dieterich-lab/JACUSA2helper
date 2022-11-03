@@ -21,7 +21,7 @@ install it directly from the repository via [devtools](https://www.r-project.org
 
 ## Documentation
 Check vignettes:
-If vignettes or code expamples do not run, *try to add library(plyranges)*
+If vignettes or code examples do not run, *try to add library(plyranges)*
 
 * `vignette("Introduction to JACUSA2helper")`
 * `vignette("Analysis of DART-seq with JACUSA2helper")`
