@@ -1,6 +1,5 @@
 #' Learn pattern from JACUSA2 output
 #' 
-#' @param 
 #' @param mods TODO 
 #' @return TODO
 #' 
