@@ -17,11 +17,11 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, tmpdir = tempdir(
   if (grepl("ftp://|http://", file)) {
     # partly adopted from data.table::fread
     tmpFile <- tempfile(tmpdir = tmpdir)
-    if (! requireNamespace("curl", quietly = TRUE)) 
+    if (!requireNamespace("curl", quietly = TRUE)) 
       stop("Input URL requires https:// connection for which fread() requires 'curl' package which cannot be found. Please install 'curl' using 'install.packages('curl')'.")
 
     tmpFile = tempfile(fileext = paste0(".", tools::file_ext(file)), tmpdir = tmpdir)
-    curl::curl_download(file, tmpFile, mode = "wb", quiet = ! showProgress)
+    curl::curl_download(file, tmpFile, mode = "wb", quiet = !showProgress)
     file = tmpFile
     on.exit(unlink(file), add = TRUE)
   }
@@ -200,9 +200,9 @@ id <- function(result) {
 #' @param bases tibble of base call counts
 #' @return vector of observed base calls
 #' @export
-base_call <-function(bases) {
+base_call <- function(bases) {
   apply(bases > 0, 1, function(x) {
-    paste0(names(which(x)), collapse= "") 
+    paste0(names(which(x)), collapse = "") 
     }
   )
 }
@@ -255,7 +255,7 @@ base_call <-function(bases) {
 #' 
 #' @export
 get_info_keys <- function(info) {
-  keys <- base::strsplit(gsub("(;?[^=;]+)=[^=;]+", "\\1", info), ";", fixed=TRUE) %>% unlist() %>% unique()
+  keys <- base::strsplit(gsub("(;?[^=;]+)=[^=;]+", "\\1", info), ";", fixed = TRUE) %>% unlist() %>% unique()
   return(setdiff(keys, .EMPTY))
 }
 
@@ -270,7 +270,7 @@ get_info_keys <- function(info) {
 #' 
 #' @export
 unpack_info <- function(info, cond_count, keys=get_info_keys(info)) {
-  info <- fast_unpack_info(info, names=keys) %>% as.data.frame()
+  info <- fast_unpack_info(info, names = keys) %>% as.data.frame()
 
   for (col in c(paste0("reset", c(1:cond_count, "P")), paste0("backtrack", c(1:cond_count, "P")))) {
     if (col %in% colnames(info)) {
@@ -286,13 +286,13 @@ unpack_info <- function(info, cond_count, keys=get_info_keys(info)) {
   }
 
   
-  col2type <- c("arrest_score"= as.numeric, "seq" = NULL)
+  col2type <- c("arrest_score" = as.numeric, "seq" = NULL)
   cols <- names(info)
   for (col in names(col2type)) {
     if (col %in% cols) {
       if (all(info[[col]] == "")) {
         info[col] <- NULL
-      } else if (! is.null(col2type[[col]])) {
+      } else if (!is.null(col2type[[col]])) {
         i <- info[[col]] == ""
         if (length(i)) {
           info[i, col] <- NA
@@ -324,7 +324,7 @@ unpack_info <- function(info, cond_count, keys=get_info_keys(info)) {
   cols <- unique(matches$col)
   df <- .fill_empty(df, cols, new_cols)
 
-  unpacked <- lapply(df[cols], .unpack, new_cols=new_cols)
+  unpacked <- lapply(df[cols], .unpack, new_cols = new_cols)
   df <- dplyr::select(df, -dplyr::one_of(cols)) %>% tidyr::as_tibble()
   
   for (prefix in prefixes) {
@@ -378,7 +378,7 @@ unpack_info <- function(info, cond_count, keys=get_info_keys(info)) {
     if (length(cols) > 0) {
       new_cols <- c("reads", "coverage")
       df <- .fill_empty(info, cols, new_cols)
-      unpacked <- lapply(df[cols], .unpack, new_cols=new_cols)
+      unpacked <- lapply(df[cols], .unpack, new_cols = new_cols)
       for (col in cols) {
         info[[col]] <- NULL
       }
