@@ -140,14 +140,14 @@ extend <- function(gr, left = 0, right = 0) {
     strand = GenomicRanges::strand(gr)
   )
   
-  if (any(is.null(GenomicRanges::seqlengths(gr)))) {
+  if (any(is.null(GenomeInfoDb::seqlengths(gr)))) {
     warning(paste0("Some sequences in `gr` have no sequence length set.",
                    "Check `?GenomeInfoDb::seqlengths`!",
                    "Ranges might invalid!",
                    sep = "\n")
     )
   }
-  
+
   gr_new
 }
 

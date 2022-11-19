@@ -4,7 +4,7 @@
 #'
 #' @param file String that represents the file name of the JACUSA2 output or an URL.
 #' @param cond_desc Vector of strings that represent names/descriptions for conditions.
-#' @param unpack Boolean indicates if info column should be processed.
+#' @param unpack Boolean or vector of fields to be unpacked.
 #' @param tmpdir String @see `data.table::fread`.
 #' @param showProgress Boolean @see `data.table::fread`.
 #' @param ... parameters forwarded to `data.table::fread`.
@@ -106,27 +106,30 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, tmpdir = tempdir(
   data <- .create_result(type, cond_count, data)
 
   # unpack info field
-  if (unpack) {
-    # FIXME 
-    prefixes <- .type2prefix(type)
-    prefix <- prefixes[1]
-    ins_keys <- c(paste0("ins", .extract_cond_repl(header_names, prefix)), "insertion_score", "insertion_pvalue")
-    del_keys <- c(paste0("del", .extract_cond_repl(header_names, prefix)), "deletion_score", "deletion_pvalue")
-    
-    unpack_keys <- c(
-      ins_keys, del_keys,
-      "seq",
-      "arrest_score",
-      paste0("reset", c(1:cond_count, "P")),
-      paste0("backtrack", c(1:cond_count, "P"))
-    )
+  if (!is.null(unpack)) {
+    if (is.logical(unpack) && unpack) {
+      prefixes <- .type2prefix(type)
+      prefix <- prefixes[1]
+      ins_keys <- c(paste0("ins", .extract_cond_repl(header_names, prefix)), "insertion_score", "insertion_pvalue")
+      del_keys <- c(paste0("del", .extract_cond_repl(header_names, prefix)), "deletion_score", "deletion_pvalue")
+      
+      unpack_keys <- c(
+        ins_keys, del_keys,
+        "seq",
+        "arrest_score",
+        paste0("reset", c(1:cond_count, "P")),
+        paste0("backtrack", c(1:cond_count, "P"))
+      )
+    } else {
+      unpack_keys <- unpack
+    }
+
     unpacked_info <- unpack_info(data$info, cond_count, unpack_keys)
     # TODO check if empty
     GenomicRanges::mcols(data) <- cbind(GenomicRanges::mcols(data), unpacked_info)
-    
-    data
   }
   
+  # TODO remove type stuff and move to RangedExperimentResult
   attr(data, .ATTR_TYPE) <- type
   if (length(cond_desc)) {
     attr(data, .ATTR_COND_DESC) <- cond_desc
