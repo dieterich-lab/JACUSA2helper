@@ -27,7 +27,8 @@ Imports:
   Rcpp,
   GenomicRanges,
   IRanges,
-  plyranges
+  plyranges,
+  S4Vectors
 Suggests: 
   ggplot2, 
   scales,
