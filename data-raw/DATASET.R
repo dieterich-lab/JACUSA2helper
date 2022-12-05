@@ -1,4 +1,5 @@
 library("JACUSA2helper")
+library("BSgenome.Hsapiens.NCBI.GRCh38")
 
 # Piechotta2017 data
 prefix <- "call-2-"
@@ -56,3 +57,14 @@ usethis::use_data(DARTseq, overwrite = TRUE, compress = "bzip2")
 
 MazF_FTO <- JACUSA2helper:::read_result("Cutoff01_MazF_vs_cond2_FTO_RC22_rtarrest_with_seq.out", unpack=TRUE)
 usethis::use_data(MazF_FTO, overwrite = TRUE, compress = "bzip2")
+
+m6a_miclip <- rtracklayer::import("miCLIP_union_flat_exclude_Y_chromosome.bed")
+m6a_miclip <- sort(m6a_miclip)
+m6a_miclip <- m6a_miclip[GenomicRanges::seqnames(m6a_miclip) %in% c(1:22, "MT", "X"), "name"]
+GenomeInfoDb::seqlevels(m6a_miclip, pruning.mode = "coarse") <- c(1:22, "MT", "X")
+colnames(GenomicRanges::mcols(m6a_miclip)) <- "experiments"
+GenomeInfoDb::seqlengths(m6a_miclip) <- GenomeInfoDb::seqlengths(BSgenome.Hsapiens.NCBI.GRCh38)[names(GenomeInfoDb::seqlengths(m6a_miclip))]
+usethis::use_data(m6a_miclip, overwrite = TRUE, compress = "bzip2")
+
+m6a_nmf <- readRDS("NMF_paper.rds")
+usethis::use_data(m6a_nmf, overwrite = TRUE, compress = "bzip2")
