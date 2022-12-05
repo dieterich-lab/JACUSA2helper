@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper.R
 \name{extend}
 \alias{extend}
-\title{Extend region}
+\title{Extend site.}
 \usage{
 extend(gr, left = 0, right = 0)
 }
@@ -17,5 +17,6 @@ extend(gr, left = 0, right = 0)
 Extended region
 }
 \description{
-Extend region
+Extend site. Make sure `seqlengths` are set for `gr`.
+Otherwise, check `?GenomeInfoDb::seqlengths`.
 }

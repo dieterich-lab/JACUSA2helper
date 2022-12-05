@@ -125,8 +125,9 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, tmpdir = tempdir(
     }
 
     unpacked_info <- unpack_info(data$info, cond_count, unpack_keys)
-    # TODO check if empty
-    GenomicRanges::mcols(data) <- cbind(GenomicRanges::mcols(data), unpacked_info)
+    if (!is.null(unpacked_info)) {
+      GenomicRanges::mcols(data) <- cbind(GenomicRanges::mcols(data), unpacked_info)
+    }
   }
   
   # TODO remove type stuff and move to RangedExperimentResult
@@ -273,6 +274,10 @@ get_info_keys <- function(info) {
 #' 
 #' @export
 unpack_info <- function(info, cond_count, keys=get_info_keys(info)) {
+  if (is.null(keys) || length(keys) == 0) {
+    return(NULL)
+  }
+
   info <- fast_unpack_info(info, names = keys) %>% as.data.frame()
 
   for (col in c(paste0("reset", c(1:cond_count, "P")), paste0("backtrack", c(1:cond_count, "P")))) {

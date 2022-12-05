@@ -18,7 +18,7 @@ read_result(
 
 \item{cond_desc}{Vector of strings that represent names/descriptions for conditions.}
 
-\item{unpack}{Boolean indicates if info column should be processed.}
+\item{unpack}{Boolean or vector of fields to be unpacked.}
 
 \item{tmpdir}{String @see `data.table::fread`.}
 

@@ -1,9 +1,9 @@
 Package: JACUSA2helper
 Type: Package
 Title: Post-processing for JACUSA2 output
-Version: 1.9.9.9300
-Depends: R (>= 3.5)
-Date: 2022-02-11
+Version: 1.9.9.9500
+Depends: R (>= 4.0)
+Date: 2022-12-05
 Authors@R: c(person("Michael", "Piechotta", email = "michael.piechotta@gmail.com", role = c("aut", "cre")),
          person("Qi", "Wang", role = c("ctb")),
          person("Christoph", "Dieterich", role = c("ctb")),
@@ -19,17 +19,20 @@ LazyDataCompression: bzip2
 biocViews:
 Imports: 
   curl,
-  data.table, 
+  data.table,
   tibble,
   tidyr,
   dplyr, 
   magrittr,
   Rcpp,
   GenomicRanges,
+  GenomeInfoDb,
   IRanges,
   plyranges,
-  S4Vectors
+  S4Vectors,
+  NMF
 Suggests: 
+  stringr,
   ggplot2, 
   scales,
   Rsamtools,
@@ -38,7 +41,6 @@ Suggests:
   VennDiagram,
   reshape2,
   rmarkdown,
-  NMF,
   BSgenome,
   BSgenome.Hsapiens.NCBI.GRCh38
 LinkingTo: Rcpp

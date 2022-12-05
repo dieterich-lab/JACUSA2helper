@@ -17,31 +17,26 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 options(tibble.print_min = 4L, tibble.print_max = 4L)
+set.seed(777)
+```
+
+In the following, the workflow for use case 3 from @Piechotta2021 is presented.
+Data for [use cases 1-3](https://zenodo.org/record/5930729#.YfmTDFvMIUG) can be downloaded to repeat the analysis.
+
+The following packages need to be loaded:
+```{r,warning=FALSE,message=FALSE}
 library(JACUSA2helper)
 library(GenomicRanges)
 library(BSgenome)
+library(GenomeInfoDb)
 library(plyranges)
 library(magrittr)
 library(dplyr)
 library(ggplot2)
 library(pROC)
 library(VennDiagram)
-
-
-miclip <- read.delim(
-  "/storage/JACUSA2_TestField/Nanopore/miCLIP_union_flat_exclude_Y_chromosome.bed", 
-  header = FALSE, as.is = TRUE, 
-  col.names = c("contig", "start", "end", "overlap", "score", "strand")
-)
-miclip$start <- miclip$start - 2
-miclip$end <- miclip$end + 2
-miclip$region <- paste0(miclip$contig, ":", miclip$start + 1, "-", miclip$end, ":", miclip$strand)
-
-set.seed(777)
+library(NMF)
 ```
-
-In the following, the workflow for use case 3 from @Piechotta2021 is presented.
-Data for [use cases 1-3](https://zenodo.org/record/5930729#.YfmTDFvMIUG) can be downloaded to repeat the analysis.
 
 # Non-negative Matrix Factorization
 
@@ -49,7 +44,7 @@ Here, we briefly introduce Non-negative Matrix Factorization (NMF). This section
 
 Non-negative Matrix Factorization tries to find an approximation of:
 $$X \approx W H$$,
-where
+where:
 
 * $X$ is a non-negative $n \times p$ matrix,
 * $W$ is a non-negative $n \times r$ matrix (basis matrix), and
@@ -67,27 +62,39 @@ Use `read_result` to read JACUSA2 output and filter the data set.
 
 To repeat the Nanopore analysis from @Piechotta2021, download the following data:
 
-* [WT100 vs. WT0](https://zenodo.org/record/5940218/files/WT100_vs_WT0_call2_result.out.gz?download=1).
 * [WT vs. KO](https://zenodo.org/record/5940218/files/WT_vs_KO_call2_result.out.gz?download=1) and
+* [WT100 vs. WT0](https://zenodo.org/record/5940218/files/WT100_vs_WT0_call2_result.out.gz?download=1).
 
 Depending on your bandwidth the Download might take some time.
+Download the data, start R and change into the directory where you have saved the files from zenodo.
 Make sure, you have approx. 20GB of main memory available.
 
 ## Pre-processing
 
-At the beginning we organize the data:
+We start to organize the data:
+
 ```{r}
 # files to read
 files <- c(
-  "/storage/zenodo/use_case3/WT_vs_KO_call2_result.out.gz",
-  "/storage/zenodo/use_case3/WT100_vs_WT0_call2_result.out.gz"
+  "WT_vs_KO_2samp_RC22_call2_result.out.gz",
+  "WT100_vs_WT0_RC22_call2_result.out.gz"
 )
 
 # descriptions corresponding to files 
 meta_conds = c(
+  #"Exp1",
+  #"Exp2"
   "WT_vs_KO",
   "WT100_vs_WT0"
 )
+```
+
+```{r, include = FALSE}
+files <- c(
+  "/home/michael/TODO/JACUSA2helper/WT_vs_KO_2samp_RC22_call2_result.out.gz",
+  "/home/michael/TODO/JACUSA2helper/WT100_vs_WT0_RC22_call2_result.out.gz"
+)
+setwd("/home/michael/TODO/JACUSA2helper/")
 ```
 
 `meta_conds` is used as a concise description of each file to distinguish the JACUSA2 outputs.
@@ -103,9 +110,6 @@ Filter
 Add meta condition
 : Add concise description of each file.
 
-Unpack and add info
-: Unpack specific info data and add.
-
 Reduce
 : Select relevant data column.
 
@@ -120,31 +124,42 @@ This approach will consume much more main memory. We recommend to read big data 
 -->
 
 ### Read 
+
 The underlying function of `read_result` is `data.table::fread` - check the respective help page for details on additional options.
 Depending on your machine increase `nThreads` to use more threads to parse a file.
+
+The "info" field contains meta information for sites, such as detailed INDEL statistics.
+To save memory, we manually unpack the "info" field and select the following keys:
+
+* `insertion_score` and 
+* `deletion_score`.
+
+We will use these score values during model training.
 
 ```{r}
 i <- 1 # WT_vs_KO
 print(files[i])
 print(meta_conds[i])
 
-wt_vs_ko_res <- read_result(files[i], nThread = 1)
+wt_vs_ko_res <- read_result(files[i], nThread = 2, unpack = c("insertion_score", "deletion_score"))
 ```
 
 ### Filter
-We use the following filters:
 
-* retain sites with "A" in the reference,
-* retain sites on chromosome 1-22, and X, and
-* remove sites that are within homopolymers (JACUSA2 filter flag: "Y").
+The JACUSA2 output files from Zenodo have been already filtered to retain sites with coverage $> 4$ in all BAM files.
+
+We use the following filter:
+
+* retain sites on chromosome 1-22, MT, and X.
 
 ```{r}
 print(paste0("Sites BEFORE filtering: ", length(wt_vs_ko_res)))
 
+# reduce set of known sequences
+seqlevels(wt_vs_ko_res, pruning.mode = "coarse") <- c(1:22, "MT", "X")
+
 wt_vs_ko_filtered <- wt_vs_ko_res %>% filter(
-    ref == "A",
-    seqnames %in% c(as.character(1:22), "X"),
-    ! grepl("Y", filter, fixed = TRUE)
+    seqnames %in% c(as.character(1:22), "MT", "X")
 )
 
 print(paste0("Sites AFTER filtering: ", length(wt_vs_ko_filtered)))
@@ -155,105 +170,96 @@ print(paste0("Sites AFTER filtering: ", length(wt_vs_ko_filtered)))
 We add a concise description of files to each result object.
 
 ```{r}
-wt_vs_ko_filtered$meta_cond <- factor(meta_conds[1], meta_conds)
+mcols(wt_vs_ko_filtered)$meta_cond <- factor(meta_conds[1], meta_conds)
 
 table(wt_vs_ko_filtered$meta_cond)
 ```
 
 `WT100_vs_WT0` is zero because we haven't added the respective file yet.
 
-### Add specific info
+#### Add reference sequence information
 
-The "info" field contains meta information for sites, such as detailed INDEL statistics.
-To save memory, we manually unpack the "info" field and select the following keys:
-
-* "insertion_score" and 
-* "deletion_score".
-
-We will use these values during model training.
+Sequence lengths are necessary to check if coordinates are valid. 
+Initially, a JACUSA2 result object has no information about the underlying reference sequence.
 
 ```{r}
-unpacked_info <- unpack_info(
-    wt_vs_ko_filtered$info, 
-    cond_count = 2, 
-    keys=c("insertion_score", "deletion_score")
-  )
-
-# append specific info
-mcols(wt_vs_ko_filtered) <- cbind(mcols(wt_vs_ko_filtered), unpacked_info)
+seqlengths(wt_vs_ko_res)
 ```
 
-### Reduce
+We can either specify the genome (see `?GenomeInfoDb::seqinfo`) or 
+add reference sequence information with `seqlengths()`:
+```{r}
+# load the package that corresponds to your genome
+library("BSgenome.Hsapiens.NCBI.GRCh38")
 
-We continue to reduce the data set by selecting only relevant columns and renaming "score" column to "call2_score" for consistency: 
+seqlengths(wt_vs_ko_res) <- seqlengths(BSgenome.Hsapiens.NCBI.GRCh38)[names(seqlengths(wt_vs_ko_res))]
+seqlengths(wt_vs_ko_res)
+```
+
+### Create matrix $X$
+
+We continue to reduce the data set by selecting only relevant columns and renaming the "score" column to "call2_score" for consistency: 
+Given a JACUSA2 result object, the function `creata_data()` will create a data matrix, that will be used in NMF. 
+In brief, relevant score columns are rearranged and a region or context around each Adenin site is created.
 
 ```{r}
-print(
-  paste0(
-    "Dimensions BEFORE reduction: ", 
-    paste0(dim(mcols(wt_vs_ko_filtered)), collapse = ", ")
-  )
-)
+data_matrix = create_data(wt_vs_ko_filtered)
+data_matrix[is.na(data_matrix)] <- 0
+data_matrix[data_matrix < 0] <- 0
 
-mcols(wt_vs_ko_filtered) <- mcols(wt_vs_ko_filtered)[c("meta_cond", "score", "insertion_score", "deletion_score")]
-colnames(mcols(wt_vs_ko_filtered))[colnames(mcols(wt_vs_ko_filtered)) == "score"] <- "call2_score"
-
-print(
-  paste0(
-    "Dimensions AFTER reduction: ", 
-    paste0(dim(mcols(wt_vs_ko_filtered)), collapse = ", ")
-  )
-)
+head(data_matrix)
 ```
+
 This operation concludes the pre-processing workflow for one file.
+
+```{r, include=FALSE}
+rm(list = c("wt_vs_ko_res", "wt_vs_ko_filtered"))
+```
 
 ### Generalize
 
 So far, we have shown a detailed description of pre-processing one file. 
-In the following, we provide code for arbitrary number of results and meta conditions:
+In the following, we provide code for arbitrary number of results/experiments/meta conditions:
 
 ```{r}
 # pre-processing workflow for arbitrary number of files and meta conditions
 results <- mapply(function(file, meta_cond) {
-    result <- read_result(file, nThread = 1) %>%
-      filter(
-        ref == "A",
-        ! grepl("Y", filter, fixed = TRUE),
-        seqnames %in% c(as.character(1:22), "X")
-      )
-    # add file specific condition
-    result$meta_cond <- factor(meta_cond, meta_conds)
+    result <- read_result(file, nThread = 3, unpack = c("insertion_score", "deletion_score")) %>%
+      filter(seqnames %in% c(as.character(1:22), "MT", "X"))
 
-    # unpack specific info
-    unpacked_info <- unpack_info(
-      result$info, 
-      cond_count = 2, 
-      keys=c("insertion_score", "deletion_score")
-    )
-    # add specific info
-    mcols(result) <- cbind(mcols(result), unpacked_info)
-    
-    # select relevant data 
-    mcols(result) <- mcols(result)[c("meta_cond", "score", "insertion_score", "deletion_score")]
-    colnames(mcols(result))[colnames(mcols(result)) == "score"] <- "call2_score"
+    seqlevels(result, pruning.mode = "coarse") <- c(1:22, "MT", "X")
+    result <- result[, c("score", "insertion_score", "deletion_score", "filter", "ref")]
+
+    # add file specific condition
+    mcols(result)$meta_cond <- factor(meta_cond, meta_conds)
 
     return(result)
-  }, files, meta_conds, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+  }, files, meta_conds, SIMPLIFY = FALSE, USE.NAMES = FALSE
+)
+```
 
+We need to convert `results` to a GRanges object and we add sequence information.
+
+```{r}
 # convert and concatenate GenomicRanges
 results <- unlist(GRangesList(results))
 
-# filtered sites per file / meta condition
+# add reference sequence information
+seqlengths(results) <- seqlengths(BSgenome.Hsapiens.NCBI.GRCh38)[names(seqlengths(results))]
+
+# retained sites per file / meta condition
 table(results$meta_cond)
 ```
 
-`results` now consists of locations and scores for sites from all `files` and `meta_conds`.
+`results` now consists of filtered JACUSA2 calls for sites from all `files` and `meta_conds`.
+
+The overlap of called sites from each experiment can be investigated with the following:
 
 ```{r}
 # add unique ID for a site: contig:start-end:strand
-results$id <- JACUSA2helper::id(results)
+results$id <- as.character(results)
 
-# venndiagram of sites shared betwen files
+# venn diagram of sites that are shared between files
 meta_cond_plt <- venn.diagram(
   tapply(results$id, results$meta_cond, c),
   filename = NULL,
@@ -268,98 +274,62 @@ grid.newpage()
 grid.draw(meta_cond_plt)
 ```
 
-## Calculating overlapping regions
-
-We extend the coordinates of a site by 2nt in each direction:
-```{r}
-extended_sites <- extend(results, left=2, right=2)
-
-unique_regions <- unique(extended_sites)
-```
-
-`unique_regions` consists now of 5nt wide coordinates around all sites with the site (-NN**A**NN-) positioned in the middle (= position 3).
-We calculate the position of each site in overlapping `unique_regions`:
-
-```{r}
-# compute overlap
-hits <- findOverlaps(results, unique_regions)
-# corresponding overlap in ...
-overlap_regions <- unique_regions[subjectHits(hits)]
-# and ...
-overlap_results <- results[queryHits(hits)]
-
-# coordinates of overlapping region: contig:start-end:strand
-# bin sites in unique_regions
-overlap_results$region <- paste0(
-  seqnames(overlap_regions), ":",
-  start(overlap_regions), "-", end(overlap_regions), ":",
-  strand(overlap_regions)
-)
-
-# add site position within extended region
-overlap_results$position <- start(overlap_results) - start(overlap_regions) + 1
-
-barplot(
-  table(overlap_results$position),
-  xlab = "position of site within a motif\n(original site position is 3)",
-  ylab = "Number of sites with score(s)",
-  names.arg = c("1\n-N", "2\nN", "3\nA", "4\nN", "5\nN-")
-)
-```
-
 ## Create data matrix
 
-The pre-processing is almost done, the data frame should contain the following columns:
+We use `create_data()` to create the data matrix that will be used to learn the model. 
+We add a context of 2nt around each site creating a region (-NN**A**NN-) where the putative modification site is positioned in the middle (= position 3) of the motif. Internally, `create_data()` removes sites that are within homopolymers (JACUSA2 filter flag: "Y").
+Each column name of the data matrix has the following format: `{meta_cond}_{score}_{position}`, where:
+
+`meta_cond`
+: 
+is meta condition information ($meta_cond \in {WT_vs_KO, WT100_vs_WT}$)
+`score`
+: 
+type of score $score \in {call2, insertion, or deletion}$
+`position`
+: 
+position information within the region ($position \in {1, ..., 5}$).
 
 ```{r}
-mcols(overlap_results)
-```
-
-Use `tidyr::pivot_wider` to create a data matrix:
-
-```{r}
-data_matrix <- mcols(overlap_results) %>% 
-  as.data.frame() %>%
-  tidyr::pivot_wider(
-    id_cols = region, 
-    names_from = c(meta_cond, position), 
-    values_from = c(call2_score, insertion_score, deletion_score), 
-    names_glue = "{meta_cond}_{.value}_{position}",
-    names_sort = TRUE,
-    values_fill = 0.0
-  )
+data_matrix <- create_data(results)
 
 # set sensible defaults
 data_matrix[is.na(data_matrix)] <- 0
 data_matrix[data_matrix < 0] <- 0
-
-colnames(data_matrix)
 ```
 
-The columns of the data matrix correspond to scores for each meta condition and corresponding position in the motif, e.g. "WT_vs_KO_call2_score_4":
-WT_vs_KO
-: Meta condition.
-call2_score
-: score that indicates if base composition between condition is different.
-4
-: Position within motif
+Next, we filter the data matrix and require that each region has to be covered in both experiments.
 
-We will continue adding meta information to the data matrix.
+```{r}
+# contains score sum for each meta condition
+score_sums <- rowsum(
+  t(data_matrix),
+  strcapture(
+    paste0("^(", paste0(meta_conds, collapse = "|"), ")"), 
+    colnames(data_matrix), 
+    data.frame(meta_cond = character())
+  )$meta_cond
+) %>% t()
+
+# score sum must be > 0 in all experiments
+keep <- rowSums(score_sums > 0) == length(meta_conds)
+data_matrix <- data_matrix[keep, ]
+```
+
+We will continue adding meta information to the data matrix to study the properties of sites.
 
 ### Add sequence
 
-In order to add information if a site is contained in a DRACH motif, we need to retrieve sequence information for
-the overlapping `unique_regions` of a site.
+In order to add information if a site is contained in a DRACH motif, we need to retrieve the sequence context for a site.
 
 If you have a custom FASTA sequence, use `Rsamtools::FaFile` to load the FASTA file.
 Otherwise, load a genome from via [BSgenome](https://bioconductor.org/packages/release/bioc/html/BSgenome.html).
 
 ```{r}
-library("BSgenome.Hsapiens.NCBI.GRCh38")
-
 # retrieve sequence and convert to character vector
-data_matrix$motif <- getSeq(BSgenome.Hsapiens.NCBI.GRCh38, GRanges(data_matrix$region)) %>% 
-  as.character() %>% unname()
+data_matrix$motif <- getSeq(BSgenome.Hsapiens.NCBI.GRCh38, GRanges(rownames(data_matrix))) %>% 
+  as.character() %>% 
+  unname()
 
 # number of top 10 motifs
 sort(table(data_matrix$motif), decreasing = TRUE)[1:10]
@@ -368,11 +338,11 @@ sort(table(data_matrix$motif), decreasing = TRUE)[1:10]
 Next, we add an indicator variable if the DRACH motif ([AGT][AG]AC[ACT]) is present:
 
 ```{r}
-data_matrix$DRACH <- 0
-data_matrix$DRACH[grep("[AGT][AG]AC[ACT]", data_matrix$motif)] <- 1
+data_matrix$DRACH <- "no"
+data_matrix$DRACH[grep("[AGT][AG]AC[ACT]", data_matrix$motif)] <- "yes"
 
 tbl <- table(data_matrix$DRACH)
-names(tbl) <- recode(names(tbl), "0" = "no", "1" = "yes")  %>% 
+names(tbl) <- names(tbl) %>% 
   paste0(
     " (", 
     paste0(
@@ -384,35 +354,34 @@ names(tbl) <- recode(names(tbl), "0" = "no", "1" = "yes")  %>%
   )
 
 # plot distribution of DRACH motifs
-pie(tbl, main="DRACH motif present")
+pie(tbl, mai = "DRACH motif present")
 ```
 
-Use `saveRDS(data_matrix, file = "data_matrix")` to store the current state.
-Use `data_matrix <- readRDS("data_matrix")` to restore previous state.
+Use `saveRDS(data_matrix, file = "data_matrix.rds")` to store the current state.
+Use `data_matrix <- readRDS("data_matrix.rds")` to restore previous state.
 
 # Use NMF on Nanopore data
 
 ## Overlap with miCLIP data
 
-Next, we need miCLIP data to extract m6A sites from the data matrix:
+Next, we use existing miCLIP data to train the model.
 
-* Boulias,
-* Koertel, and
-* Koh.
+The data can be investigated with: `data(m6a_miclip)`. It consists of 3 experiments:
 
-We use sites that are present in all three data sets.
+* @koh_atlas_2019,
+* @boulias_identification_2019, and
+* @kortel_deep_2021.
 
-The column "region" corresponds to the extended sites around identified miCLIP sites.
-Make sure that "region" is 1-indexed if you use your own annotation.
+The column "experiments" indicates the source of a site.
 
-```{r}
-head(miclip)
-```
+Plot venn diagram of shared CLIP sites:
 
 ```{r}
-# plot venn diagram of shared CLIP sites
-miclip_plt <- tidyr::separate_rows(miclip[c("overlap", "region")], overlap) %>% 
-  with(tapply(region, overlap, list)) %>%
+miclip_plt <- m6a_miclip %>%
+  mutate(site = as.character(.)) %>%
+  as.data.frame() %>%
+  tidyr::separate_rows(experiments) %>%
+  with(tapply(site, experiments, list)) %>%
   venn.diagram(
     filename = NULL,
     lwd = 1,
@@ -421,102 +390,94 @@ miclip_plt <- tidyr::separate_rows(miclip[c("overlap", "region")], overlap) %>%
     cat.cex = 0.9,
     cat.default.pos = "outer",
     cat.fontfamily = "sans",
-)
+  )
 grid.newpage()
 grid.draw(miclip_plt)
 ```
 
-Intersect regions and create feature matrix (corresponds to $X$ in $N \approx W H$) of sites that are contained in all three data sets: Boulias, Koertel, and Koh.
-NMF requires the matrix to consist only of numeric and non-negative values:
+We add miCLIP information to `data_matrix`:
 
 ```{r}
-# retain sites that overlap with miCLIP and remove non-numeric columns
-feature_matrix <- data_matrix[data_matrix$region %in% miclip[miclip$overlap == "Boulias,Koertel,Koh", "region"], ] %>% 
-  as.data.frame()
-rownames(feature_matrix) <- feature_matrix$region
+data(m6a_miclip)
 
-# remove non-numeric columns
-feature_matrix <- select(feature_matrix, -region, -motif, -DRACH)
+# Add region around site to miCLIP data
+m6a_miclip_region <- extend(m6a_miclip, left = 2, right = 2)
+m6a_miclip_region$experiments <- m6a_miclip$experiments
 
-feature_matrix
+miclip_covered <- subsetByOverlaps(
+  m6a_miclip_region,
+  GRanges(rownames(data_matrix)),
+  type = "equal"
+)
+data_matrix$experiments <- "-"
+data_matrix[as.character(miclip_covered), "experiments"] <- miclip_covered$experiments
+
+table(data_matrix$experiments)
+```
+
+Next, we create the data matrix (corresponds to $X$ in $N \approx W H$) of sites that are contained in all three data sets: Boulias, Koertel, and Koh. It will be used to learn the modification patterns:
+
+```{r}
+# retain sites that overlap with 3 miCLIP experiments
+
+keep <- data_matrix$experiments == "Boulias,Koertel,Koh"
+train_matrix <- data_matrix[keep, ]
+
+table(train_matrix$DRACH)
 ```
 
 ## Compute factorizaion rank(s)
 
-An important parameter in NMF is the factorization rank $r$ that defines the number of features to approximate $X$ - a similar parameter like the number of clusters in the k-means algorithm. We will compute multiple factorizations with different values for $r$ and use a surrogate measure to find an appropriate value.
+An important parameter in NMF is the factorization rank $r$ that defines the number of features to approximate $X$ - a similar parameter such as the number of clusters in the k-means algorithm. We will compute multiple factorizations with different values for $r$ and use surrogate measures to find an appropriate value.
 
-Make sure that the feature matrix ($X$) contains only numeric values before you start the factorization of $X$ to $W H$.
+Make sure that the data/train matrix ($X$) contains only numeric values before you start the factorization of $X$ to $W H$.
+The functions that does the calculations in JACUSA2helper is `nmf_learn(x, mods)`, where `x` is the data/train matrix and mods is a GRanges object of known modifications.
+
+Internally, JACUSA2helper uses the NMF package. 
 Check [NMF vignette](https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf) for details on parameters.
-For example argument `.opt=pv3` insructs to use for 3 cores - adjust the number according to your machine.
+The default parameters in JACUSA2helper are set to `nmf_args = list(rank = 2:10, nrun = 10, seed = 123456, .opt = "vp4")`.
+For example argument `.opt=pv3` instructs to use 3 cores - adjust the number according to your machine.
 
-Here, we will compute factorizations for $r \in {2, ..., 10}$:
+When using the default parameters, factorizations for rank $r \in {2, ..., 10}$ will be computed:
 
 ```{r,warning=FALSE,message=FALSE}
-library(NMF)
-nmfSeed('nndsvd')
-
-estim.r <- nmf(feature_matrix, rank = 2:10, nrun = 10, seed = 123456, .opt = 'vp3')
+nmf_results <- learn_nmf(
+  train_matrix %>% select(-c(motif, DRACH, experiments))
+)
 ```
+
+The result `nmf_results` is a list that consists of the following data:
+
+`estim_r`
+: Factorizations for `x`
+`nmf_matrix`
+: Factorization of `x` with `r` that maximizes `estim_r$measures$silhouette.consensus` and `estim_r$measures$cophenetic`
+`chosen_rank`
+: Optimal rank
+`chosen_pattern`
+: The pattern that has the highest score
+
+In the next steps, we will evaluate the learned model by comparing it against a null model.
 
 ### Visualize estimation of the ranks
 
-In the following, we will compare the results for different $r$ on our original and randomized data (use default NMF algorithm):
+We permutate the initial data and learn a randomized model:
 
 ```{r,warning=FALSE,message=FALSE}
-# randomize original data
-V.random <- randomize(feature_matrix)
+nmf_random <- learn_nmf(
+  train_matrix %>% 
+    select(-c(motif, DRACH, experiments)) %>%
+    randomize()
+)
+```
 
-# calculate factorization on randomized data
-estim.r.random <- nmf(V.random, rank = 2:10, nrun=10, seed = 123456, .opt='vp3')
+In the following, we will compare the results for different factorizations on the original and randomized data:
 
+```{r,warning=FALSE,message=FALSE}
 # compare factorization on original and randomized data
-plot(estim.r, estim.r.random)
+plot(nmf_results$estim_r, nmf_random$estim_r)
 ```
-
-### Choose factorization rank
-
-```{r}
-DeltaSil <- estim.r$measures$silhouette.consensus - estim.r.random$measures$silhouette.consensus
-DeltaCoph <- estim.r$measures$cophenetic - estim.r.random$measures$cophenetic
-
-# how can we select factorization rank ?
-ChoseRank <- min(
-  which(DeltaSil == max(DeltaSil)) + 1,
-  which(DeltaCoph == max(DeltaCoph)) + 1
-)
-```
-
-Plot distribution of surrogate scores to select an appropriate factorization range $r$.
-
-```{r}
-val_matrix <- matrix(0, nrow = length(DeltaCoph), ncol = 2)
-val_matrix[, 1] <- DeltaSil 
-val_matrix[, 2] <- DeltaCoph
-
-barplot(
-  t(val_matrix), 
-  names.arg = 2:(length(DeltaCoph) + 1), 
-  beside = TRUE, 
-  col = c("#009E73", "#D55E00"), 
-  legend.text = c("Silhouette", "Cophenetic"),
-  ylim = range(
-    pretty(c(0, DeltaSil))), 
-  xlab = "Rank", 
-  ylab = "Delta", 
-  main = "Difference between original and randomized data",
-  cex.names=2,
-  cex.axis=2
-)
-abline(h = c(max(DeltaSil), max(DeltaCoph)), col = c("#009E73", "#D55E00"))
-```
-
-Compute factorization with chosen rank.
-
-```{r,warning=FALSE,message=FALSE}
-nmf_matrix <- nmf(feature_matrix, ChoseRank, nrun=10, seed=123456, .opt='vp3')
-```
-
-Use `saveRDS(nmf_matrix, file="nmf_matrix")` to store final result.
+The optimal value of $r$ is the minimum rank for which rank `Silhouette` and `Cophenetic` is maximized.
 
 ## Visualize NMF
 
@@ -525,20 +486,21 @@ Use `saveRDS(nmf_matrix, file="nmf_matrix")` to store final result.
 Plot properties of $W$.
 
 ```{r}
-basismap(nmf_matrix)
+basismap(nmf_results$nmf_matrix)
 ```
+
 ### Mixture components
 
 Plot properties of $H$.
 
 ```{r}
-coefmap(nmf_matrix)
+coefmap(nmf_results$nmf_matrix)
 ```
 
 ## Visualize patterns
 
 ```{r}
-w <- basis(nmf_matrix)
+w <- basis(nmf_results$nmf_matrix)
 # Table of number of best hits for each pattern"
 pattern_instances <- apply(w, 1, function(x) {
     which(x == max(x))
@@ -556,14 +518,20 @@ barplot(
 )
 ```
 
+From this plot, we see that the highest score can observed for pattern:
+
+```{r}
+nmf_results$chosen_pattern
+```
+
 Next, we visualize the sequence logos that correspond to calculated patterns in NMF.
 
 ```{r,warning=FALSE,message=FALSE}
-h <- coef(nmf_matrix)
+h <- coef(nmf_results$nmf_matrix)
 
 sequences <- lapply(1:nrow(h), function(k) {
-  region_index <- data_matrix$region %in% names(which(pattern_instances == k))
-  return(data_matrix[region_index, "motif"]$motif)
+  region_index <- rownames(train_matrix) %in% names(which(pattern_instances == k))
+  return(train_matrix[region_index, "motif"])
 })
 names(sequences) <- paste0("Pattern ", 1:nrow(h))
 ggseqlogo::ggseqlogo(sequences)
@@ -577,7 +545,8 @@ as.data.frame(h) %>%
   tidyr::pivot_longer(
     -pattern, 
     names_to = c("Exp", "Score", "Pos"), 
-    names_pattern = "(WT_vs_KO|WT100_vs_WT0)_(call2_score|deletion_score|insertion_score)_([1-5]+)") %>% 
+    names_pattern = "(WT_vs_KO|WT100_vs_WT0)_(call2_score|deletion_score|insertion_score)_([1-5]+)"
+  ) %>% 
   mutate(score = gsub("_score$", "", Score)) %>% 
   ggplot(aes(x = Pos, y = value, fill = Score)) + 
     geom_bar(stat = "identity") + 
@@ -588,84 +557,146 @@ as.data.frame(h) %>%
 
 ## Prediction
 
-We evaluate the factorization on miCLIP data from 3 experiments.
+We evaluate the factorization on the previously introduced miCLIP data. We use all sites.
+WARNING! Make sure that the order of columns is correct - use `create_data()`.
 
 ```{r}
-score_matrix <- select(data_matrix, starts_with("WT_")) %>% 
-  as.matrix()
-score_matrix <- score_matrix %*% t(h)[colnames(score_matrix), ]
-colnames(score_matrix) <- paste0("NMF", 1:nrow(h))
-
-score_matrix <- cbind(score_matrix, data_matrix[, c("region", "motif", "DRACH")])
-rownames(score_matrix) <- score_matrix$region
+score_matrix <- predict_mods(
+  data_matrix %>% select(-c(motif, DRACH, experiments)), 
+  nmf_results
+)
 ```
+
+`score_matrix` consists of columns scores for each pattern and the `score` for the chosen pattern (in this case: `NMF5` = `score`).
+We add meta information from `data_matrix` to `score_matrix`.
+```{r}
+score_matrix <- cbind(score_matrix, data_matrix[, c("motif", "DRACH", "experiments")])
+
+head(score_matrix)
+```
+
+Sort `score_matrix` by column `score` - the best predictions will appear in the upper part of matrix.
 
 ## Evaluation
 
 ```{r}
-# combine score and miCLIP data
-data <- merge(score_matrix, miclip[, c("region", "overlap")], by = "region", sort = TRUE)
+score_matrix$clip <- if_else(score_matrix$experiments != "-", "CLIP", "No Clip")
+score_matrix$type <- "-"
 
-data$clip <- if_else(data$overlap == "Boulias,Koertel,Koh", "CLIP", "No Clip")
+train <- score_matrix$experiments == "Boulias,Koertel,Koh"
+score_matrix$type[train] <- "train"
+score_matrix$type[!train] <- "evaluate"
 
-table(data$clip)
+table(score_matrix$clip, score_matrix$type)
 ```
-
-### Empirical distribution
-
-Plot empirical distribution of scores for each pattern
 
 ```{r}
-tidyr::gather(data, feature, score, starts_with("NMF")) %>%
-  ggplot(aes(x = score, color = clip)) +
-    stat_ecdf() +
-    theme_bw() +  
-    ylab("") +
-    scale_color_discrete(name = "") + 
-    theme(
-      axis.title.x = element_text(size = rel(2)),
-      axis.title.y = element_text(size = rel(2)),
-      axis.text = element_text(size = rel(1.5))
-    ) + 
-    facet_wrap(~ feature)
+test_matrix <- score_matrix[score_matrix$type == "evaluate", ]
+r <- roc(
+  ifelse(test_matrix[, "clip"] == "CLIP", 1, 0), 
+  test_matrix[, "score"]
+)
 ```
 
-### Plot positive predictive value
+```{r}
+coordinates <- coords(r, x = "all", input = "threshold", ret = c("threshold","ppv","tpr","tp", "tn","fp","fn"))
+coordinates$sum <- log2(coordinates$tp + coordinates$fp)
+coordinates$ppv <- coordinates$ppv * 20
+coordinates <- coordinates[which(coordinates$sum > log2(10)),]
+```
 
-```{r,warning=FALSE,message=FALSE}
-roc_values <- lapply(select(data, starts_with("NMF")), function(x) { 
-    roc(data$clip, x)
-  }
-) %>%
-  lapply(function(x) { 
-    coordinates <- coords(x, x = "all", input = "threshold", ret = c("threshold", "ppv", "tpr", "tp", "tn", "fp", "fn"))
-    coordinates$sum <- log2(coordinates$tp + coordinates$fp)
-    coordinates$ppv <- coordinates$ppv * 20
-    
-    return(coordinates)
-  }
-) %>%
-  dplyr::bind_rows(.id = "feature")
-
-# plot
-ggplot(roc_values, aes(x = threshold)) +
-  geom_line(aes(y = sum), size = 2, color = "#009E73") +
+```{r}
+ggplot(coordinates, aes(x = threshold)) +  
+  geom_line(aes(y = sum), size = 2, color = "#009E73") + 
   geom_line(aes(y = ppv), size = 2, color = "#D55E00") +
-  scale_y_continuous(# Features of the first axis
-    name = "Log2(#predictions)",
+  scale_y_continuous(
+    # Features of the first axis
+    name = "Log2(#predicted modified)",
     # Add a second axis and specify its features
-    sec.axis = sec_axis( ~ . * 5, name = "Positive Predictive Value")
+    sec.axis = sec_axis(~.*5, name = "PPV (miCLIP)")
   ) +  
-  scale_x_continuous(name = "Cutoff") + 
-  theme_bw() + 
+  scale_x_continuous(name = "JACUSA2 NMF Score") + 
+  theme_bw() +
   theme(
-    axis.title.x = element_text(size = rel(2)),
+    axis.title.x = element_text(size = rel(2)),      
     axis.title.y = element_text(color = "#009E73", size = rel(2)),
-    axis.title.y.right = element_text(color = "#D55E00", size = rel(0.9)),
+    axis.title.y.right = element_text(color = "#D55E00", size = rel(0.9)), 
     axis.text = element_text(size = rel(1.5))
-  ) + 
-  facet_wrap(~ feature)
+  )
+```
+
+# Prediction on 1 experiment
+
+```{r}
+t_h <- coef(nmf_results$nmf_matrix) %>%
+  t() %>%
+  as.data.frame()
+
+t_h$score_types <- gsub(paste0("(", meta_conds, ")_", collapse = "|"), "", rownames(t_h))
+t_h <- t_h %>% 
+  group_by(score_types) %>%
+  summarise_at(paste0("V", 1:(ncol(t_h) - 1)), mean) %>%
+  select(-score_types) %>%
+  as.matrix()
+```
+
+```{r}
+WT_vs_KO_data <- cbind(
+  data_matrix[, grep("^WT_vs_KO", colnames(data_matrix))],
+  data_matrix[, c("motif", "DRACH", "experiments")]
+)
+WT_vs_KO_data$clip <- if_else(WT_vs_KO_data$experiments != "-", "CLIP", "No Clip")
+WT_vs_KO_data$type <- "-"
+
+train <- WT_vs_KO_data$experiments == "Boulias,Koertel,Koh"
+WT_vs_KO_data$type[train] <- "train"
+WT_vs_KO_data$type[!train] <- "evaluate"
+```
+
+```{r}
+WT_vs_KO_scores <- as.matrix(select(WT_vs_KO_data, -c(motif, DRACH, experiments, clip, type))) %*% t_h
+WT_vs_KO_score <- WT_vs_KO_scores[, nmf_results$chosen_pattern]
+
+WT_vs_KO_scores <- as.data.frame(WT_vs_KO_scores)
+colnames(WT_vs_KO_scores) <- paste0("NMF", 1:ncol(WT_vs_KO_scores))
+WT_vs_KO_scores[["score"]] <- WT_vs_KO_score
+
+WT_vs_KO_scores <- cbind(WT_vs_KO_scores, WT_vs_KO_data[, c("clip", "type")])
+```
+
+```{r}
+WT_vs_KO_test <- WT_vs_KO_scores[WT_vs_KO_scores$type == "evaluate", ]
+WT_vs_KO_roc <- roc(
+  ifelse(WT_vs_KO_test[, "clip"] == "CLIP", 1, 0), 
+  WT_vs_KO_test[, "score"]
+)
+```
+
+```{r}
+WT_vs_KO_coords <- coords(WT_vs_KO_roc, x = "all", input = "threshold", ret = c("threshold","ppv","tpr","tp", "tn","fp","fn"))
+WT_vs_KO_coords$sum <- log2(WT_vs_KO_coords$tp + WT_vs_KO_coords$fp)
+WT_vs_KO_coords$ppv <- WT_vs_KO_coords$ppv * 20
+WT_vs_KO_coords <- WT_vs_KO_coords[which(WT_vs_KO_coords$sum > log2(10)),]
+```
+
+```{r}
+ggplot(WT_vs_KO_coords, aes(x = threshold)) +  
+  geom_line(aes(y = sum), size = 2, color = "#009E73") + 
+  geom_line(aes(y = ppv), size = 2, color = "#D55E00") +
+  scale_y_continuous(
+    # Features of the first axis
+    name = "Log2(#predicted modified)",
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~.*5, name = "PPV (miCLIP)")
+  ) +  
+  scale_x_continuous(name = "JACUSA2 NMF Score") + 
+  theme_bw() +
+  theme(
+    axis.title.x = element_text(size = rel(2)),      
+    axis.title.y = element_text(color = "#009E73", size = rel(2)),
+    axis.title.y.right = element_text(color = "#D55E00", size = rel(0.9)), 
+    axis.text = element_text(size = rel(1.5))
+  )
 ```
 
 # References
-
