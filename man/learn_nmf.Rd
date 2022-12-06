@@ -4,12 +4,10 @@
 \alias{learn_nmf}
 \title{Estimate factorization rank from JACUSA2 output}
 \usage{
-learn_nmf(x, mods = NULL, nmf_args = NULL, nmf_seed = "nndsvd")
+learn_nmf(x, nmf_args = NULL, nmf_seed = "nndsvd")
 }
 \arguments{
 \item{x}{target data to fit, i.e. a matrix-like object - use `create_features()`}
-
-\item{mods}{GRanges object of known modifications sites. Default: NULL.}
 
 \item{nmf_args}{argument to be forward to `NMF::nmf`. @seealso NMF::nmf}
 
