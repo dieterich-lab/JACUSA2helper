@@ -66,5 +66,5 @@ colnames(GenomicRanges::mcols(m6a_miclip)) <- "experiments"
 GenomeInfoDb::seqlengths(m6a_miclip) <- GenomeInfoDb::seqlengths(BSgenome.Hsapiens.NCBI.GRCh38)[names(GenomeInfoDb::seqlengths(m6a_miclip))]
 usethis::use_data(m6a_miclip, overwrite = TRUE, compress = "bzip2")
 
-m6a_nmf <- readRDS("NMF_paper.rds")
-usethis::use_data(m6a_nmf, overwrite = TRUE, compress = "bzip2")
+m6a_nmf_results <- readRDS("nmf_results_paper.rds")
+usethis::use_data(m6a_nmf_results, overwrite = TRUE, compress = "bzip2")

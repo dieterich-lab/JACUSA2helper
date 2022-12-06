@@ -4,12 +4,12 @@
 \alias{predict_mods}
 \title{Predict modifications in JACUSA2 output}
 \usage{
-predict_mods(x, nmf_matrix = NULL)
+predict_mods(x, nmf_results = NULL)
 }
 \arguments{
 \item{x}{target data to fit, i.e. a matrix-like object - use `create_data()`.}
 
-\item{nmf_matrix}{Default: data(m6a_nmf).}
+\item{nmf_results}{Default: data(m6a_nmf_results).}
 }
 \value{
 Score matrix.

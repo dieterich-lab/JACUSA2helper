@@ -591,11 +591,19 @@
 #' 
 #' @docType data
 #' 
-#' @usage data(m6a_nmf)
-#' 
+#' @usage data(m6a_nmf_results)
+#'
+#' @details description of list items:
+#' \itemize{
+#'  \item{"estim_r"}{Factorizations for `x`}
+#'  \item{"nmf_matrix"}{Factorization of `x` with `r` that maximizes `estim_r$measures$silhouette.consensus` and `estim_r$measures$cophenetic`}
+#'  \item{"chosen_rank"}{Optimal rank}
+#'  \item{"chosen_pattern"}{The pattern that has the highest score}
+#' }
+#'
 #' @references Koh CWQ, Goh YT, Goh WSS. Atlas of quantitative single-base-resolution n6-methyl-adenine methylomes. Nat Commun. 2019; 10:5636. https://doi.org/10.1038/s41467-019-13561-z.
 #' @references Boulias K, Toczydłowska-Socha D, Hawley BR, Liberman N, Takashima K, Zaccara S, Guez T, Vasseur J-J, Debart F, Aravind L, Jaffrey SR, Greer EL. Identification of the m, javax.xml.bind.jaxbelement@3155288a, am methyltransferase pcif1 reveals the location and functions of m, javax.xml.bind.jaxbelement@72f29a24, am in the transcriptome. Mol Cell. 2019; 75:631–6438. https://doi.org/10.1016/j.molcel.2019.06.006.
 #' @references Körtel N, Rücklé C, Zhou Y, Busch A, Hoch-Kraft P, Sutandy FXR, Haase J, Pradhan M, Musheev M, Ostareck D, Ostareck-Lederer A, Dieterich C, Hüttelmaier S, Niehrs C, Rausch O, Dominissini D, König J, Zarnack K. Deep and accurate detection of m6a RNA modifications using miclip2 and m6aboost machine learning. Nucleic Acids Res. 2021; 49:92. https://doi.org/10.1093/nar/gkab485.
-#' 
-#' @format a NMFfitX1 object
-"m6a_nmf"
+#'
+#' @format a list with results from NMF
+"m6a_nmf_results"

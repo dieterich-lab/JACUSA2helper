@@ -141,7 +141,7 @@ learn_nmf <- function(x, nmf_args = NULL, nmf_seed = "nndsvd") {
 #'
 #' @importFrom NMF coef
 #' @export
-predict_mods <- function(x, nmf_results = NULL, ) {
+predict_mods <- function(x, nmf_results = NULL) {
   if (is.null(nmf_results)) {
     data(m6a_nmf_results)
     nmf_results <- m6a_nmf_results
