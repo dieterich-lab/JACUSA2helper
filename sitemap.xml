@@ -106,6 +106,9 @@
     <loc>/reference/coverage.html</loc>
   </url>
   <url>
+    <loc>/reference/create_data.html</loc>
+  </url>
+  <url>
     <loc>/reference/expand_tag.html</loc>
   </url>
   <url>
@@ -130,16 +133,31 @@
     <loc>/reference/get_info_keys.html</loc>
   </url>
   <url>
+    <loc>/reference/get_motif.html</loc>
+  </url>
+  <url>
     <loc>/reference/id.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/is_DRACH.html</loc>
+  </url>
+  <url>
     <loc>/reference/lapply_cond.html</loc>
   </url>
   <url>
     <loc>/reference/lapply_repl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/learn_nmf.html</loc>
+  </url>
+  <url>
+    <loc>/reference/m6a_miclip.html</loc>
+  </url>
+  <url>
+    <loc>/reference/m6a_nmf_results.html</loc>
   </url>
   <url>
     <loc>/reference/mapply_repl.html</loc>
@@ -158,6 +176,9 @@
   </url>
   <url>
     <loc>/reference/observed_bc.html</loc>
+  </url>
+  <url>
+    <loc>/reference/predict_mods.html</loc>
   </url>
   <url>
     <loc>/reference/rdd.html</loc>

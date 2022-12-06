@@ -1,11 +1,12 @@
-pandoc: 2.14.2
-pkgdown: 2.0.2
+pandoc: 2.19.2
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   JACUSA2helper-dart-seq: JACUSA2helper-dart-seq.html
   JACUSA2helper-mazf: JACUSA2helper-mazf.html
   JACUSA2helper-meta-condtions: JACUSA2helper-meta-condtions.html
+  JACUSA2helper-nanopore: JACUSA2helper-nanopore.html
   JACUSA2helper: JACUSA2helper.html
   JACUSA2helper-nanopore: web_only/JACUSA2helper-nanopore.html
-last_built: 2022-02-22T07:41Z
+last_built: 2022-12-06T06:26Z
 

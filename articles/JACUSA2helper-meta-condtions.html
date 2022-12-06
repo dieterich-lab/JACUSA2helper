@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">JACUSA2helper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9200</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.9.9.9500</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -60,6 +60,9 @@
     </li>
     <li>
       <a href="../articles/JACUSA2helper-meta-condtions.html">Introduction to meta conditions with JACUSA2helper</a>
+    </li>
+    <li>
+      <a href="../articles/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
     </li>
     <li>
       <a href="../articles/web_only/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
@@ -87,10 +90,12 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Introduction to meta conditions with JACUSA2helper</h1>
-                        <h4 data-toc-skip class="author">Michael Piechotta</h4>
+      <h1 data-toc-skip>Introduction to meta conditions with
+JACUSA2helper</h1>
+                        <h4 data-toc-skip class="author">Michael
+Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-02-22</h4>
+            <h4 data-toc-skip class="date">2022-12-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper-meta-condtions.Rmd" class="external-link"><code>vignettes/JACUSA2helper-meta-condtions.Rmd</code></a></small>
       <div class="hidden name"><code>JACUSA2helper-meta-condtions.Rmd</code></div>
@@ -99,33 +104,54 @@
 
     
     
-<p>See <code><a href="../articles/JACUSA2helper.html">vignette("JACUSA2helper")</a></code> for general description of analysis with JACUSA2helper. For details on JACUSA2, check the <a href="https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf" class="external-link">JACUSA2 manual</a>.</p>
-<p>In the following, the use of meta conditions to combine multiple pairwise comparisons will be shown.</p>
+<p>See <code><a href="../articles/JACUSA2helper.html">vignette("JACUSA2helper")</a></code> for general description of
+analysis with JACUSA2helper. For details on JACUSA2, check the <a href="https://github.com/dieterich-lab/JACUSA2/blob/master/manual/manual.pdf" class="external-link">JACUSA2
+manual</a>.</p>
+<p>In the following, the use of meta conditions to combine multiple
+pairwise comparisons will be shown.</p>
 <div class="section level3">
 <h3 id="meta-condition">Meta condition<a class="anchor" aria-label="anchor" href="#meta-condition"></a>
 </h3>
-<p>JACUSA2helper supports the analysis of several related JACUSA2 result files via <code>results &lt;- read_results(files, meta_conds)</code> where <code>meta_conds</code> is a vector of strings that provides a descriptive name for each file in the vector of strings <code>files</code>.</p>
-<p>Here, we will use the the <span class="citation">Zhou et al. (<a href="#ref-Zhou2018" role="doc-biblioref">2018</a>)</span> data set, where the authors map RNA modification of pseudouridine (<span class="math inline">\(\Psi\)</span>) by chemically modifying pseudouridines with carbodiimide (+CMC) and detecting arrest events that are induced by reverse transcription stops in high-throughput sequencing under 3 different conditions (HIVRT, SIIIMn, and SIIIMg). All three data sets are available in JACUSA2helper via <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>. Additionally, we have compiled combined data sets <code>data(Zhou2018_call2)</code> and <code>data(Zhou2018_rt_arrest)</code> that utilizes meta conditions. Note, that this data has NO replicates!</p>
+<p>JACUSA2helper supports the analysis of several related JACUSA2 result
+files via <code>results &lt;- read_results(files, meta_conds)</code>
+where <code>meta_conds</code> is a vector of strings that provides a
+descriptive name for each file in the vector of strings
+<code>files</code>.</p>
+<p>Here, we will use the the <span class="citation">Zhou et al. (<a href="#ref-Zhou2018" role="doc-biblioref">2018</a>)</span> data set,
+where the authors map RNA modification of pseudouridine (<span class="math inline">\(\Psi\)</span>) by chemically modifying
+pseudouridines with carbodiimide (+CMC) and detecting arrest events that
+are induced by reverse transcription stops in high-throughput sequencing
+under 3 different conditions (HIVRT, SIIIMn, and SIIIMg). All three data
+sets are available in JACUSA2helper via <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code>.
+Additionally, we have compiled combined data sets
+<code>data(Zhou2018_call2)</code> and
+<code>data(Zhou2018_rt_arrest)</code> that utilizes meta conditions.
+Note, that this data has NO replicates!</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">$</span><span class="va">meta_cond</span><span class="op">)</span>
-<span class="co">#&gt; [1] HIVRT    SIIIRTMn SIIIRTMg</span>
-<span class="co">#&gt; Levels: HIVRT SIIIRTMg SIIIRTMn</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">$</span><span class="va">meta_cond</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] HIVRT    SIIIRTMn SIIIRTMg</span></span>
+<span><span class="co">#&gt; Levels: HIVRT SIIIRTMg SIIIRTMn</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="group-by-site-and-other">Group By Site (and other)<a class="anchor" aria-label="anchor" href="#group-by-site-and-other"></a>
 </h4>
-<p>When manipulating a multi <code>results</code> object created by <code><a href="../reference/read_results.html">read_results()</a></code>, it is crucial to distinguish the following files in an analysis pipeline:</p>
+<p>When manipulating a multi <code>results</code> object created by
+<code><a href="../reference/read_results.html">read_results()</a></code>, it is crucial to distinguish the following
+files in an analysis pipeline:</p>
 <ul>
 <li><code>results %&gt;% ... other functions()</code></li>
 <li><code>results %&gt;% dplyr:group_by(results, meta_cond) %&gt;% ... other functions()</code></li>
 </ul>
-<p>The first statement will apply any subsequent functions to ALL sites regardless of the meta condition while the last statement will apply to sites of EACH meta condition!</p>
+<p>The first statement will apply any subsequent functions to ALL sites
+regardless of the meta condition while the last statement will apply to
+sites of EACH meta condition!</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="number-of-sites">Number of sites<a class="anchor" aria-label="anchor" href="#number-of-sites"></a>
 </h3>
-<p>The following statement will determine the number of covered sites per contig and meta condition:</p>
+<p>The following statement will determine the number of covered sites
+per contig and meta condition:</p>
 <!-- TODO
 #```{r}
 #GenomicRanges::mcols(Zhou2018_rt_arrest) %>% as.data.frame() %>%
@@ -134,7 +160,8 @@
 #  dplyr::count()
 #```
 -->
-<p>This statement will determine the number of covered sites per contig regardless of the meta condition:</p>
+<p>This statement will determine the number of covered sites per contig
+regardless of the meta condition:</p>
 <!-- TODO
 #```{r}
 #dplyr::distinct(Zhou2018_rt_arrest, contig, start, end, strand) %>% 
@@ -160,7 +187,10 @@
 <div class="section level2">
 <h2 id="plot">Plot<a class="anchor" aria-label="anchor" href="#plot"></a>
 </h2>
-<p>First, we add a description <code>data_desc</code> of the conditions to the result object. The data sets of <code>Zhou2018</code> have been layout out in such a way that condition 1 and 2 correspond to carbodiimide (+CMC) treatment and control (-CMC), respectively.</p>
+<p>First, we add a description <code>data_desc</code> of the conditions
+to the result object. The data sets of <code>Zhou2018</code> have been
+layout out in such a way that condition 1 and 2 correspond to
+carbodiimide (+CMC) treatment and control (-CMC), respectively.</p>
 <!-- TODO
 #```{r}
 #result <- gather_repl(Zhou2018_rt_arrest$id, Zhou2018_rt_arrest$arrest_rate) %>%
@@ -182,7 +212,12 @@
 #labels <- meta_desc[["data_desc"]]
 #```
 -->
-<p>Next, we define a ggplot2 object that allows to merge legend for different scales. Check <a href="https://ozh2014.wordpress.com/2017/06/26/combine-related-legends-into-one-in-ggplot2/" class="external-link">combine legends</a> for details. In brief, we use <code>colour</code> to represent cond(ition) and <code>linetype</code> to represent repl(icate) an relate their possible combinations to descriptive <code>labels</code>.</p>
+<p>Next, we define a ggplot2 object that allows to merge legend for
+different scales. Check <a href="https://ozh2014.wordpress.com/2017/06/26/combine-related-legends-into-one-in-ggplot2/" class="external-link">combine
+legends</a> for details. In brief, we use <code>colour</code> to
+represent cond(ition) and <code>linetype</code> to represent repl(icate)
+an relate their possible combinations to descriptive
+<code>labels</code>.</p>
 <!--
 #```{r}
 #colour_scale <- ggplot2::scale_colour_manual(
@@ -202,7 +237,8 @@
 <div class="section level3">
 <h3 id="pvalue-distribution">Pvalue distribution<a class="anchor" aria-label="anchor" href="#pvalue-distribution"></a>
 </h3>
-<p>Plot of the empirical cumulative distributions of pvalues for all meta conditions.</p>
+<p>Plot of the empirical cumulative distributions of pvalues for all
+meta conditions.</p>
 <!--
 #```{r}
 result %>% 
@@ -323,7 +359,11 @@ conditions and add Pseudouridine sites (black points).
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Zhou2018" class="csl-entry">
-Zhou, Katherine I., Wesley C. Clark, David W. Pan, Matthew J. Eckwahl, Qing Dai, and Tao Pan. 2018. <span>“Pseudouridines Have Context-Dependent Mutation and Stop Rates in High-Throughput Sequencing.”</span> <em><span>RNA</span> Biology</em> 15 (7): 892–900. <a href="https://doi.org/10.1080/15476286.2018.1462654" class="external-link">https://doi.org/10.1080/15476286.2018.1462654</a>.
+Zhou, Katherine I., Wesley C. Clark, David W. Pan, Matthew J. Eckwahl,
+Qing Dai, and Tao Pan. 2018. <span>“Pseudouridines Have
+Context-Dependent Mutation and Stop Rates in High-Throughput
+Sequencing.”</span> <em><span>RNA</span> Biology</em> 15 (7): 892–900.
+<a href="https://doi.org/10.1080/15476286.2018.1462654" class="external-link">https://doi.org/10.1080/15476286.2018.1462654</a>.
 </div>
 </div>
 </div>
@@ -346,7 +386,7 @@ Zhou, Katherine I., Wesley C. Clark, David W. Pan, Matthew J. Eckwahl, Qing Dai,
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
