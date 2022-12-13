@@ -5,8 +5,10 @@ articles:
   JACUSA2helper-dart-seq: JACUSA2helper-dart-seq.html
   JACUSA2helper-mazf: JACUSA2helper-mazf.html
   JACUSA2helper-meta-condtions: JACUSA2helper-meta-condtions.html
-  JACUSA2helper-nanopore: JACUSA2helper-nanopore.html
   JACUSA2helper: JACUSA2helper.html
   JACUSA2helper-nanopore: web_only/JACUSA2helper-nanopore.html
-last_built: 2022-12-06T06:26Z
+last_built: 2022-12-13T05:58Z
+urls:
+  reference: https://dieterich-lab.github.io/JACUSA2helper/reference
+  article: https://dieterich-lab.github.io/JACUSA2helper/articles
 
