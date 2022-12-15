@@ -78,7 +78,7 @@
                         <h4 data-toc-skip class="author">Michael
 Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-12-13</h4>
+            <h4 data-toc-skip class="date">2022-12-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper.Rmd" class="external-link"><code>vignettes/JACUSA2helper.Rmd</code></a></small>
       <div class="d-none name"><code>JACUSA2helper.Rmd</code></div>
@@ -626,7 +626,7 @@ result object and plot the arrest rate from each condition in a scatter
 plot.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  contig <span class="op">=</span> <span class="fu">seqnames</span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span>,</span>
+<span>  contig <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqnames</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span>,</span>
 <span>  arrest_rate1 <span class="op">=</span> <span class="va">filtered</span><span class="op">$</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond1</span><span class="op">$</span><span class="va">rep1</span>,</span>
 <span>  arrest_rate2 <span class="op">=</span> <span class="va">filtered</span><span class="op">$</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond2</span><span class="op">$</span><span class="va">rep1</span></span>
 <span><span class="op">)</span></span>

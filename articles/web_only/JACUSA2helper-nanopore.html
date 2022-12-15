@@ -78,7 +78,7 @@
                         <h4 data-toc-skip class="author">Christoph
 Dieterich, Michael Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-12-13</h4>
+            <h4 data-toc-skip class="date">2022-12-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/web_only/JACUSA2helper-nanopore.Rmd" class="external-link"><code>vignettes/web_only/JACUSA2helper-nanopore.Rmd</code></a></small>
       <div class="d-none name"><code>JACUSA2helper-nanopore.Rmd</code></div>
@@ -108,7 +108,7 @@ can be downloaded to repeat the analysis.</p>
 This section uses the notation from <a href="https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf" class="external-link">NMF
 vignette</a>.</p>
 <p>Non-negative Matrix Factorization tries to find an approximation of:
-<span class="math display">\[X \approx W H\]</span>, where:</p>
+<span class="math display">\[X \approx W H,\]</span> where:</p>
 <ul>
 <li>
 <span class="math inline">\(X\)</span> is a non-negative <span class="math inline">\(n \times p\)</span> matrix,</li>
@@ -288,7 +288,7 @@ information with <code><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.htm
 </h4>
 <p>We continue to reduce the data set by selecting only relevant columns
 and renaming the “score” column to “call2_score” for consistency: Given
-a JACUSA2 result object, the function <code>creata_data()</code> will
+a JACUSA2 result object, the function <code><a href="../../reference/create_data.html">create_data()</a></code> will
 create a data matrix, that will be used in NMF. In brief, relevant score
 columns are rearranged and a region or context around each Adenin site
 is created.</p>
@@ -297,63 +297,15 @@ is created.</p>
 <span><span class="va">data_matrix</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">data_matrix</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="va">data_matrix</span><span class="op">[</span><span class="va">data_matrix</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data_matrix</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                 WT_vs_KO_call2_score_1 WT_vs_KO_call2_score_2</span></span>
-<span><span class="co">#&gt; 1:14409-14413:-              0.1281011              0.3220266</span></span>
-<span><span class="co">#&gt; 1:14413-14417:-              0.0000000              0.2798460</span></span>
-<span><span class="co">#&gt; 1:14414-14418:-              0.3120128              0.0000000</span></span>
-<span><span class="co">#&gt; 1:14416-14420:-              1.2141860              1.2637003</span></span>
-<span><span class="co">#&gt; 1:14417-14421:-              0.6564440              1.2141860</span></span>
-<span><span class="co">#&gt; 1:14418-14422:-              0.7196735              0.6564440</span></span>
-<span><span class="co">#&gt;                 WT_vs_KO_call2_score_3 WT_vs_KO_call2_score_4</span></span>
-<span><span class="co">#&gt; 1:14409-14413:-              0.1822214              0.7831896</span></span>
-<span><span class="co">#&gt; 1:14413-14417:-              0.2003390              0.2642120</span></span>
-<span><span class="co">#&gt; 1:14414-14418:-              0.2798460              0.2003390</span></span>
-<span><span class="co">#&gt; 1:14416-14420:-              0.3120128              0.0000000</span></span>
-<span><span class="co">#&gt; 1:14417-14421:-              1.2637003              0.3120128</span></span>
-<span><span class="co">#&gt; 1:14418-14422:-              1.2141860              1.2637003</span></span>
-<span><span class="co">#&gt;                 WT_vs_KO_call2_score_5 WT_vs_KO_deletion_score_1</span></span>
-<span><span class="co">#&gt; 1:14409-14413:-              0.0000000               0.000000000</span></span>
-<span><span class="co">#&gt; 1:14413-14417:-              0.1281011               0.000000000</span></span>
-<span><span class="co">#&gt; 1:14414-14418:-              0.2642120               0.014438317</span></span>
-<span><span class="co">#&gt; 1:14416-14420:-              0.2798460               0.165217123</span></span>
-<span><span class="co">#&gt; 1:14417-14421:-              0.0000000               0.005910451</span></span>
-<span><span class="co">#&gt; 1:14418-14422:-              0.3120128               0.758677180</span></span>
-<span><span class="co">#&gt;                 WT_vs_KO_deletion_score_2 WT_vs_KO_deletion_score_3</span></span>
-<span><span class="co">#&gt; 1:14409-14413:-               0.000000000                0.00000000</span></span>
-<span><span class="co">#&gt; 1:14413-14417:-               0.000000000                0.84031855</span></span>
-<span><span class="co">#&gt; 1:14414-14418:-               0.000000000                0.00000000</span></span>
-<span><span class="co">#&gt; 1:14416-14420:-               0.137437351                0.01443832</span></span>
-<span><span class="co">#&gt; 1:14417-14421:-               0.165217123                0.13743735</span></span>
-<span><span class="co">#&gt; 1:14418-14422:-               0.005910451                0.16521712</span></span>
-<span><span class="co">#&gt;                 WT_vs_KO_deletion_score_4 WT_vs_KO_deletion_score_5</span></span>
-<span><span class="co">#&gt; 1:14409-14413:-                0.00000000                0.00000000</span></span>
-<span><span class="co">#&gt; 1:14413-14417:-                0.00000000                0.00000000</span></span>
-<span><span class="co">#&gt; 1:14414-14418:-                0.84031855                0.00000000</span></span>
-<span><span class="co">#&gt; 1:14416-14420:-                0.00000000                0.00000000</span></span>
-<span><span class="co">#&gt; 1:14417-14421:-                0.01443832                0.00000000</span></span>
-<span><span class="co">#&gt; 1:14418-14422:-                0.13743735                0.01443832</span></span>
-<span><span class="co">#&gt;                 WT_vs_KO_insertion_score_1 WT_vs_KO_insertion_score_2</span></span>
-<span><span class="co">#&gt; 1:14409-14413:-                0.000000000                  0.0000000</span></span>
-<span><span class="co">#&gt; 1:14413-14417:-                0.000000000                  0.0000000</span></span>
-<span><span class="co">#&gt; 1:14414-14418:-                1.740745459                  0.0000000</span></span>
-<span><span class="co">#&gt; 1:14416-14420:-                0.164746345                  0.2362655</span></span>
-<span><span class="co">#&gt; 1:14417-14421:-                0.201563909                  0.1647463</span></span>
-<span><span class="co">#&gt; 1:14418-14422:-                0.005369561                  0.2015639</span></span>
-<span><span class="co">#&gt;                 WT_vs_KO_insertion_score_3 WT_vs_KO_insertion_score_4</span></span>
-<span><span class="co">#&gt; 1:14409-14413:-                  0.9737768                  0.3360311</span></span>
-<span><span class="co">#&gt; 1:14413-14417:-                  0.0000000                  0.0000000</span></span>
-<span><span class="co">#&gt; 1:14414-14418:-                  0.0000000                  0.0000000</span></span>
-<span><span class="co">#&gt; 1:14416-14420:-                  1.7407455                  0.0000000</span></span>
-<span><span class="co">#&gt; 1:14417-14421:-                  0.2362655                  1.7407455</span></span>
-<span><span class="co">#&gt; 1:14418-14422:-                  0.1647463                  0.2362655</span></span>
-<span><span class="co">#&gt;                 WT_vs_KO_insertion_score_5</span></span>
-<span><span class="co">#&gt; 1:14409-14413:-                   0.000000</span></span>
-<span><span class="co">#&gt; 1:14413-14417:-                   0.000000</span></span>
-<span><span class="co">#&gt; 1:14414-14418:-                   0.000000</span></span>
-<span><span class="co">#&gt; 1:14416-14420:-                   0.000000</span></span>
-<span><span class="co">#&gt; 1:14417-14421:-                   0.000000</span></span>
-<span><span class="co">#&gt; 1:14418-14422:-                   1.740745</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_matrix</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "WT_vs_KO_call2_score_1"     "WT_vs_KO_call2_score_2"    </span></span>
+<span><span class="co">#&gt;  [3] "WT_vs_KO_call2_score_3"     "WT_vs_KO_call2_score_4"    </span></span>
+<span><span class="co">#&gt;  [5] "WT_vs_KO_call2_score_5"     "WT_vs_KO_deletion_score_1" </span></span>
+<span><span class="co">#&gt;  [7] "WT_vs_KO_deletion_score_2"  "WT_vs_KO_deletion_score_3" </span></span>
+<span><span class="co">#&gt;  [9] "WT_vs_KO_deletion_score_4"  "WT_vs_KO_deletion_score_5" </span></span>
+<span><span class="co">#&gt; [11] "WT_vs_KO_insertion_score_1" "WT_vs_KO_insertion_score_2"</span></span>
+<span><span class="co">#&gt; [13] "WT_vs_KO_insertion_score_3" "WT_vs_KO_insertion_score_4"</span></span>
+<span><span class="co">#&gt; [15] "WT_vs_KO_insertion_score_5"</span></span></code></pre></div>
 <p>This operation concludes the pre-processing workflow for one
 file.</p>
 </div>
@@ -515,6 +467,12 @@ previous state.</p>
 <div class="section level2">
 <h2 id="use-nmf-on-nanopore-data">Use NMF on Nanopore data<a class="anchor" aria-label="anchor" href="#use-nmf-on-nanopore-data"></a>
 </h2>
+<p>The learning part can be omitted. Use
+<code>data(m6a_nmf_results)</code> from <span class="citation">Piechotta
+et al. (<a href="#ref-Piechotta2021" role="doc-biblioref">2021</a>)</span> and and continue to <a href="#visualize-nmf">Visualize NMF</a>.</p>
+<p>Continue reading <a href="#overlap-with-miclip-data">Overlap with
+miCLIP data</a>, to understand how object <code>m6a_nmf_results</code>
+can be created.</p>
 <div class="section level3">
 <h3 id="overlap-with-miclip-data">Overlap with miCLIP data<a class="anchor" aria-label="anchor" href="#overlap-with-miclip-data"></a>
 </h3>
@@ -523,12 +481,12 @@ previous state.</p>
 consists of 3 experiments:</p>
 <ul>
 <li>
-<span class="citation">Koh, Goh, and Goh (<a href="#ref-koh_atlas_2019" role="doc-biblioref">2019</a>)</span>,</li>
+<span class="citation">Körtel et al. (<a href="#ref-kortel_deep_2021" role="doc-biblioref">2021</a>)</span>,</li>
 <li>
-<span class="citation">Boulias et al. (<a href="#ref-boulias_identification_2019" role="doc-biblioref">2019</a>)</span>, and</li>
-<li><ol class="example" style="list-style-type: decimal">
+<span class="citation">Koh, Goh, and Goh (<a href="#ref-koh_atlas_2019" role="doc-biblioref">2019</a>)</span>,
+and</li>
 <li>
-</ol></li>
+<span class="citation">Boulias et al. (<a href="#ref-boulias_identification_2019" role="doc-biblioref">2019</a>)</span> .</li>
 </ul>
 <p>The column “experiments” indicates the source of a site.</p>
 <p>Plot venn diagram of shared CLIP sites:</p>
@@ -627,7 +585,7 @@ adjust the number according to your machine.</p>
 <span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
 <span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; System time:</span></span>
 <span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  26.736   4.062  21.446</span></span></code></pre></div>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  29.171   3.941  23.817</span></span></code></pre></div>
 <p>The result <code>nmf_results</code> is a list that consists of the
 following data:</p>
 <dl>
@@ -674,7 +632,7 @@ against a null model.</p>
 <span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
 <span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; System time:</span></span>
 <span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  24.984   4.126  20.229</span></span></code></pre></div>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  28.206   4.108  23.036</span></span></code></pre></div>
 <p>In the following, we will compare the results for different
 factorizations on the original and randomized data:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -780,21 +738,9 @@ and the <code>score</code> for the chosen pattern (in this case:
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">score_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">score_matrix</span>, <span class="va">data_matrix</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"motif"</span>, <span class="st">"DRACH"</span>, <span class="st">"experiments"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">score_matrix</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                       NMF1       NMF2       NMF3       NMF4       NMF5</span></span>
-<span><span class="co">#&gt; 1:14409-14413:- 0.08532186 0.06152355 0.18647251 0.09162654 0.19374606</span></span>
-<span><span class="co">#&gt; 1:14413-14417:- 0.07236065 0.04503123 0.04404222 0.01742198 0.19104034</span></span>
-<span><span class="co">#&gt; 1:14414-14418:- 0.08384209 0.12012474 0.08679406 0.37986482 0.05592739</span></span>
-<span><span class="co">#&gt; 1:14416-14420:- 0.03159483 0.15650479 0.42518658 0.39636835 0.58138484</span></span>
-<span><span class="co">#&gt; 1:14417-14421:- 0.10301670 0.22899483 0.48837202 0.14181476 0.32324177</span></span>
-<span><span class="co">#&gt; 1:14418-14422:- 0.45054602 0.14644171 0.47695708 0.18900124 0.35461187</span></span>
-<span><span class="co">#&gt;                      score motif DRACH experiments</span></span>
-<span><span class="co">#&gt; 1:14409-14413:- 0.19374606 TGAGC    no           -</span></span>
-<span><span class="co">#&gt; 1:14413-14417:- 0.19104034 GAACT   yes           -</span></span>
-<span><span class="co">#&gt; 1:14414-14418:- 0.05592739 AGAAC    no           -</span></span>
-<span><span class="co">#&gt; 1:14416-14420:- 0.58138484 AAAGA    no           -</span></span>
-<span><span class="co">#&gt; 1:14417-14421:- 0.32324177 TAAAG    no           -</span></span>
-<span><span class="co">#&gt; 1:14418-14422:- 0.35461187 ATAAA    no           -</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">score_matrix</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "NMF1"        "NMF2"        "NMF3"        "NMF4"        "NMF5"       </span></span>
+<span><span class="co">#&gt; [6] "score"       "motif"       "DRACH"       "experiments"</span></span></code></pre></div>
 <p>Sort <code>score_matrix</code> by column <code>score</code> - the
 best predictions will appear in the upper part of matrix.</p>
 </div>
@@ -952,6 +898,13 @@ Koh, Casslynn W. Q., Yeek Teck Goh, and W. S. Sho Goh. 2019.
 <span>“Atlas of Quantitative Single-Base-Resolution
 <span>N6</span>-Methyl-Adenine Methylomes.”</span> <em>Nature
 Communications</em> 10 (1): 5636. <a href="https://doi.org/10.1038/s41467-019-13561-z" class="external-link">https://doi.org/10.1038/s41467-019-13561-z</a>.
+</div>
+<div id="ref-kortel_deep_2021" class="csl-entry">
+Körtel, Nadine, Cornelia Rücklé, You Zhou, Anke Busch, Peter Hoch-Kraft,
+F X Reymond Sutandy, Jacob Haase, et al. 2021. <span>“Deep and Accurate
+Detection of <span class="nocase">m6A</span> <span>RNA</span>
+Modifications Using <span class="nocase">miCLIP2</span> and <span class="nocase">m6Aboost</span> Machine Learning.”</span> <em>Nucleic
+Acids Research</em> 49 (16): e92–92. <a href="https://doi.org/10.1093/nar/gkab485" class="external-link">https://doi.org/10.1093/nar/gkab485</a>.
 </div>
 <div id="ref-Piechotta2021" class="csl-entry">
 Piechotta, Michael, Qi Wang, Janine Altmüller, and Christoph Dieterich.
