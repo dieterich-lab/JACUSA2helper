@@ -78,7 +78,7 @@
                         <h4 data-toc-skip class="author">Michael
 Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-12-15</h4>
+            <h4 data-toc-skip class="date">2022-12-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper.Rmd" class="external-link"><code>vignettes/JACUSA2helper.Rmd</code></a></small>
       <div class="d-none name"><code>JACUSA2helper.Rmd</code></div>
@@ -350,74 +350,15 @@ present in all/both replicates),</li>
 <li>Finally, we compute the base substitution (here RNA editing sites
 against FASTA reference) per replicate.</li>
 </ul>
-</div>
-</div>
-<div class="section level2">
-<h2 id="todo">TODO<a class="anchor" aria-label="anchor" href="#todo"></a>
-</h2>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">filtered</span> <span class="op">&lt;-</span> <span class="va">rdd</span></span>
 <span><span class="va">filtered</span><span class="op">$</span><span class="va">bc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/lapply_cond.html">lapply_cond</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">$</span><span class="va">bases</span>, <span class="kw">function</span><span class="op">(</span><span class="va">b</span><span class="op">)</span> <span class="op">{</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="st">"+"</span>, <span class="va">b</span><span class="op">)</span> <span class="op">}</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="st">"+"</span>, <span class="va">.</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/base_count.html">base_count</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">filtered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span></span>
+<span><span class="va">filtered</span> <span class="op">&lt;-</span> <span class="va">filtered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">score</span> <span class="op">&gt;=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/All.html">All</a></span><span class="op">(</span><span class="va">cov</span><span class="op">$</span><span class="va">cond1</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="../reference/All.html">All</a></span><span class="op">(</span><span class="va">cov</span><span class="op">$</span><span class="va">cond2</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">bc</span> <span class="op">&lt;=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="../reference/robust.html">robust</a></span><span class="op">(</span><span class="va">bases</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; GRanges object with 246 ranges and 17 metadata columns:</span></span>
-<span><span class="co">#&gt;           seqnames    ranges strand |        name     score        info</span></span>
-<span><span class="co">#&gt;              &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;numeric&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt;     [1] GL000195.1     85622      - |      call-2   4.07819           *</span></span>
-<span><span class="co">#&gt;     [2] GL000220.1    118145      + |      call-2   4.61688           *</span></span>
-<span><span class="co">#&gt;     [3]         MT      7402      + |      call-2   3.41595           *</span></span>
-<span><span class="co">#&gt;     [4]          X 118604441      + |      call-2   2.95517           *</span></span>
-<span><span class="co">#&gt;     [5]          X 118672671      - |      call-2   8.33540           *</span></span>
-<span><span class="co">#&gt;     ...        ...       ...    ... .         ...       ...         ...</span></span>
-<span><span class="co">#&gt;   [242]         22  19956270      + |      call-2   2.84008           *</span></span>
-<span><span class="co">#&gt;   [243]         22  24970609      + |      call-2   9.56645           *</span></span>
-<span><span class="co">#&gt;   [244]         22  30733077      - |      call-2   3.09863           *</span></span>
-<span><span class="co">#&gt;   [245]         22  41326713      + |      call-2   3.22868           *</span></span>
-<span><span class="co">#&gt;   [246]         22  50357344      + |      call-2   2.59208           *</span></span>
-<span><span class="co">#&gt;              filter         ref                                   bases</span></span>
-<span><span class="co">#&gt;         &lt;character&gt; &lt;character&gt;                                &lt;tbl_df&gt;</span></span>
-<span><span class="co">#&gt;     [1]           D           A 15:  0: 0:...:12: 3: 0:...:13: 3: 0:...</span></span>
-<span><span class="co">#&gt;     [2]         D;Y           C  0:101: 0:...: 0:16: 3:...: 0:20: 4:...</span></span>
-<span><span class="co">#&gt;     [3]         D;Y           C  0: 86: 0:...: 0:10: 0:...: 0:10: 0:...</span></span>
-<span><span class="co">#&gt;     [4]           D           G  0:  0:44:...: 4: 0:86:...: 2: 0:88:...</span></span>
-<span><span class="co">#&gt;     [5]           *           A 29:  0: 0:...: 6: 0: 5:...: 5: 0:13:...</span></span>
-<span><span class="co">#&gt;     ...         ...         ...                                     ...</span></span>
-<span><span class="co">#&gt;   [242]         D;Y           G      0:0:38:...: 0:2:40:...: 0:3:33:...</span></span>
-<span><span class="co">#&gt;   [243]           *           A     37:0: 0:...: 3:0:11:...: 5:0: 9:...</span></span>
-<span><span class="co">#&gt;   [244]           D           T      0:0: 0:...: 0:4: 0:...: 0:1: 0:...</span></span>
-<span><span class="co">#&gt;   [245]           *           A     31:0: 0:...:19:0: 2:...:12:0: 3:...</span></span>
-<span><span class="co">#&gt;   [246]         D;Y           T      0:0: 0:...: 0:0: 1:...: 0:0: 3:...</span></span>
-<span><span class="co">#&gt;               cov         seq      reset1      reset2      resetP  backtrack1</span></span>
-<span><span class="co">#&gt;          &lt;tbl_df&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt;     [1]  15:15:16                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;     [2] 101:19:24                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;     [3]  86:13:12                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;     [4]  44:90:90                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;     [5]  29:11:18                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;     ...       ...         ...         ...         ...         ...         ...</span></span>
-<span><span class="co">#&gt;   [242]  38:42:36                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;   [243]  37:14:14                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;   [244]  48:21:26                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;   [245]  31:21:15                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;   [246]  28:14:14                    &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;          backtrack2  backtrackP         ins         del        bc</span></span>
-<span><span class="co">#&gt;         &lt;character&gt; &lt;character&gt;    &lt;tbl_df&gt;    &lt;tbl_df&gt; &lt;integer&gt;</span></span>
-<span><span class="co">#&gt;     [1]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span></span>
-<span><span class="co">#&gt;     [2]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span></span>
-<span><span class="co">#&gt;     [3]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span></span>
-<span><span class="co">#&gt;     [4]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span></span>
-<span><span class="co">#&gt;     [5]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span></span>
-<span><span class="co">#&gt;     ...         ...         ...         ...         ...       ...</span></span>
-<span><span class="co">#&gt;   [242]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span></span>
-<span><span class="co">#&gt;   [243]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span></span>
-<span><span class="co">#&gt;   [244]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span></span>
-<span><span class="co">#&gt;   [245]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span></span>
-<span><span class="co">#&gt;   [246]        &lt;NA&gt;        &lt;NA&gt; 0:0:0:0:0:0 0:0:0:0:0:0         2</span></span>
-<span><span class="co">#&gt;   -------</span></span>
-<span><span class="co">#&gt;   seqinfo: 35 sequences from an unspecified genome; no seqlengths</span></span>
 <span></span>
 <span><span class="co"># sum base call counts of condition / RNA replicates</span></span>
 <span><span class="va">rna_bases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="st">"+"</span>, <span class="va">filtered</span><span class="op">$</span><span class="va">bases</span><span class="op">$</span><span class="va">cond2</span><span class="op">)</span></span>
@@ -427,12 +368,8 @@ against FASTA reference) per replicate.</li>
 <span><span class="va">ref2rna</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/base_sub.html">base_sub</a></span><span class="op">(</span><span class="va">rna_bases</span>, <span class="va">filtered</span><span class="op">$</span><span class="va">ref</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">ref2rna</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ref2rna</span></span>
-<span><span class="co">#&gt;      A-&gt;C     A-&gt;CG      A-&gt;G      A-&gt;T      C-&gt;A     C-&gt;AG      C-&gt;G      C-&gt;T </span></span>
-<span><span class="co">#&gt;       170         1      4823       367       279         1       487       258 </span></span>
-<span><span class="co">#&gt;      G-&gt;A     G-&gt;AT      G-&gt;C     G-&gt;CT      G-&gt;T no change      T-&gt;A     T-&gt;AC </span></span>
-<span><span class="co">#&gt;       716         1        69         1        86         6       840         1 </span></span>
-<span><span class="co">#&gt;      T-&gt;C     T-&gt;CG      T-&gt;G </span></span>
-<span><span class="co">#&gt;       997         1       914</span></span></code></pre></div>
+<span><span class="co">#&gt; A-&gt;C A-&gt;G A-&gt;T C-&gt;A C-&gt;G C-&gt;T G-&gt;A G-&gt;C G-&gt;T T-&gt;A T-&gt;C T-&gt;G </span></span>
+<span><span class="co">#&gt;    6  171    2    3    2    9   23    6    1    5   15    3</span></span></code></pre></div>
 <p>Instead of using DNA information from the reference FASTA sequence
 via column “ref”, we could use the actual data from condition 1 /
 DNA.</p>
@@ -443,16 +380,13 @@ replicates of at least condition.</p>
 <span><span class="va">dna2rna</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/base_sub.html">base_sub</a></span><span class="op">(</span><span class="va">rna_bases</span>, <span class="va">filtered</span><span class="op">$</span><span class="va">ref</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">dna2rna</span><span class="op">)</span></span>
 <span><span class="co">#&gt; dna2rna</span></span>
-<span><span class="co">#&gt;      A-&gt;C     A-&gt;CG      A-&gt;G      A-&gt;T      C-&gt;A     C-&gt;AG      C-&gt;G      C-&gt;T </span></span>
-<span><span class="co">#&gt;       170         1      4823       367       279         1       487       258 </span></span>
-<span><span class="co">#&gt;      G-&gt;A     G-&gt;AT      G-&gt;C     G-&gt;CT      G-&gt;T no change      T-&gt;A     T-&gt;AC </span></span>
-<span><span class="co">#&gt;       716         1        69         1        86         6       840         1 </span></span>
-<span><span class="co">#&gt;      T-&gt;C     T-&gt;CG      T-&gt;G </span></span>
-<span><span class="co">#&gt;       997         1       914</span></span></code></pre></div>
+<span><span class="co">#&gt; A-&gt;C A-&gt;G A-&gt;T C-&gt;A C-&gt;G C-&gt;T G-&gt;A G-&gt;C G-&gt;T T-&gt;A T-&gt;C T-&gt;G </span></span>
+<span><span class="co">#&gt;    6  171    2    3    2    9   23    6    1    5   15    3</span></span></code></pre></div>
 <p>Using different sources of DNA to describe RRDs via
 <code>ref2rna</code> and <code>dna2rna</code> we can conclude that there
 are no polymorphic positions in <code>filtered</code> because
 <code>ref2rna</code> and <code>dna2rna</code> are identical.</p>
+</div>
 <div class="section level4">
 <h4 id="plot-base-substitutions">Plot base substitutions<a class="anchor" aria-label="anchor" href="#plot-base-substitutions"></a>
 </h4>
@@ -553,6 +487,7 @@ serves as a blueprint for other plots, e.g.:</p>
 <li>number of observed bases.</li>
 </ul>
 </div>
+</div>
 <div class="section level3">
 <h3 id="arrest-events">Arrest events<a class="anchor" aria-label="anchor" href="#arrest-events"></a>
 </h3>
@@ -626,7 +561,7 @@ result object and plot the arrest rate from each condition in a scatter
 plot.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  contig <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqnames</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span>,</span>
+<span>  contig <span class="op">=</span> <span class="fu">seqnames</span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span>,</span>
 <span>  arrest_rate1 <span class="op">=</span> <span class="va">filtered</span><span class="op">$</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond1</span><span class="op">$</span><span class="va">rep1</span>,</span>
 <span>  arrest_rate2 <span class="op">=</span> <span class="va">filtered</span><span class="op">$</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond2</span><span class="op">$</span><span class="va">rep1</span></span>
 <span><span class="op">)</span></span>
@@ -651,7 +586,6 @@ SIIIRTMn, and SIIIRTMg), checkout
 necessary because JACUSA2 will automatically invert Single End (SE) and
 Paired End (PE) depending on the provided library type option “-P”
 UNSTRANDED|FR_FIRSTSTRAND|RF_SECONDSTRAND”.</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="inputoutput">Input/Output<a class="anchor" aria-label="anchor" href="#inputoutput"></a>
