@@ -142,6 +142,9 @@
     <loc>https://dieterich-lab.github.io/JACUSA2helper/reference/m6a_miclip.html</loc>
   </url>
   <url>
+    <loc>https://dieterich-lab.github.io/JACUSA2helper/reference/m6a_nmf_reduced.html</loc>
+  </url>
+  <url>
     <loc>https://dieterich-lab.github.io/JACUSA2helper/reference/m6a_nmf_results.html</loc>
   </url>
   <url>
@@ -173,6 +176,9 @@
   </url>
   <url>
     <loc>https://dieterich-lab.github.io/JACUSA2helper/reference/read_results.html</loc>
+  </url>
+  <url>
+    <loc>https://dieterich-lab.github.io/JACUSA2helper/reference/reduce_coef.html</loc>
   </url>
   <url>
     <loc>https://dieterich-lab.github.io/JACUSA2helper/reference/rnam.html</loc>

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../../index.html">JACUSA2helper</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.9.9.9500</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.9.9.9600</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@
                         <h4 data-toc-skip class="author">Christoph
 Dieterich, Michael Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-12-16</h4>
+            <h4 data-toc-skip class="date">2022-12-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/web_only/JACUSA2helper-nanopore.Rmd" class="external-link"><code>vignettes/web_only/JACUSA2helper-nanopore.Rmd</code></a></small>
       <div class="d-none name"><code>JACUSA2helper-nanopore.Rmd</code></div>
@@ -86,6 +86,10 @@ Dieterich, Michael Piechotta</h4>
 
     
     
+<ul>
+<li>This vignette requires the latest version of JACUSA2helper - please
+update*</li>
+</ul>
 <p>In the following, the workflow for use case 3 from <span class="citation">Piechotta et al. (<a href="#ref-Piechotta2021" role="doc-biblioref">2021</a>)</span> is presented. Data for <a href="https://zenodo.org/record/5930729#.YfmTDFvMIUG" class="external-link">use cases 1-3</a>
 can be downloaded to repeat the analysis.</p>
 <p>The following packages need to be loaded:</p>
@@ -585,7 +589,7 @@ adjust the number according to your machine.</p>
 <span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
 <span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; System time:</span></span>
 <span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  29.019   3.259  23.454</span></span></code></pre></div>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  27.343   3.958  22.104</span></span></code></pre></div>
 <p>The result <code>nmf_results</code> is a list that consists of the
 following data:</p>
 <dl>
@@ -632,7 +636,7 @@ against a null model.</p>
 <span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>Runs<span class="sc">:</span> <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
 <span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; System time:</span></span>
 <span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  27.567   3.385  22.084</span></span></code></pre></div>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  25.719   3.914  20.694</span></span></code></pre></div>
 <p>In the following, we will compare the results for different
 factorizations on the original and randomized data:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -797,11 +801,15 @@ best predictions will appear in the upper part of matrix.</p>
 <div class="section level2">
 <h2 id="prediction-on-1-experiment">Prediction on 1 experiment<a class="anchor" aria-label="anchor" href="#prediction-on-1-experiment"></a>
 </h2>
-<p>In the following we will show to predict modification sites on one
-experiment. We will use WT vs KO from the previous example.</p>
+<p>In the following we will show how to predict modification sites on
+only one experiment.</p>
 <div class="section level3">
 <h3 id="prepare-data">Prepare data<a class="anchor" aria-label="anchor" href="#prepare-data"></a>
 </h3>
+<p>We will predict modification sites only on WT vs KO from the previous
+example. If you have your own data, follow the steps above until
+<code><a href="../../reference/create_data.html">create_data()</a></code>. Here, we will modify the existing
+<code>data_matrix</code>:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">WT_vs_KO_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_matrix</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"^WT_vs_KO"</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_matrix</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>,</span>
@@ -815,46 +823,42 @@ experiment. We will use WT vs KO from the previous example.</p>
 <span><span class="va">WT_vs_KO_data</span><span class="op">$</span><span class="va">type</span><span class="op">[</span><span class="op">!</span><span class="va">train</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"evaluate"</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="reduce-h">Reduce h<a class="anchor" aria-label="anchor" href="#reduce-h"></a>
+<h3 id="reduce-coef">Reduce coef<a class="anchor" aria-label="anchor" href="#reduce-coef"></a>
 </h3>
-<p>We need to adjust the coefficient matrix. We combine the coefficient
-from NMF on WT vs KO and WT100 vs WT0 with the mean function.</p>
+<p>We need to adjust the coefficient matrix and combine the coefficients
+from WT vs KO and WT100 vs WT0.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">t_h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">nmf_results</span><span class="op">$</span><span class="va">nmf_matrix</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">t_h</span><span class="op">$</span><span class="va">score_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"("</span>, <span class="va">meta_conds</span>, <span class="st">")_"</span>, collapse <span class="op">=</span> <span class="st">"|"</span><span class="op">)</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">t_h</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">t_h</span> <span class="op">&lt;-</span> <span class="va">t_h</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">score_types</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html" class="external-link">summarise_at</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"V"</span>, <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">t_h</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, <span class="va">mean</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">score_types</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">nmf_reduced</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/reduce_coef.html">reduce_coef</a></span><span class="op">(</span><span class="va">nmf_results</span>, <span class="va">meta_conds</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nmf_reduced</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "estim_r"        "chosen_rank"    "chosen_pattern" "nmf_matrix"    </span></span>
+<span><span class="co">#&gt; [5] "reduced_coef"</span></span></code></pre></div>
+<p>This will calculate the mean of the coefficients and add the result
+as <code>reduced_coef</code> to <code>nmf_results</code>.</p>
 </div>
 <div class="section level3">
-<h3 id="create-scores">Create scores<a class="anchor" aria-label="anchor" href="#create-scores"></a>
+<h3 id="prediction-1">Prediction<a class="anchor" aria-label="anchor" href="#prediction-1"></a>
 </h3>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">WT_vs_KO_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">WT_vs_KO_data</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">motif</span>, <span class="va">DRACH</span>, <span class="va">experiments</span>, <span class="va">clip</span>, <span class="va">type</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">t_h</span></span>
-<span><span class="va">WT_vs_KO_score</span> <span class="op">&lt;-</span> <span class="va">WT_vs_KO_scores</span><span class="op">[</span>, <span class="va">nmf_results</span><span class="op">$</span><span class="va">chosen_pattern</span><span class="op">]</span></span>
-<span></span>
-<span><span class="va">WT_vs_KO_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">WT_vs_KO_scores</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">WT_vs_KO_scores</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"NMF"</span>, <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">WT_vs_KO_scores</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">WT_vs_KO_scores</span><span class="op">[[</span><span class="st">"score"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">WT_vs_KO_score</span></span>
-<span></span>
-<span><span class="va">WT_vs_KO_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">WT_vs_KO_scores</span>, <span class="va">WT_vs_KO_data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clip"</span>, <span class="st">"type"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">WT_vs_KO_pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/predict_mods.html">predict_mods</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">WT_vs_KO_data</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">motif</span>, <span class="va">DRACH</span>, <span class="va">experiments</span>, <span class="va">clip</span>, <span class="va">type</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="va">nmf_reduced</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">WT_vs_KO_pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">WT_vs_KO_pred</span>, <span class="va">WT_vs_KO_data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"clip"</span>, <span class="st">"type"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p>Column <code>score</code>, can be used to sort the prediction.</p>
+</div>
+<div class="section level3">
+<h3 id="evaluate">Evaluate<a class="anchor" aria-label="anchor" href="#evaluate"></a>
+</h3>
+<p>We repeat the evaluation now on WT vs KO and the reduced coefficient
+matrix on.</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">WT_vs_KO_test</span> <span class="op">&lt;-</span> <span class="va">WT_vs_KO_scores</span><span class="op">[</span><span class="va">WT_vs_KO_scores</span><span class="op">$</span><span class="va">type</span> <span class="op">==</span> <span class="st">"evaluate"</span>, <span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">WT_vs_KO_test</span> <span class="op">&lt;-</span> <span class="va">WT_vs_KO_pred</span><span class="op">[</span><span class="va">WT_vs_KO_pred</span><span class="op">$</span><span class="va">type</span> <span class="op">==</span> <span class="st">"evaluate"</span>, <span class="op">]</span></span>
 <span><span class="va">WT_vs_KO_roc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">roc</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">WT_vs_KO_test</span><span class="op">[</span>, <span class="st">"clip"</span><span class="op">]</span> <span class="op">==</span> <span class="st">"CLIP"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, </span>
 <span>  <span class="va">WT_vs_KO_test</span><span class="op">[</span>, <span class="st">"score"</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Setting levels: control = 0, case = 1</span></span>
 <span><span class="co">#&gt; Setting direction: controls &lt; cases</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="evaluate">Evaluate<a class="anchor" aria-label="anchor" href="#evaluate"></a>
-</h3>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">WT_vs_KO_coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/pROC/man/coords.html" class="external-link">coords</a></span><span class="op">(</span><span class="va">WT_vs_KO_roc</span>, x <span class="op">=</span> <span class="st">"all"</span>, input <span class="op">=</span> <span class="st">"threshold"</span>, ret <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"threshold"</span>,<span class="st">"ppv"</span>,<span class="st">"tpr"</span>,<span class="st">"tp"</span>, <span class="st">"tn"</span>,<span class="st">"fp"</span>,<span class="st">"fn"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">WT_vs_KO_coords</span><span class="op">$</span><span class="va">sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">WT_vs_KO_coords</span><span class="op">$</span><span class="va">tp</span> <span class="op">+</span> <span class="va">WT_vs_KO_coords</span><span class="op">$</span><span class="va">fp</span><span class="op">)</span></span>
