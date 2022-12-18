@@ -153,11 +153,11 @@ In the following, we will:
 * Finally, we compute the base substitution (here RNA editing sites against FASTA 
   reference) per replicate.
 
-# TODO
 ```{r}
 filtered <- rdd
 filtered$bc <- lapply_cond(filtered$bases, function(b) { Reduce("+", b) } ) %>% Reduce("+", .) %>% base_count()
-filtered %>%
+
+filtered <- filtered %>%
   dplyr::filter(score >= 2) %>%
   dplyr::filter(All(cov$cond1 >= 10) & All(cov$cond2 > 10)) %>%
   dplyr::filter(bc <= 2) %>%

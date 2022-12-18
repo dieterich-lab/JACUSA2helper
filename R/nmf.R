@@ -13,7 +13,7 @@
 #' @param meta_cond logical - split features based on meta conditions
 #' @return Data frame
 #' 
-#' @importFrom GenomicRanges GRanges start mcols strand
+#' @importFrom GenomicRanges GRanges start mcols mcols<- strand
 #' @importFrom IRanges findOverlaps countOverlaps
 #' @importFrom S4Vectors queryHits subjectHits
 #' @importFrom tidyr all_of
@@ -143,11 +143,13 @@ learn_nmf <- function(x, nmf_args = NULL, nmf_seed = "nndsvd") {
 #' @export
 predict_mods <- function(x, nmf_results = NULL) {
   if (is.null(nmf_results)) {
-    data(m6a_nmf_results)
-    nmf_results <- m6a_nmf_results
-    rm(m6a_nmf_results)
+    nmf_results <- JACUSA2helper::m6a_nmf_results
   }
-  h <- coef(nmf_results$nmf_matrix)
+  if (is.null(nmf_results$reduced_coef)) {
+    h <- coef(nmf_results$nmf_matrix)
+  } else {
+    h <- nmf_results$reduced_coef
+  }
   
   stopifnot(ncol(x) == ncol(h))
   # TODO stopifnot(ncol(x) == length(intersect(colnames(x), colnames(h))))
@@ -170,4 +172,34 @@ fix_coords <- function(x) {
   start(x) <- start(x) + 1
   
   as.character(x)
+}
+
+#' Reduce coefficient matrix
+#' 
+#' Reduce coefficient matrix to make predictions on one experiment data.
+#' 
+#' @param nmf_results object created by `learn_nmf()`.
+#' @param meta_conds names of the experiments in nmf_results
+#' @return nmf_results with modified coefficient matrix (t_h).
+#'
+#' @importFrom NMF coef
+#' @importFrom dplyr group_by summarise_at select
+#' @export
+reduce_coef <- function(nmf_results, meta_conds) {
+  t_h <- coef(nmf_results$nmf_matrix) %>%
+    t() %>%
+    as.data.frame()
+  
+  score_types <- gsub(paste0("(", meta_conds, ")_", collapse = "|"), "", rownames(t_h))
+  t_h$score_types <- score_types
+  t_h <- t_h %>% 
+    group_by(score_types) %>%
+    summarise_at(paste0("V", 1:(ncol(t_h) - 1)), mean) %>%
+    select(-score_types) %>%
+    as.matrix()
+  
+  rownames(t_h) <- unique(score_types)
+  nmf_results$reduced_coef <- t(t_h)
+
+  nmf_results
 }

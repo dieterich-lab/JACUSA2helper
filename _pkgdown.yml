@@ -1,7 +1,12 @@
+template:
+  bootstrap: 5
+
+url:
+  https://dieterich-lab.github.io/JACUSA2helper/
+
 development:
   mode: release
 
 authors:
   Dieterich Lab:
     href: http://dieterichlab.org/
-

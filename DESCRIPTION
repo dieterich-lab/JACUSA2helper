@@ -9,7 +9,8 @@ Authors@R: c(person("Michael", "Piechotta", email = "michael.piechotta@gmail.com
          person("Christoph", "Dieterich", role = c("ctb")),
          person("Dieterich Lab", role = c("fnd")))
 Description: This package enables post-processing of JACUSA2 output: read, filter, and plot.
-URL: https://github.com/dieterich-lab/JACUSA2helper, https://dieterich-lab.github.io/JACUSA2helper/
+URL: https://github.com/dieterich-lab/JACUSA2helper,
+    https://dieterich-lab.github.io/JACUSA2helper/
 BugReports: https://github.com/dieterich-lab/JACUSA2helper/issues
 License: GPL-3 + file LICENSE
 Encoding: UTF-8

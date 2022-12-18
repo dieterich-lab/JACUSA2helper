@@ -68,3 +68,5 @@ usethis::use_data(m6a_miclip, overwrite = TRUE, compress = "bzip2")
 
 m6a_nmf_results <- readRDS("nmf_results_paper.rds")
 usethis::use_data(m6a_nmf_results, overwrite = TRUE, compress = "bzip2")
+m6a_nmf_reduced <- JACUSA2helper::reduce_coef(m6a_nmf_results, c("WT_vs_KO", "WT100_vs_WT0"))
+usethis::use_data(m6a_nmf_reduced, overwrite = TRUE, compress = "bzip2")

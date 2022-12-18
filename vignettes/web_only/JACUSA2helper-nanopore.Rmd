@@ -20,6 +20,8 @@ options(tibble.print_min = 4L, tibble.print_max = 4L)
 set.seed(777)
 ```
 
+* This vignette requires the latest version of JACUSA2helper - please update*
+
 In the following, the workflow for use case 3 from @Piechotta2021 is presented.
 Data for [use cases 1-3](https://zenodo.org/record/5930729#.YfmTDFvMIUG) can be downloaded to repeat the analysis.
 
@@ -43,7 +45,7 @@ library(NMF)
 Here, we briefly introduce Non-negative Matrix Factorization (NMF). This section uses the notation from [NMF vignette](https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf).
 
 Non-negative Matrix Factorization tries to find an approximation of:
-$$X \approx W H$$,
+$$X \approx W H,$$
 where:
 
 * $X$ is a non-negative $n \times p$ matrix,
@@ -76,14 +78,12 @@ We start to organize the data:
 ```{r}
 # files to read
 files <- c(
-  "WT_vs_KO_2samp_RC22_call2_result.out.gz",
-  "WT100_vs_WT0_RC22_call2_result.out.gz"
+  "WT_vs_KO_call2_result.out.gz",
+  "WT100_vs_WT0_call2_result.out.gz"
 )
 
 # descriptions corresponding to files 
 meta_conds = c(
-  #"Exp1",
-  #"Exp2"
   "WT_vs_KO",
   "WT100_vs_WT0"
 )
@@ -91,8 +91,8 @@ meta_conds = c(
 
 ```{r, include = FALSE}
 files <- c(
-  "/home/michael/TODO/JACUSA2helper/WT_vs_KO_2samp_RC22_call2_result.out.gz",
-  "/home/michael/TODO/JACUSA2helper/WT100_vs_WT0_RC22_call2_result.out.gz"
+  "/home/michael/TODO/JACUSA2helper/WT_vs_KO_call2_result.out.gz",
+  "/home/michael/TODO/JACUSA2helper/WT100_vs_WT0_call2_result.out.gz"
 )
 setwd("/home/michael/TODO/JACUSA2helper/")
 ```
@@ -199,7 +199,7 @@ seqlengths(wt_vs_ko_res)
 ### Create matrix $X$
 
 We continue to reduce the data set by selecting only relevant columns and renaming the "score" column to "call2_score" for consistency: 
-Given a JACUSA2 result object, the function `creata_data()` will create a data matrix, that will be used in NMF. 
+Given a JACUSA2 result object, the function `create_data()` will create a data matrix, that will be used in NMF. 
 In brief, relevant score columns are rearranged and a region or context around each Adenin site is created.
 
 ```{r}
@@ -207,7 +207,7 @@ data_matrix = create_data(wt_vs_ko_filtered)
 data_matrix[is.na(data_matrix)] <- 0
 data_matrix[data_matrix < 0] <- 0
 
-head(data_matrix)
+colnames(data_matrix)
 ```
 
 This operation concludes the pre-processing workflow for one file.
@@ -362,15 +362,21 @@ Use `data_matrix <- readRDS("data_matrix.rds")` to restore previous state.
 
 # Use NMF on Nanopore data
 
+The learning part can be omitted. 
+Use `data(m6a_nmf_results)` from @Piechotta2021 and and continue to [Visualize NMF].
+
+Continue reading [Overlap with miCLIP data], to understand how object `m6a_nmf_results` can be created.
+
+
 ## Overlap with miCLIP data
 
 Next, we use existing miCLIP data to train the model.
 
 The data can be investigated with: `data(m6a_miclip)`. It consists of 3 experiments:
 
-* @koh_atlas_2019,
-* @boulias_identification_2019, and
-* @kortel_deep_2021.
+* @kortel_deep_2021,
+* @koh_atlas_2019, and
+* @boulias_identification_2019 .
 
 The column "experiments" indicates the source of a site.
 
@@ -572,7 +578,7 @@ We add meta information from `data_matrix` to `score_matrix`.
 ```{r}
 score_matrix <- cbind(score_matrix, data_matrix[, c("motif", "DRACH", "experiments")])
 
-head(score_matrix)
+colnames(score_matrix)
 ```
 
 Sort `score_matrix` by column `score` - the best predictions will appear in the upper part of matrix.
@@ -627,10 +633,14 @@ ggplot(coordinates, aes(x = threshold)) +
 
 # Prediction on 1 experiment
 
-In the following we will show to predict modification sites on one experiment.
-We will use WT vs KO from the previous example.
+In the following we will show how to predict modification sites on only one experiment.
 
 ## Prepare data
+
+We will predict modification sites only on WT vs KO from the previous example.
+If you have your own data, follow the steps above until `create_data()`.
+Here, we will modify the existing `data_matrix`:
+
 ```{r}
 WT_vs_KO_data <- cbind(
   data_matrix[, grep("^WT_vs_KO", colnames(data_matrix))],
@@ -644,47 +654,40 @@ WT_vs_KO_data$type[train] <- "train"
 WT_vs_KO_data$type[!train] <- "evaluate"
 ```
 
-## Reduce h
+## Reduce coef
 
-We need to adjust the coefficient matrix. We combine the coefficient from NMF on WT vs KO and WT100 vs WT0 with
-the mean function.
+We need to adjust the coefficient matrix and combine the coefficients from WT vs KO and WT100 vs WT0.
 
 ```{r}
-t_h <- coef(nmf_results$nmf_matrix) %>%
-  t() %>%
-  as.data.frame()
-
-t_h$score_types <- gsub(paste0("(", meta_conds, ")_", collapse = "|"), "", rownames(t_h))
-t_h <- t_h %>% 
-  group_by(score_types) %>%
-  summarise_at(paste0("V", 1:(ncol(t_h) - 1)), mean) %>%
-  select(-score_types) %>%
-  as.matrix()
+nmf_reduced <- reduce_coef(nmf_results, meta_conds)
+names(nmf_reduced)
 ```
 
+This will calculate the mean of the coefficients and add the result as `reduced_coef` to `nmf_results`.
 
-## Create scores
+## Prediction
 
 ```{r}
-WT_vs_KO_scores <- as.matrix(select(WT_vs_KO_data, -c(motif, DRACH, experiments, clip, type))) %*% t_h
-WT_vs_KO_score <- WT_vs_KO_scores[, nmf_results$chosen_pattern]
-
-WT_vs_KO_scores <- as.data.frame(WT_vs_KO_scores)
-colnames(WT_vs_KO_scores) <- paste0("NMF", 1:ncol(WT_vs_KO_scores))
-WT_vs_KO_scores[["score"]] <- WT_vs_KO_score
-
-WT_vs_KO_scores <- cbind(WT_vs_KO_scores, WT_vs_KO_data[, c("clip", "type")])
+WT_vs_KO_pred <- predict_mods(
+  select(WT_vs_KO_data, -c(motif, DRACH, experiments, clip, type)),
+  nmf_reduced
+)
+WT_vs_KO_pred <- cbind(WT_vs_KO_pred, WT_vs_KO_data[, c("clip", "type")])
 ```
 
+Column `score`, can be used to sort the prediction.
+
+## Evaluate
+
+We repeat the evaluation now on WT vs KO and the reduced coefficient matrix on.
+
 ```{r}
-WT_vs_KO_test <- WT_vs_KO_scores[WT_vs_KO_scores$type == "evaluate", ]
+WT_vs_KO_test <- WT_vs_KO_pred[WT_vs_KO_pred$type == "evaluate", ]
 WT_vs_KO_roc <- roc(
   ifelse(WT_vs_KO_test[, "clip"] == "CLIP", 1, 0), 
   WT_vs_KO_test[, "score"]
 )
 ```
-
-## Evaluate
 
 ```{r}
 WT_vs_KO_coords <- coords(WT_vs_KO_roc, x = "all", input = "threshold", ret = c("threshold","ppv","tpr","tp", "tn","fp","fn"))
