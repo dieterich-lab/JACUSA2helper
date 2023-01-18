@@ -5,7 +5,7 @@ url:
   https://dieterich-lab.github.io/JACUSA2helper/
 
 development:
-  mode: auto
+  mode: release
 
 articles:
 - title: Articles
@@ -13,7 +13,6 @@ articles:
   contents:
   - JACUSA2helper
   - JACUSA2helper-meta-conditions
-  - web_only/JACUSA2helper-nanopore
   - JACUSA2helper-dart-seq
   - JACUSA2helper-mazf
 
