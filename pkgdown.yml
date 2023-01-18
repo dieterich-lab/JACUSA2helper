@@ -3,10 +3,10 @@ pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   JACUSA2helper-dart-seq: JACUSA2helper-dart-seq.html
+  JACUSA2helper-intro: JACUSA2helper-intro.html
   JACUSA2helper-mazf: JACUSA2helper-mazf.html
   JACUSA2helper-meta-conditions: JACUSA2helper-meta-conditions.html
-  JACUSA2helper: JACUSA2helper.html
-last_built: 2023-01-18T05:59Z
+last_built: 2023-01-18T06:01Z
 urls:
   reference: https://dieterich-lab.github.io/JACUSA2helper/reference
   article: https://dieterich-lab.github.io/JACUSA2helper/articles

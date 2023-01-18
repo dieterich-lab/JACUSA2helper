@@ -35,15 +35,13 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="active nav-item">
-  <a class="nav-link" href="../articles/JACUSA2helper.html">Get started</a>
-</li>
 <li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
-<li class="nav-item dropdown">
+<li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/JACUSA2helper-intro.html">Introduction to JACUSA2helper</a>
     <a class="dropdown-item" href="../articles/JACUSA2helper-meta-conditions.html">Introduction to meta conditions with JACUSA2helper</a>
     <a class="dropdown-item" href="../articles/JACUSA2helper-dart-seq.html">Analysis of DART-seq with JACUSA2helper</a>
     <a class="dropdown-item" href="../articles/JACUSA2helper-mazf.html">Analysis of m6A mapping by MazF with JACUSA2helper</a>
@@ -79,8 +77,8 @@ Piechotta</h4>
             
             <h4 data-toc-skip class="date">2023-01-18</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper.Rmd" class="external-link"><code>vignettes/JACUSA2helper.Rmd</code></a></small>
-      <div class="d-none name"><code>JACUSA2helper.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper-intro.Rmd" class="external-link"><code>vignettes/JACUSA2helper-intro.Rmd</code></a></small>
+      <div class="d-none name"><code>JACUSA2helper-intro.Rmd</code></div>
     </div>
 
     
@@ -401,7 +399,7 @@ with:</p>
 <span>   legend.position <span class="op">=</span> <span class="st">"none"</span>, </span>
 <span>   axis.text.x <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, vjust <span class="op">=</span> <span class="fl">0.5</span>, hjust<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="JACUSA2helper_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
+<p><img src="JACUSA2helper-intro_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="plot-coverage-distribution">Plot coverage distribution<a class="anchor" aria-label="anchor" href="#plot-coverage-distribution"></a>
@@ -415,7 +413,7 @@ cond(ition) to <code>colour</code> and repl(icate) to
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">cond</span>, linetype <span class="op">=</span> <span class="va">repl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html" class="external-link">stat_ecdf</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"step"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Coverage"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="JACUSA2helper_files/figure-html/unnamed-chunk-15-1.png" width="700">
+<p><img src="JACUSA2helper-intro_files/figure-html/unnamed-chunk-15-1.png" width="700">
 –&gt; In order to improve the preliminary plot, we need to modify the
 following aspects:</p>
 <ul>
@@ -477,7 +475,7 @@ plot:</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Coverage"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span>  </span></code></pre></div>
-<p><img src="JACUSA2helper_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
+<p><img src="JACUSA2helper-intro_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
 <p>From the plot, we can deduce that RNA samples have similar coverage
 distribution and are higher covered than the DNA data sample. This code
 serves as a blueprint for other plots, e.g.:</p>
@@ -543,7 +541,7 @@ of this vignette.</p>
 <span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Coverage"</span><span class="op">)</span> <span class="op">+</span></span>
 <span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">seqnames</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span></span></code></pre></div>
-<p><img src="JACUSA2helper_files/figure-html/unnamed-chunk-20-1.png" width="700"></p>
+<p><img src="JACUSA2helper-intro_files/figure-html/unnamed-chunk-20-1.png" width="700"></p>
 <p>We filter by pvalue, coverage, strand, and only retain robust arrest
 events:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
@@ -571,7 +569,7 @@ plot.</p>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"log2(+CMC arrest rate)"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"log2(-CMC arrest rate)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="JACUSA2helper_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
+<p><img src="JACUSA2helper-intro_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
 <p>From the above plot, we can deduce that the arrest rate is higher in
 the +CMC condition for all rRNAs when compared against -CMC.</p>
 <p>If you want to look simultaneously at all conditions (HIVRT,
