@@ -44,10 +44,9 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/JACUSA2helper-meta-conditions.html">Introduction to meta conditions with JACUSA2helper</a>
     <a class="dropdown-item" href="../articles/JACUSA2helper-dart-seq.html">Analysis of DART-seq with JACUSA2helper</a>
     <a class="dropdown-item" href="../articles/JACUSA2helper-mazf.html">Analysis of m6A mapping by MazF with JACUSA2helper</a>
-    <a class="dropdown-item" href="../articles/JACUSA2helper-meta-condtions.html">Introduction to meta conditions with JACUSA2helper</a>
-    <a class="dropdown-item" href="../articles/web_only/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
   </div>
 </li>
       </ul>
@@ -78,10 +77,10 @@
                         <h4 data-toc-skip class="author">Michael
 Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-12-18</h4>
+            <h4 data-toc-skip class="date">2023-01-18</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper-meta-condtions.Rmd" class="external-link"><code>vignettes/JACUSA2helper-meta-condtions.Rmd</code></a></small>
-      <div class="d-none name"><code>JACUSA2helper-meta-condtions.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper-meta-conditions.Rmd" class="external-link"><code>vignettes/JACUSA2helper-meta-conditions.Rmd</code></a></small>
+      <div class="d-none name"><code>JACUSA2helper-meta-conditions.Rmd</code></div>
     </div>
 
     
@@ -111,7 +110,7 @@ Additionally, we have compiled combined data sets
 Note, that this data has NO replicates!</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">$</span><span class="va">meta_cond</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Zhou2018_rt_arrest</span><span class="op">$</span><span class="va">meta_cond</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] HIVRT    SIIIRTMn SIIIRTMg</span></span>
 <span><span class="co">#&gt; Levels: HIVRT SIIIRTMg SIIIRTMn</span></span></code></pre></div>
 <div class="section level4">

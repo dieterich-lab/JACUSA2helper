@@ -44,10 +44,9 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/JACUSA2helper-meta-conditions.html">Introduction to meta conditions with JACUSA2helper</a>
     <a class="dropdown-item" href="../articles/JACUSA2helper-dart-seq.html">Analysis of DART-seq with JACUSA2helper</a>
     <a class="dropdown-item" href="../articles/JACUSA2helper-mazf.html">Analysis of m6A mapping by MazF with JACUSA2helper</a>
-    <a class="dropdown-item" href="../articles/JACUSA2helper-meta-condtions.html">Introduction to meta conditions with JACUSA2helper</a>
-    <a class="dropdown-item" href="../articles/web_only/JACUSA2helper-nanopore.html">Analysis of Nanopore HEK293 with JACUSA2helper</a>
   </div>
 </li>
       </ul>
@@ -78,7 +77,7 @@
                         <h4 data-toc-skip class="author">Michael
 Piechotta</h4>
             
-            <h4 data-toc-skip class="date">2022-12-18</h4>
+            <h4 data-toc-skip class="date">2023-01-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dieterich-lab/JACUSA2helper/blob/HEAD/vignettes/JACUSA2helper.Rmd" class="external-link"><code>vignettes/JACUSA2helper.Rmd</code></a></small>
       <div class="d-none name"><code>JACUSA2helper.Rmd</code></div>
@@ -113,7 +112,7 @@ easy interaction with <a href="https://github.com/tidyverse/dplyr" class="extern
 <p>In the following, we will focus on single pairwise comparisons of two
 conditions of one output file. If you want to analyze multiple files
 with similar pairwise comparisons, read
-<code>vignette("JACUSA2helper-meta-conditions")</code>.</p>
+<code><a href="../articles/JACUSA2helper-meta-conditions.html">vignette("JACUSA2helper-meta-conditions")</a></code>.</p>
 <div class="section level3">
 <h3 id="multi-site-and-new-features">Multi site and new features<a class="anchor" aria-label="anchor" href="#multi-site-and-new-features"></a>
 </h3>
@@ -561,7 +560,7 @@ result object and plot the arrest rate from each condition in a scatter
 plot.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  contig <span class="op">=</span> <span class="fu">seqnames</span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span>,</span>
+<span>  contig <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqnames</a></span><span class="op">(</span><span class="va">filtered</span><span class="op">)</span>,</span>
 <span>  arrest_rate1 <span class="op">=</span> <span class="va">filtered</span><span class="op">$</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond1</span><span class="op">$</span><span class="va">rep1</span>,</span>
 <span>  arrest_rate2 <span class="op">=</span> <span class="va">filtered</span><span class="op">$</span><span class="va">arrest_rate</span><span class="op">$</span><span class="va">cond2</span><span class="op">$</span><span class="va">rep1</span></span>
 <span><span class="op">)</span></span>
@@ -577,7 +576,7 @@ plot.</p>
 the +CMC condition for all rRNAs when compared against -CMC.</p>
 <p>If you want to look simultaneously at all conditions (HIVRT,
 SIIIRTMn, and SIIIRTMg), checkout
-<code>vignette("JACUSA2helper-meta-conditions")</code>.</p>
+<code><a href="../articles/JACUSA2helper-meta-conditions.html">vignette("JACUSA2helper-meta-conditions")</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="stranded-data">Stranded data<a class="anchor" aria-label="anchor" href="#stranded-data"></a>
@@ -593,7 +592,7 @@ UNSTRANDED|FR_FIRSTSTRAND|RF_SECONDSTRAND”.</p>
 <p>There are two functions to read JACUSA2 output
 <code>read_result(file)</code> and
 <code>read_results(files, meta_conds)</code> which is explained in
-<code>vignette("JACUSA2helper-meta-conditions")</code>.</p>
+<code><a href="../articles/JACUSA2helper-meta-conditions.html">vignette("JACUSA2helper-meta-conditions")</a></code>.</p>
 <p>Use <code>result &lt;- read_result("JACUSA2.out")</code> to read and
 create a JACUSA2 result object from a JACUSA2 output file
 <code>JACUSA2.out</code>. By default, variables stored in the
