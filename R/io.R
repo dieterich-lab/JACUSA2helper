@@ -143,7 +143,7 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, tmpdir = tempdir(
 # Create result for type and conditions from data 
 .create_result <- function(type, cond_count, data) {
   cols <- NULL
-  if(type == .CALL_PILEUP) {
+  if (type == .CALL_PILEUP) {
     cols <- c(.CALL_PILEUP_COL)
   } else if (type %in% c(.RT_ARREST, .LRT_ARREST)) {
     cols <- c(.ARREST_COL, .THROUGH_COL)
@@ -154,8 +154,8 @@ read_result <- function(file, cond_desc = c(), unpack = FALSE, tmpdir = tempdir(
 
   l <- list(
     seqnames = data$contig,
-    ranges = IRanges::IRanges(start=data$start + 1, end=data$end),
-    strand = GenomicRanges::strand(data$strand)
+    ranges = IRanges::IRanges(start = data$start + 1, end = data$end),
+    strand = GenomicRanges::strand(gsub("\\.", "*", data$strand))
   )
   gr <- do.call(GenomicRanges::GRanges, l)
   GenomicRanges::mcols(gr) <- data[, setdiff(colnames(data), c("contig", "start", "end", "strand"))]
