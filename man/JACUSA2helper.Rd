@@ -2,6 +2,7 @@
 % Please edit documentation in R/common.R
 \docType{package}
 \name{JACUSA2helper}
+\alias{JACUSA2helper-package}
 \alias{JACUSA2helper}
 \title{JACUSA2helper: A package for post-processing JACUSA2 result files.}
 \description{
@@ -82,3 +83,23 @@ See:
 }
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/dieterich-lab/JACUSA2helper}
+  \item \url{https://dieterich-lab.github.io/JACUSA2helper/}
+  \item Report bugs at \url{https://github.com/dieterich-lab/JACUSA2helper/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Michael Piechotta \email{michael.piechotta@gmail.com}
+
+Other contributors:
+\itemize{
+  \item Qi Wang [contributor]
+  \item Christoph Dieterich [contributor]
+  \item Dieterich Lab [funder]
+}
+
+}

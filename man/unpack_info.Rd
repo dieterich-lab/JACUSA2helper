@@ -4,14 +4,14 @@
 \alias{unpack_info}
 \title{Unpack info field}
 \usage{
-unpack_info(info, cond_count, keys = get_info_keys(info))
+unpack_info(info, keys = get_info_keys(info))
 }
 \arguments{
 \item{info}{Vector of stings.}
 
-\item{cond_count}{integer Number of conditions.}
-
 \item{keys}{vector of string of keys to extract from "info".}
+
+\item{cond_count}{integer Number of conditions.}
 }
 \value{
 returns a JACUSA2 result object with "info" unpacked.

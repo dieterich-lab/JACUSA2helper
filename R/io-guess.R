@@ -1,16 +1,20 @@
-.type2prefix <-function(type) {
+# given the type of the data, what column prefix to except for the data
+.type2prefix <- function(type) {
   if (type == .UNKNOWN_METHOD) {
     stop("Unknown type: ", type)
   }
 
-  if (type == .CALL_PILEUP) {
-    return(c(.CALL_PILEUP_COL))
+  if (type == .CALL) {
+    return(c(.CALL_COL))
+  } else if (type == .PILEUP) {
+    return(c(.PILEUP_COL))
   } else if (type %in% c(.RT_ARREST, .LRT_ARREST)) {
     return(c(.ARREST_COL, .THROUGH_COL))
   } else {
     stop("Unknown type: ", type)
   }
 }
+
 
 # Guess conditions and replicates from labels
 .guess_cond_count <- function(type, header_names) {
@@ -73,10 +77,12 @@
   type <- .UNKNOWN_METHOD
   if (length(grep(.LRT_ARREST_POS_COL, line)) > 0) { # lrt-arrest
     type <- .LRT_ARREST
-  } else if(length(grep(paste0("\t", .ARREST_COL), line)) > 0) { # rt-arrest
+  } else if (length(grep(paste0("\t", .ARREST_COL), line)) > 0) { # rt-arrest
     type <- .RT_ARREST
-  } else if (length(grep(paste0("\t", .CALL_PILEUP_COL), line)) > 0) { # call-pileup
-    type <- .CALL_PILEUP
+  } else if (length(grep(paste0("\t", .CALL_COL), line)) > 0 & length(grep(paste0("\t", .CALL_SCORE_COL), line))) { # call
+    type <- .CALL
+  } else if (length(grep(paste0("\t", .PILEUP_COL), line)) > 0 & length(grep(paste0("\t", .PILEUP_SCORE_COL), line))) { # call
+    type <- .CALL
   } else { 
     stop("Result type could not be guessed from header: ", line)
   }

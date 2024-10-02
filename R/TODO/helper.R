@@ -11,17 +11,20 @@
 # Helpers defining supported types by JACUSA2.x
 .UNKNOWN_METHOD <- "unknown"
 # call and pileup cannot be distinguished by output
-.CALL_PILEUP <- "call-pileup"
+.CALL <- "call"
+.PILEUP <- "pileup"
 .RT_ARREST <- "rt-arrest"
 .LRT_ARREST <- "lrt-arrest"
 
-.ATTR_TYPE <- "JACUSA2.type"
-.ATTR_HEADER <- "JACUSA2.header"
-.ATTR_COND_DESC <- "JACUSA2.cond_desc"
-
-
 # convenience: description data fields
-.CALL_PILEUP_COL <- "bases"
+.CALL_COL <- "bases"
+.CALL_SCORE_COL <- "score"
+.PILEUP_COL <- "bases"
+.PILEUP_SCORE_COL <- "stat"
+#
+.RL_ARREST_PILEUP_COL <- "pvalue"
+.LRT_ARREST_PILEUP_COL <- "pvalue"
+
 
 .ARREST_COL <- "arrest"
 .THROUGH_COL <- "through"

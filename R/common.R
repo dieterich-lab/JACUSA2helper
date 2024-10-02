@@ -1,3 +1,6 @@
+# FIXME 
+
+
 #' JACUSA2helper: A package for post-processing JACUSA2 result files.
 #'
 #' Auxiliary R package for the assessment of JACUSA1.x and JACUSA2.x results.

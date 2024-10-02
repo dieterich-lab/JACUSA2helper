@@ -10,7 +10,7 @@ get_info_keys(info)
 \item{info}{Vector of strings.}
 }
 \value{
-returndfs a vector of available keys.
+returns a vector of available keys.
 }
 \description{
 Get keys of info field.
