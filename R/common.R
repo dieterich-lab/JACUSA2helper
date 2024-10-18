@@ -77,4 +77,4 @@
 #'
 #' @docType package
 #' @name JACUSA2helper
-NULL
+"_PACKAGE"
